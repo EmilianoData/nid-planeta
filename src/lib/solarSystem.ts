@@ -1,4 +1,4 @@
-import { enrich, setorColor, type Projeto, type ProjetoRaw } from './projetos';
+import { enrich, SETOR_PALETTE, type Projeto, type ProjetoRaw } from './projetos';
 
 export type BodyKind = 'setor' | 'nid' | 'porto-acu' | 'houston';
 
@@ -105,10 +105,12 @@ export function buildSolarSystem(rawProj: ProjetoRaw[], rawMem: MembroRaw[]): So
     const phaseOffset = ringIdx === 0 ? Math.PI / 2.3 : 0; // avoid NID at phase 0
     const phase = phaseOffset + (positionInRing / ringCount) * Math.PI * 2;
     const isBacklog = nome === BACKLOG_LABEL;
+    // Cor por índice (sem colisão de hash) — garante contraste entre setores vizinhos
+    const paletteColor = SETOR_PALETTE[i % SETOR_PALETTE.length];
     bodies.push({
       id: `setor-${i}`,
       nome,
-      color: isBacklog ? '#3A4A60' : setorColor(nome),
+      color: isBacklog ? '#3A4A60' : paletteColor,
       kind: 'setor',
       orbit: RINGS[ringIdx],
       size: Math.max(0.18, Math.min(0.42, 0.14 + Math.sqrt(projs.length) * 0.06)),

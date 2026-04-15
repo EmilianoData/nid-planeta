@@ -5,8 +5,10 @@ import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { atmosphereVert, atmosphereFrag } from '@/shaders/atmosphere';
+import { planetVert, planetFrag } from '@/shaders/planet';
 import type { Body } from '@/lib/solarSystem';
 import { useStore } from '@/lib/store';
+import FrontierMarker from './FrontierMarker';
 
 const SUN_DIR = new THREE.Vector3(1, 0.5, 0.7).normalize();
 
@@ -26,13 +28,26 @@ export default function Planet({ body, worldPosRef, parentPos, children }: Props
   const active = planetId === body.id;
   const dim = planetId && !active;
 
-  // Per-body spin speed (stable hash from id)
-  const spinSpeed = useMemo(() => {
+  // Per-body spin speed + seed de estilo (stable hash from id)
+  const { spinSpeed, seed } = useMemo(() => {
     let h = 0;
     for (let i = 0; i < body.id.length; i++) h = (h * 31 + body.id.charCodeAt(i)) >>> 0;
     const sign = (h & 1) ? 1 : -1;
-    return sign * (0.12 + ((h % 100) / 100) * 0.28);
+    const spin = sign * (0.12 + ((h % 100) / 100) * 0.28);
+    const s = ((h >>> 8) % 1000) / 1000;
+    return { spinSpeed: spin, seed: s };
   }, [body.id]);
+
+  const planetUniforms = useMemo(
+    () => ({
+      uColor: { value: new THREE.Color(body.color) },
+      uSunDir: { value: SUN_DIR.clone() },
+      uSeed: { value: seed },
+      uEmissive: { value: body.kind === 'nid' ? 0.6 : 0.12 },
+      uTime: { value: 0 },
+    }),
+    [body.color, body.kind, seed],
+  );
 
   const halo = useMemo(
     () => ({
@@ -51,6 +66,7 @@ export default function Planet({ body, worldPosRef, parentPos, children }: Props
     const cz = Math.sin(angle) * body.orbit;
     orbitGroup.current.position.set(cx, 0, cz);
     if (spin.current) spin.current.rotation.y += dt * spinSpeed;
+    planetUniforms.uTime.value = t;
 
     if (worldPosRef) {
       worldPosRef.current.set(cx, 0, cz);
@@ -86,16 +102,26 @@ export default function Planet({ body, worldPosRef, parentPos, children }: Props
         }}
       >
         <sphereGeometry args={[1, 48, 48]} />
-        <meshStandardMaterial
-          color={body.color}
-          emissive={body.color}
-          emissiveIntensity={body.kind === 'nid' ? 0.8 : 0.35}
-          roughness={0.6}
-          metalness={0.2}
-          transparent
-          opacity={dim ? 0.55 : 1}
-          toneMapped={body.kind !== 'nid'}
-        />
+        {body.kind === 'nid' ? (
+          <meshStandardMaterial
+            color={body.color}
+            emissive={body.color}
+            emissiveIntensity={0.9}
+            roughness={0.4}
+            metalness={0.3}
+            transparent
+            opacity={dim ? 0.55 : 1}
+            toneMapped={false}
+          />
+        ) : (
+          <shaderMaterial
+            vertexShader={planetVert}
+            fragmentShader={planetFrag}
+            uniforms={planetUniforms}
+            transparent={!!dim}
+            opacity={dim ? 0.55 : 1}
+          />
+        )}
       </mesh>
 
       {/* Label */}
@@ -138,6 +164,15 @@ export default function Planet({ body, worldPosRef, parentPos, children }: Props
           )}
         </div>
       </Html>
+
+      {/* Fronteira: Porto do Açu e Houston ganham marcador de "nova exploração" */}
+      {(body.kind === 'porto-acu' || body.kind === 'houston') && (
+        <FrontierMarker
+          color={body.color}
+          size={body.size}
+          label={body.kind === 'houston' ? 'MISSÃO LUNAR' : 'NOVA EXPLORAÇÃO'}
+        />
+      )}
 
       {children}
     </group>

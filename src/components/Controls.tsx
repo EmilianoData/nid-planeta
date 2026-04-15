@@ -65,11 +65,13 @@ export default function Controls() {
         s.current.phiIdleBase = s.current.tPhi;
         s.current.lastInteract = performance.now() / 1000;
       },
-      onPinchStart: () => {
+      onPinchStart: ({ event }) => {
+        event?.preventDefault?.();
         s.current.pinchStart = s.current.tRadius;
         s.current.lastInteract = performance.now() / 1000;
       },
-      onPinch: ({ offset: [scale] }) => {
+      onPinch: ({ offset: [scale], event }) => {
+        event?.preventDefault?.();
         const factor = scale > 0 ? scale : 1;
         s.current.tRadius = THREE.MathUtils.clamp(
           s.current.pinchStart / factor,
@@ -83,7 +85,12 @@ export default function Controls() {
       target: gl.domElement,
       eventOptions: { passive: false },
       drag: { filterTaps: true, pointer: { touch: true } },
-      pinch: { scaleBounds: { min: 0.2, max: 6 } },
+      pinch: {
+        scaleBounds: { min: 0.2, max: 6 },
+        pointer: { touch: true },
+        pinchOnWheel: false,
+        rubberband: true,
+      },
     },
   );
 

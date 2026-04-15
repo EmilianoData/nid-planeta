@@ -6,6 +6,7 @@ import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import SolarSystem from './SolarSystem';
 import Controls from './Controls';
 import Nebula from './Nebula';
+import ShootingStars from './ShootingStars';
 
 export default function Scene() {
   return (
@@ -18,6 +19,7 @@ export default function Scene() {
       <ambientLight intensity={0.15} />
       <Nebula />
       <Stars radius={120} depth={60} count={5200} factor={4.2} fade speed={0.8} />
+      <ShootingStars />
       <SolarSystem />
       <Controls />
 

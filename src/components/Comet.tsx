@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber';
 import { Html, Trail } from '@react-three/drei';
 import * as THREE from 'three';
 import { cometPos, type Comet as CometT } from '@/lib/solarSystem';
+import { useStore } from '@/lib/store';
 
 type Props = {
   comet: CometT;
@@ -16,6 +17,9 @@ const scratch = { x: 0, y: 0, z: 0 };
 export default function Comet({ comet, worldPosRef }: Props) {
   const group = useRef<THREE.Group>(null);
   const body = useRef<THREE.Group>(null);
+  const focusComet = useStore((s) => s.focusComet);
+  const cometId = useStore((s) => s.cometId);
+  const active = cometId === comet.id;
 
   useFrame((state) => {
     if (!group.current) return;
@@ -36,7 +40,7 @@ export default function Comet({ comet, worldPosRef }: Props) {
   return (
     <group ref={group}>
       <Trail
-        width={comet.size * 2.8}
+        width={comet.size * (active ? 4.2 : 2.8)}
         length={isStack ? 8 : 6}
         color={comet.color}
         attenuation={(w) => w * w}
@@ -54,10 +58,20 @@ export default function Comet({ comet, worldPosRef }: Props) {
             <meshBasicMaterial
               color={comet.color}
               transparent
-              opacity={0.18}
+              opacity={active ? 0.4 : 0.18}
               toneMapped={false}
               depthWrite={false}
             />
+          </mesh>
+          {/* hit-area invisível — aumenta raio de clique (vital no touch de TV) */}
+          <mesh
+            onClick={(e) => {
+              e.stopPropagation();
+              focusComet(active ? null : comet.id);
+            }}
+          >
+            <sphereGeometry args={[comet.size * 3, 16, 16]} />
+            <meshBasicMaterial transparent opacity={0} depthWrite={false} />
           </mesh>
         </group>
       </Trail>

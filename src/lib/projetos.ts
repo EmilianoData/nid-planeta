@@ -30,12 +30,30 @@ const STATUS_MAP: Record<string, ProjetoStatus> = {
   Planejamento: 'planejado',
 };
 
-// Palette per setor (Delp-adjacent). Cycled deterministically.
-const SETOR_PALETTE = [
-  '#FF6B1A', '#21D4FD', '#00E5A0', '#FFD233', '#B14AED',
-  '#FF3D5A', '#FFA366', '#3FB0E8', '#6BDC7D', '#E8A84B',
-  '#F06292', '#9575CD', '#4DD0E1', '#FFB74D', '#81C784',
-  '#BA68C8',
+// Paleta curada — matizes bem espaçados no círculo cromático pra nenhum setor
+// vizinho parecer "igual". Hues progridem em ~22° e alternam saturação/luminosidade
+// pra quebrar monotonia.
+export const SETOR_PALETTE = [
+  '#FF3D5A', // vermelho-coral
+  '#FF8A2B', // laranja-brasa
+  '#FFD233', // âmbar
+  '#A8E63B', // verde-lima
+  '#00E5A0', // verde-esmeralda
+  '#21D4FD', // ciano
+  '#3FB0E8', // azul-piscina
+  '#5E81FF', // azul-elétrico
+  '#9A6BFF', // violeta
+  '#B14AED', // roxo magenta
+  '#F06292', // rosa
+  '#FF6B1A', // laranja Delp
+  '#4DD0E1', // teal claro
+  '#E8A84B', // ouro velho
+  '#81C784', // verde-sálvia
+  '#FF5C8A', // pink framboesa
+  '#00B8A9', // turquesa
+  '#D4A5FF', // lilás pálido
+  '#6BDC7D', // verde menta
+  '#F2784B', // tangerine
 ];
 
 export function statusSlug(status: string | null): ProjetoStatus {

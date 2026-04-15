@@ -22,15 +22,17 @@ export default function InfoPanel() {
     let construido = 0;
     let em_obra = 0;
     let planejado = 0;
+    let backlog = 0;
     for (const b of sys.bodies) {
       for (const p of b.projetos) {
         total++;
         if (p.slug === 'construido') construido++;
         else if (p.slug === 'em_obra') em_obra++;
+        else if ((p.status ?? '').trim() === 'Backlog') backlog++;
         else planejado++;
       }
     }
-    return { total, construido, em_obra, planejado };
+    return { total, construido, em_obra, planejado, backlog };
   }, [sys]);
 
   const squads = useMemo<Squad[]>(() => {
@@ -103,6 +105,7 @@ export default function InfoPanel() {
                 <KPI label="Construídos" value={stats.construido ?? 0} color="#00E5A0" />
                 <KPI label="Em obra" value={stats.em_obra ?? 0} color="#FFD233" />
                 <KPI label="Planejados" value={stats.planejado ?? 0} color="#8A9BB0" />
+                <KPI label="Backlog" value={stats.backlog ?? 0} color="#FF6B1A" />
               </div>
             </section>
 
