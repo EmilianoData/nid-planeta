@@ -19,14 +19,18 @@ export default function InfoPanel() {
   const stats = useMemo(() => {
     if (!sys) return null;
     let total = 0;
-    const bySlug: Record<string, number> = { construido: 0, em_obra: 0, planejado: 0 };
+    let construido = 0;
+    let em_obra = 0;
+    let planejado = 0;
     for (const b of sys.bodies) {
       for (const p of b.projetos) {
         total++;
-        bySlug[p.slug] = (bySlug[p.slug] ?? 0) + 1;
+        if (p.slug === 'construido') construido++;
+        else if (p.slug === 'em_obra') em_obra++;
+        else planejado++;
       }
     }
-    return { total, ...bySlug };
+    return { total, construido, em_obra, planejado };
   }, [sys]);
 
   const squads = useMemo<Squad[]>(() => {

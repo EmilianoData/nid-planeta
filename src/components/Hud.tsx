@@ -219,18 +219,7 @@ function ProjetoDetail({
   p,
   color,
 }: {
-  p: {
-    id: string;
-    nome: string;
-    status: string | null;
-    setor: string | null | undefined;
-    squad: string | null | undefined;
-    descricao: string | null | undefined;
-    setorColor: string;
-    progresso: number;
-    horas: number;
-    slug: string;
-  };
+  p: import('@/lib/projetos').Projeto;
   color: string;
 }) {
   return (
