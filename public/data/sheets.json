@@ -1,0 +1,14 @@
+{
+  "all": [
+    "projetos",
+    "membros_nucleo",
+    "alocacoes",
+    "dim_pessoas",
+    "dim_custo_setor_horas",
+    "validacao_lista",
+    "timesheets",
+    "_dicionario"
+  ],
+  "projSheet": "projetos",
+  "memSheet": "membros_nucleo"
+}

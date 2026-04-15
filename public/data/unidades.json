@@ -1,0 +1,23 @@
+[
+  {
+    "slug": "vespasiano",
+    "nome": "Vespasiano · MG",
+    "lat": -19.69,
+    "lng": -43.92,
+    "ativa": true
+  },
+  {
+    "slug": "porto-acu",
+    "nome": "Porto do Açu · RJ",
+    "lat": -21.83,
+    "lng": -41,
+    "ativa": false
+  },
+  {
+    "slug": "houston",
+    "nome": "Houston · EUA",
+    "lat": 29.76,
+    "lng": -95.37,
+    "ativa": false
+  }
+]

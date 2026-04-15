@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #__next { height: 100%; }
+body {
+  margin: 0;
+  background: #050B16;
+  color: #F2F7FC;
+  font-family: 'Barlow', system-ui, sans-serif;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+canvas { touch-action: none; }
+body.kiosk-mode, body.kiosk-mode * { cursor: none !important; }

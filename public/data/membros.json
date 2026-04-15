@@ -1,0 +1,101 @@
+[
+  {
+    "id": "MBR-001",
+    "nome": "Henrique Emiliano",
+    "cargo": "Tech Lead",
+    "setor": "NID",
+    "squad": "IA",
+    "is_active": "1",
+    "monthly_capacity_hours": "128",
+    "custo_hora": "R$ 100.00",
+    "data_entrada": "11/1/25"
+  },
+  {
+    "id": "MBR-002",
+    "nome": "Rafael Souza",
+    "cargo": "Product Owner / QA",
+    "setor": "NID",
+    "squad": "Software",
+    "is_active": "1",
+    "monthly_capacity_hours": "60",
+    "custo_hora": "R$ 100.00",
+    "data_entrada": "1/1/26"
+  },
+  {
+    "id": "MBR-003",
+    "nome": "Lucas Franca",
+    "cargo": "Analista BP",
+    "setor": "NID",
+    "squad": "BI & Eng. Dados",
+    "is_active": "1",
+    "monthly_capacity_hours": "140",
+    "custo_hora": "R$ 100.00",
+    "data_entrada": "2/1/26"
+  },
+  {
+    "id": "MBR-004",
+    "nome": "Luiz Castro",
+    "cargo": "Analista BP",
+    "setor": "NID",
+    "squad": "Automações RPA",
+    "is_active": "1",
+    "monthly_capacity_hours": "140",
+    "custo_hora": "R$ 100.00",
+    "data_entrada": "2/1/26"
+  },
+  {
+    "id": "MBR-005",
+    "nome": "César",
+    "cargo": "Analista M1",
+    "setor": "NID",
+    "squad": "Software",
+    "is_active": "1",
+    "monthly_capacity_hours": "100",
+    "custo_hora": "R$ 100.00",
+    "data_entrada": "3/1/26"
+  },
+  {
+    "id": "MBR-006",
+    "nome": null,
+    "cargo": null,
+    "setor": null,
+    "squad": null,
+    "is_active": null,
+    "monthly_capacity_hours": null,
+    "custo_hora": null,
+    "data_entrada": null
+  },
+  {
+    "id": "MBR-007",
+    "nome": null,
+    "cargo": null,
+    "setor": null,
+    "squad": null,
+    "is_active": null,
+    "monthly_capacity_hours": null,
+    "custo_hora": null,
+    "data_entrada": null
+  },
+  {
+    "id": "MBR-008",
+    "nome": null,
+    "cargo": null,
+    "setor": null,
+    "squad": null,
+    "is_active": null,
+    "monthly_capacity_hours": null,
+    "custo_hora": null,
+    "data_entrada": null
+  },
+  {
+    "id": "MBR-009",
+    "nome": null,
+    "cargo": null,
+    "setor": null,
+    "squad": null,
+    "is_active": null,
+    "monthly_capacity_hours": null,
+    "custo_hora": null,
+    "data_entrada": null
+  }
+]
