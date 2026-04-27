@@ -13,6 +13,8 @@ void main() {
 }
 `;
 
+// Nebulosa mais sutil e coerente: uma banda galáctica com 2-3 nuvens grandes,
+// ao invés de um fundo totalmente colorido. Mais espaço = mais preto.
 const frag = /* glsl */ `
 precision highp float;
 varying vec3 vDir;
@@ -39,7 +41,7 @@ float vnoise(vec3 x) {
 float fbm(vec3 p) {
   float v = 0.0;
   float a = 0.55;
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 6; i++) {
     v += a * vnoise(p);
     p *= 2.03;
     a *= 0.5;
@@ -49,24 +51,33 @@ float fbm(vec3 p) {
 
 void main() {
   vec3 d = normalize(vDir);
-  vec3 drift = d * 2.4 + vec3(uTime * 0.008, 0.0, uTime * 0.006);
+  vec3 drift = d * 3.2 + vec3(uTime * 0.004, 0.0, uTime * 0.003);
   float n = fbm(drift);
-  float m = fbm(drift * 1.7 + 3.1);
+  float m = fbm(drift * 2.1 + 5.7);
+  float fine = fbm(drift * 5.5 + 12.0);
 
-  // Bandas coloridas: roxo profundo + vermelho Delp esmaecido + cyan distante
-  vec3 deepPurple = vec3(0.14, 0.04, 0.24);
-  vec3 delpRed    = vec3(0.36, 0.05, 0.10);
-  vec3 cyan       = vec3(0.05, 0.16, 0.28);
+  // Paleta astronômica: hidrogênio H-alpha (vermelho-rosado) + OIII (cyan/verde-azul) + poeira escura
+  vec3 halpha = vec3(0.55, 0.12, 0.22);
+  vec3 oiii   = vec3(0.08, 0.25, 0.38);
+  vec3 dust   = vec3(0.09, 0.04, 0.12);
 
-  vec3 col = mix(deepPurple, delpRed, smoothstep(0.45, 0.88, n));
-  col = mix(col, cyan, smoothstep(0.55, 0.9, m) * 0.45);
+  vec3 col = mix(dust, halpha, smoothstep(0.55, 0.88, n));
+  col = mix(col, oiii, smoothstep(0.58, 0.9, m) * 0.5);
 
-  // Faixa galáctica ao longo de Y
-  float stripe = smoothstep(0.38, 0.0, abs(d.y - 0.05));
-  col += stripe * vec3(0.18, 0.06, 0.14) * smoothstep(0.4, 0.9, n);
+  // Faixa da Via Láctea ao longo do plano (levemente inclinada)
+  float galacticY = d.y * 0.92 + d.x * 0.08;
+  float stripe = smoothstep(0.32, 0.0, abs(galacticY));
+  col += stripe * vec3(0.18, 0.08, 0.14) * smoothstep(0.45, 0.95, n);
 
-  // Fade global — mantém o céu escuro, só insinua as nuvens
-  float intensity = smoothstep(0.35, 0.95, n) * 0.25 + 0.025;
+  // Pó escuro cortando a nebulosa (aumenta realismo)
+  float darkLane = smoothstep(0.5, 0.2, fine);
+  col *= mix(1.0, 0.55, darkLane * stripe);
+
+  // Mask global forte — mantém o céu predominantemente preto
+  float intensity = smoothstep(0.48, 0.95, n) * 0.22 + 0.015;
+  // Realça apenas dentro da faixa galáctica
+  intensity *= mix(0.35, 1.0, stripe * 0.6 + 0.4);
+
   gl_FragColor = vec4(col * intensity, 1.0);
 }
 `;

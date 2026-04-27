@@ -12,32 +12,28 @@ import Planet from './Planet';
 import Ship from './Ship';
 import Satellites from './Satellites';
 import Comet from './Comet';
+import AsteroidBelt from './AsteroidBelt';
+import DataPulse from './DataPulse';
+import SolarFlare from './SolarFlare';
 
 export default function SolarSystem() {
   const sys = useSolarSystem();
   const planetId = useStore((s) => s.planetId);
   const projetoId = useStore((s) => s.projetoId);
 
-  // world positions of each body + comet (updated every frame)
   const positions = useRef<Record<string, { current: THREE.Vector3 }>>({});
 
   useMemo(() => {
     if (!sys) return;
-    for (const b of sys.bodies) {
-      positions.current[b.id] = { current: new THREE.Vector3() };
-    }
-    for (const c of sys.comets) {
-      positions.current[c.id] = { current: new THREE.Vector3() };
-    }
+    for (const b of sys.bodies) positions.current[b.id] = { current: new THREE.Vector3() };
+    for (const c of sys.comets) positions.current[c.id] = { current: new THREE.Vector3() };
   }, [sys]);
 
-  // Ring radii for orbits (dedupe)
   const ringRadii = useMemo(() => {
     if (!sys) return [] as number[];
     return [...new Set(sys.bodies.filter((b) => !b.parentId).map((b) => b.orbit))].sort();
   }, [sys]);
 
-  // Ship targets = all parentless planets + all mission comets
   const shipTargets = useMemo(() => {
     if (!sys) return [] as string[];
     return [
@@ -46,7 +42,6 @@ export default function SolarSystem() {
     ];
   }, [sys]);
 
-  // Publish focus target each frame (lets Controls lerp toward moving bodies)
   useFrame(() => {
     if (!sys) return;
     if (projetoId) return;
@@ -75,8 +70,8 @@ export default function SolarSystem() {
   return (
     <group>
       <Sun size={sys.sun.size} />
+      <SolarFlare />
 
-      {/* Orbit rings for parentless planets */}
       {ringRadii.map((r) => (
         <OrbitRing
           key={`ring-${r}`}
@@ -87,7 +82,12 @@ export default function SolarSystem() {
         />
       ))}
 
-      {/* Planets (parentless) */}
+      {/* Pulsos de dados circulando os anéis de setores (dentro do cinturão) */}
+      <DataPulse radii={ringRadii.filter((r) => r < 8)} color="#21D4FD" />
+
+      {/* Cinturão de asteroides entre última órbita de setor e Porto do Açu */}
+      <AsteroidBelt />
+
       {sys.bodies
         .filter((b) => !b.parentId)
         .map((b) => (
@@ -110,12 +110,10 @@ export default function SolarSystem() {
           </Planet>
         ))}
 
-      {/* Cometas — stacks do núcleo + missões NID */}
       {sys.comets.map((c) => (
         <Comet key={c.id} comet={c} worldPosRef={positions.current[c.id]} />
       ))}
 
-      {/* Naves exploradoras — pousam aleatoriamente em planetas e missões */}
       {shipTargets.length > 0 &&
         sys.ships.map((s, i) => (
           <Ship
