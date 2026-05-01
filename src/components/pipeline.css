@@ -519,8 +519,8 @@
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--pl-late);
-  margin-bottom: 18px;
+  color: var(--pl-text-faint);
+  margin-bottom: 14px;
 }
 .pl-status-banner {
   display: inline-flex; align-items: center; gap: 8px;
@@ -651,4 +651,135 @@
 @keyframes pl-junction-open {
   from { opacity: 0; transform: translateY(-6px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ====== stack tile selection / clickable ====== */
+.pl-tile.clickable { cursor: pointer; }
+.pl-tile.clickable:hover {
+  border-color: var(--pl-chrome);
+  transform: translateY(-1px);
+  transition: all 0.16s ease;
+}
+.pl-tile.selected {
+  border-color: var(--pl-gold) !important;
+  box-shadow: 0 0 0 1px var(--pl-gold), 0 0 18px rgba(242, 201, 76, 0.18);
+}
+.pl-tile.selected::after {
+  content: '';
+  position: absolute;
+  top: -1px; bottom: -1px;
+  left: -4px;
+  width: 3px;
+  background: var(--pl-gold);
+  box-shadow: 0 0 6px var(--pl-gold);
+}
+
+/* ====== stack detail counts row ====== */
+.pl-counts-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px dashed var(--pl-line);
+}
+.pl-count {
+  font-family: 'Geist Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.pl-count::before {
+  content: '';
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 5px currentColor;
+}
+.pl-count.running { color: var(--pl-running); }
+.pl-count.pending { color: var(--pl-pending); }
+.pl-count.late { color: var(--pl-late); }
+.pl-count.backlog { color: var(--pl-backlog); }
+
+/* ====== stack project list ====== */
+.pl-stack-projects { display: flex; flex-direction: column; gap: 4px; }
+.pl-stack-projects h4 {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pl-text-faint);
+  margin-bottom: 8px;
+}
+.pl-empty {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10.5px;
+  color: var(--pl-text-faint);
+  padding: 12px 0;
+  text-align: center;
+  letter-spacing: 0.06em;
+}
+.pl-stack-proj {
+  background: var(--pl-surface);
+  border: 1px solid var(--pl-line-soft);
+  border-left: 3px solid var(--pl-text-faint);
+  cursor: pointer;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+.pl-stack-proj:hover { background: var(--pl-surface-2); }
+.pl-stack-proj.open { border-color: var(--pl-chrome); }
+.pl-stack-proj[data-status='running'] { border-left-color: var(--pl-running); }
+.pl-stack-proj[data-status='pending'] { border-left-color: var(--pl-pending); }
+.pl-stack-proj[data-status='late'] {
+  border-left-color: var(--pl-late);
+  background: linear-gradient(90deg, rgba(255, 77, 109, 0.05), var(--pl-surface) 60%);
+}
+.pl-stack-proj[data-status='backlog'] {
+  border-left-color: var(--pl-backlog);
+  color: var(--pl-text-dim);
+}
+.pl-stack-proj-row {
+  padding: 8px 12px 8px 11px;
+  display: grid;
+  grid-template-columns: 7px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 11.5px;
+}
+.pl-stack-proj[data-status='running'] .pl-proj-led {
+  background: var(--pl-running); box-shadow: 0 0 6px var(--pl-running);
+}
+.pl-stack-proj[data-status='pending'] .pl-proj-led {
+  background: var(--pl-pending); box-shadow: 0 0 4px var(--pl-pending);
+}
+.pl-stack-proj[data-status='late'] .pl-proj-led {
+  background: var(--pl-late); box-shadow: 0 0 8px var(--pl-late);
+  animation: pl-led-alarm 0.6s ease-in-out infinite;
+}
+.pl-stack-proj[data-status='backlog'] .pl-proj-led { background: var(--pl-backlog); }
+.pl-stack-proj-body {
+  padding: 4px 12px 12px 14px;
+  border-top: 1px dashed var(--pl-line);
+  background: rgba(0, 0, 0, 0.15);
+}
+.pl-stack-proj-body .pl-spec {
+  margin-top: 8px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  grid-template-columns: 80px 1fr;
+  font-size: 11px;
+  gap: 4px 12px;
+}
+.pl-proj-desc {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--pl-text-dim);
+  padding: 8px 0 4px;
 }

@@ -53,49 +53,5 @@
     "monthly_capacity_hours": "100",
     "custo_hora": "R$ 100.00",
     "data_entrada": "3/1/26"
-  },
-  {
-    "id": "MBR-006",
-    "nome": null,
-    "cargo": null,
-    "setor": null,
-    "squad": null,
-    "is_active": null,
-    "monthly_capacity_hours": null,
-    "custo_hora": null,
-    "data_entrada": null
-  },
-  {
-    "id": "MBR-007",
-    "nome": null,
-    "cargo": null,
-    "setor": null,
-    "squad": null,
-    "is_active": null,
-    "monthly_capacity_hours": null,
-    "custo_hora": null,
-    "data_entrada": null
-  },
-  {
-    "id": "MBR-008",
-    "nome": null,
-    "cargo": null,
-    "setor": null,
-    "squad": null,
-    "is_active": null,
-    "monthly_capacity_hours": null,
-    "custo_hora": null,
-    "data_entrada": null
-  },
-  {
-    "id": "MBR-009",
-    "nome": null,
-    "cargo": null,
-    "setor": null,
-    "squad": null,
-    "is_active": null,
-    "monthly_capacity_hours": null,
-    "custo_hora": null,
-    "data_entrada": null
   }
 ]

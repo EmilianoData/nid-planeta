@@ -5,12 +5,14 @@ import { useSolarSystem } from '@/lib/dataLoader';
 
 export default function Hud() {
   const sys = useSolarSystem();
+  const view = useStore((s) => s.view);
   const planetId = useStore((s) => s.planetId);
   const projetoId = useStore((s) => s.projetoId);
   const focusPlanet = useStore((s) => s.focusPlaneta);
   const focusProj = useStore((s) => s.focusProjeto);
   const back = useStore((s) => s.back);
 
+  if (view === 'pipeline') return null;
   if (!sys) return null;
 
   const planet = sys.bodies.find((b) => b.id === planetId) ?? null;

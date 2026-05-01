@@ -67,6 +67,7 @@ const COMET_INFO: Record<
 };
 
 export default function CometPanel() {
+  const view = useStore((s) => s.view);
   const cometId = useStore((s) => s.cometId);
   const focusComet = useStore((s) => s.focusComet);
   const sys = useSolarSystem();
@@ -76,6 +77,7 @@ export default function CometPanel() {
     return sys.comets.find((c) => c.id === cometId) ?? null;
   }, [sys, cometId]);
 
+  if (view === 'pipeline') return null;
   if (!comet) return null;
 
   const info = COMET_INFO[comet.nome];

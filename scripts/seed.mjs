@@ -10,8 +10,7 @@ const ROOT = join(__dirname, '..');
 const OUT = join(ROOT, 'public', 'data');
 
 const XLSX_PATH =
-  process.env.XLSX_PATH ||
-  'c:/Users/henrique.emiliano/OneDrive - Delp/NÚCLEO DE INOVAÇÃO DELP - DOCUMENTAÇÃO PROJETOS/SOFTWARE & SAAS/NID SITE/NID_DELP_Carteira_Projetos_BI.xlsx';
+  process.env.XLSX_PATH || join(ROOT, 'data_projects', 'NID_DELP_Carteira_Projetos_BI.xlsx');
 
 if (!existsSync(XLSX_PATH)) {
   console.error(`[seed] xlsx not found at: ${XLSX_PATH}`);

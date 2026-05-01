@@ -1,10 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useStore } from '@/lib/store';
+import {
+  useCarteira,
+  aggregateStack,
+  formatStackSubtitle,
+  type CarteiraProject,
+  type StackKey,
+} from '@/lib/carteira';
 import './pipeline.css';
-
-type StackKey = 'bi-stack' | 'ia-stack' | 'sw-stack' | 'rpa-stack' | 'erp-stack' | 'gen-stack';
 
 type Tile = {
   top: number;
@@ -196,6 +201,106 @@ function LogoSymbols() {
   );
 }
 
+function fmtBRL(n: number | null): string | null {
+  if (n == null) return null;
+  if (n >= 1000) return `${(n / 1000).toFixed(1).replace('.0', '')}k`;
+  return n.toFixed(0);
+}
+
+function fmtDate(d: Date | null): string | null {
+  if (!d) return null;
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  return `${dd}/${mm}/${d.getFullYear()}`;
+}
+
+function StackDetail({
+  tile,
+  agg,
+  projects,
+}: {
+  tile: Tile & { stackKey: StackKey };
+  agg: ReturnType<typeof aggregateStack> | undefined;
+  projects: CarteiraProject[];
+}) {
+  const [openId, setOpenId] = useState<string | null>(null);
+  const total = agg?.total ?? 0;
+  const breach = agg?.late ?? 0;
+
+  return (
+    <>
+      <div className="pl-panel-id">Stack · {tile.stackKey.toUpperCase()}</div>
+      <h3>{tile.name}</h3>
+      <div className="pl-subhead">
+        {total} {total === 1 ? 'projeto' : 'projetos'} ·{' '}
+        {agg ? formatStackSubtitle(agg).split(' · ').slice(1).join(' · ') || 'sem breakdown' : '—'}
+      </div>
+      {breach > 0 && (
+        <span className="pl-status-banner">
+          {breach} {breach === 1 ? 'breach' : 'breaches'} de SLA
+        </span>
+      )}
+
+      <div className="pl-counts-row">
+        {agg && agg.running > 0 && <span className="pl-count running">{agg.running} Running</span>}
+        {agg && agg.pending > 0 && <span className="pl-count pending">{agg.pending} Pending</span>}
+        {agg && agg.late > 0 && <span className="pl-count late">{agg.late} Late</span>}
+        {agg && agg.backlog > 0 && <span className="pl-count backlog">{agg.backlog} Backlog</span>}
+      </div>
+
+      <div className="pl-stack-projects">
+        <h4>// Projetos · carteira NID</h4>
+        {projects.length === 0 && <div className="pl-empty">Nenhum projeto cadastrado para esta stack.</div>}
+        {projects.map((p) => {
+          const open = openId === p.id;
+          return (
+            <div
+              key={p.id}
+              className={`pl-stack-proj${open ? ' open' : ''}`}
+              data-status={p.status}
+              onClick={() => setOpenId(open ? null : p.id)}
+            >
+              <div className="pl-stack-proj-row">
+                <span className="pl-proj-led" />
+                <span className="pl-proj-name">{p.nome}</span>
+                <span className="pl-proj-status">
+                  {p.status === 'late' ? `D+${p.diasAtraso}` : p.statusLabel}
+                </span>
+              </div>
+              {open && (
+                <div className="pl-stack-proj-body">
+                  {p.descricao && <p className="pl-proj-desc">{p.descricao}</p>}
+                  <dl className="pl-spec">
+                    {p.sponsor && <><dt>Sponsor</dt><dd>{p.sponsor}</dd></>}
+                    {p.bp && <><dt>BP</dt><dd>{p.bp}</dd></>}
+                    {p.desenvolvedor && <><dt>Dev</dt><dd>{p.desenvolvedor}</dd></>}
+                    {p.setor && <><dt>Setor</dt><dd>{p.setor}</dd></>}
+                    {p.dataInicio && <><dt>Início</dt><dd>{fmtDate(p.dataInicio)}</dd></>}
+                    {p.dataFim && (
+                      <>
+                        <dt>Previsto</dt>
+                        <dd style={p.status === 'late' ? { color: 'var(--pl-late)' } : undefined}>
+                          {fmtDate(p.dataFim)}
+                          {p.status === 'late' && ` · D+${p.diasAtraso}`}
+                        </dd>
+                      </>
+                    )}
+                    {p.dataFimReal && <><dt>Fim real</dt><dd>{fmtDate(p.dataFimReal)}</dd></>}
+                    {p.progresso != null && <><dt>Progresso</dt><dd>{p.progresso.toFixed(0)}%</dd></>}
+                    {p.capex != null && <><dt>CapEx</dt><dd>R$ {fmtBRL(p.capex)}</dd></>}
+                    {p.expectedRoi != null && <><dt>ROI</dt><dd>{p.expectedRoi.toFixed(1)}x</dd></>}
+                    {p.paybackMonths != null && <><dt>Payback</dt><dd>{p.paybackMonths.toFixed(0)} meses</dd></>}
+                  </dl>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
 function LiveClock() {
   const [now, setNow] = useState(new Date());
   useEffect(() => {
@@ -206,18 +311,29 @@ function LiveClock() {
   return <span className="pl-timestamp">{`${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`}</span>;
 }
 
-function PipelineTile({ t }: { t: Tile }) {
+function PipelineTile({
+  t,
+  selected,
+  onClick,
+  subOverride,
+}: {
+  t: Tile;
+  selected?: boolean;
+  onClick?: () => void;
+  subOverride?: string;
+}) {
   return (
     <div
-      className={`pl-tile${t.delp ? ' delp' : ''}`}
+      className={`pl-tile${t.delp ? ' delp' : ''}${selected ? ' selected' : ''}${onClick ? ' clickable' : ''}`}
       style={{ top: t.top, left: t.left, width: t.width }}
+      onClick={onClick}
     >
       <div className={`pl-logo-bg pl-bg-${t.bg}`}>
         <svg><use href={`#i-${t.icon}`} /></svg>
       </div>
       <div className="pl-tile-body">
         <div className="pl-tile-name" style={t.smallName ? { fontSize: 11.5 } : undefined}>{t.name}</div>
-        <div className="pl-tile-sub">{t.sub}</div>
+        <div className="pl-tile-sub">{subOverride ?? t.sub}</div>
       </div>
     </div>
   );
@@ -226,6 +342,29 @@ function PipelineTile({ t }: { t: Tile }) {
 export default function PipelineView() {
   const view = useStore((s) => s.view);
   const setView = useStore((s) => s.setView);
+  const carteira = useCarteira();
+  const [selectedStack, setSelectedStack] = useState<StackKey>('bi-stack');
+
+  const aggregates = useMemo(() => {
+    const map = {} as Record<StackKey, ReturnType<typeof aggregateStack>>;
+    if (!carteira) return map;
+    for (const s of STACKS) map[s.stackKey] = aggregateStack(carteira, s.stackKey);
+    return map;
+  }, [carteira]);
+
+  const stackProjects = useMemo<CarteiraProject[]>(() => {
+    if (!carteira) return [];
+    return carteira
+      .filter((p) => p.stackKey === selectedStack)
+      .sort((a, b) => {
+        const order: Record<string, number> = { late: 0, running: 1, pending: 2, backlog: 3 };
+        return order[a.status] - order[b.status];
+      });
+  }, [carteira, selectedStack]);
+
+  const selectedStackTile = STACKS.find((s) => s.stackKey === selectedStack)!;
+  const selectedAgg = aggregates[selectedStack];
+  const breachCount = Object.values(aggregates).reduce((n, a) => n + (a?.late ?? 0), 0);
 
   if (view !== 'pipeline') return null;
 
@@ -252,8 +391,10 @@ export default function PipelineView() {
           <span className="pl-live">Live</span>
           <span>UTC-3 BRT</span>
           <LiveClock />
-          <span>Nodes 24/24</span>
-          <span style={{ color: 'var(--pl-late)' }}>SLA · 1 Breach</span>
+          <span>Nodes {carteira ? `${carteira.length}/${carteira.length}` : '— / —'}</span>
+          <span style={{ color: breachCount ? 'var(--pl-late)' : 'var(--pl-text-faint)' }}>
+            SLA · {breachCount} {breachCount === 1 ? 'Breach' : 'Breaches'}
+          </span>
         </div>
         <div className="pl-chrome-actions">
           <button className="pl-chrome-btn active">All</button>
@@ -319,9 +460,18 @@ export default function PipelineView() {
             <div className="pl-annot callout" style={{ top: 480, left: 650, color: 'var(--pl-fabric-green)', fontWeight: 500 }}>◉ OneLake Storage</div>
             <div className="pl-annot callout" style={{ top: 332, left: 1085, maxWidth: 160 }}>Predictive analytics &amp; ML training</div>
 
-            {STACKS.map((s) => (
-              <PipelineTile key={s.stackKey} t={s} />
-            ))}
+            {STACKS.map((s) => {
+              const agg = aggregates[s.stackKey];
+              return (
+                <PipelineTile
+                  key={s.stackKey}
+                  t={s}
+                  selected={selectedStack === s.stackKey}
+                  onClick={() => setSelectedStack(s.stackKey)}
+                  subOverride={agg ? formatStackSubtitle(agg) : s.sub}
+                />
+              );
+            })}
 
             <div className="pl-govern-strip">
               <span className="label">Discover &amp; Govern</span>
@@ -346,6 +496,10 @@ export default function PipelineView() {
             </div>
           </div>
         </div>
+
+        <aside className="pl-detail">
+          <StackDetail tile={selectedStackTile} agg={selectedAgg} projects={stackProjects} />
+        </aside>
       </main>
     </div>
   );
