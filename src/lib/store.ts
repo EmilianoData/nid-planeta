@@ -1,12 +1,15 @@
 import { create } from 'zustand';
 
 type Level = 'world' | 'planeta' | 'projeto';
+type View = 'solar' | 'pipeline';
 
 type State = {
+  view: View;
   planetId: string | null;
   projetoId: string | null;
   cometId: string | null;
   level: Level;
+  setView: (v: View) => void;
   focusPlaneta: (id: string | null) => void;
   focusProjeto: (id: string | null) => void;
   focusComet: (id: string | null) => void;
@@ -14,10 +17,12 @@ type State = {
 };
 
 export const useStore = create<State>((set, get) => ({
+  view: 'solar',
   planetId: null,
   projetoId: null,
   cometId: null,
   level: 'world',
+  setView: (view) => set({ view }),
   focusPlaneta: (id) =>
     set({
       planetId: id,

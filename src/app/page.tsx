@@ -3,6 +3,8 @@ import Hud from '@/components/Hud';
 import InfoPanel from '@/components/InfoPanel';
 import KioskButton from '@/components/KioskButton';
 import CometPanel from '@/components/CometPanel';
+import PipelineView from '@/components/PipelineView';
+import PipelineEntryButton from '@/components/PipelineEntryButton';
 
 export default function Home() {
   return (
@@ -23,10 +25,12 @@ export default function Home() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <PipelineEntryButton />
           <InfoPanel />
           <KioskButton />
         </div>
       </header>
+      <PipelineView />
     </main>
   );
 }
