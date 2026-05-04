@@ -6,12 +6,17 @@ import {
   useCarteira,
   aggregateStack,
   formatStackSubtitle,
+  conduitStrokeFor,
+  conduitWidthFor,
   type CarteiraProject,
+  type StackAggregate,
   type StackKey,
 } from '@/lib/carteira';
+import { INFRA_META, type InfraMeta } from '@/lib/infra-meta';
 import './pipeline.css';
 
 type Tile = {
+  id: string;
   top: number;
   left: number;
   width: number;
@@ -30,7 +35,10 @@ type Conduit = {
   stroke: string;
   width: number;
   cold?: boolean;
+  feedsStack?: StackKey;
 };
+
+type Selection = { kind: 'stack'; key: StackKey } | { kind: 'infra'; id: string };
 
 type ParticleSpec = {
   pathId: string;
@@ -41,56 +49,56 @@ type ParticleSpec = {
 };
 
 const SOURCES: Tile[] = [
-  { top: 80, left: 24, width: 176, bg: 'fluig', icon: 'fluig', name: 'FLUIG', sub: 'Workflows · BPM', delp: true },
-  { top: 148, left: 24, width: 176, bg: 'totvs', icon: 'totvs', name: 'TOTVS RM', sub: 'ERP · Master', delp: true },
-  { top: 216, left: 24, width: 176, bg: 'sharepoint', icon: 'sharepoint', name: 'SharePoint', sub: 'Docs · Listas · M365', delp: true },
-  { top: 284, left: 24, width: 176, bg: 'sql-gray', icon: 'sql', name: 'DB Local Delp', sub: 'SQL · Relational', delp: true },
-  { top: 352, left: 24, width: 176, bg: 'azure-data', icon: 'sql', name: 'Azure Data Services', sub: 'Cosmos DB · Dataverse' },
+  { id: 'fluig', top: 80, left: 24, width: 176, bg: 'fluig', icon: 'fluig', name: 'FLUIG', sub: 'Workflows · BPM', delp: true },
+  { id: 'totvs', top: 148, left: 24, width: 176, bg: 'totvs', icon: 'totvs', name: 'TOTVS RM', sub: 'ERP · Master', delp: true },
+  { id: 'sharepoint', top: 216, left: 24, width: 176, bg: 'sharepoint', icon: 'sharepoint', name: 'SharePoint', sub: 'Docs · Listas · M365', delp: true },
+  { id: 'db-local', top: 284, left: 24, width: 176, bg: 'sql-gray', icon: 'sql', name: 'DB Local Delp', sub: 'SQL · Relational', delp: true },
+  { id: 'azure-data', top: 352, left: 24, width: 176, bg: 'azure-data', icon: 'sql', name: 'Azure Data Services', sub: 'Cosmos DB · Dataverse' },
 ];
 
 const INGEST: Tile[] = [
-  { top: 110, left: 230, width: 130, bg: 'azure-blue', icon: 'eventhubs', name: 'Event Hubs', sub: 'Streaming', smallName: true },
-  { top: 195, left: 230, width: 130, bg: 'azure-blue', icon: 'iothub', name: 'IoT Hub', sub: 'Telemetry', smallName: true },
+  { id: 'event-hubs', top: 110, left: 230, width: 130, bg: 'azure-blue', icon: 'eventhubs', name: 'Event Hubs', sub: 'Streaming', smallName: true },
+  { id: 'iot-hub', top: 195, left: 230, width: 130, bg: 'azure-blue', icon: 'iothub', name: 'IoT Hub', sub: 'Telemetry', smallName: true },
 ];
 
 const FABRIC_INGEST: Tile[] = [
-  { top: 153, left: 410, width: 130, bg: 'fabric-purple', icon: 'eventstreams', name: 'Eventstreams', sub: 'Hot · Real-time', smallName: true },
-  { top: 223, left: 410, width: 130, bg: 'dataflow', icon: 'datafactory', name: 'Data Factory', sub: 'Cold · Scheduled', smallName: true },
-  { top: 295, left: 410, width: 130, bg: 'sql-gray', icon: 'mirror', name: 'Mirroring', sub: 'SQL · Copy Job', smallName: true },
+  { id: 'eventstreams', top: 153, left: 410, width: 130, bg: 'fabric-purple', icon: 'eventstreams', name: 'Eventstreams', sub: 'Hot · Real-time', smallName: true },
+  { id: 'data-factory', top: 223, left: 410, width: 130, bg: 'dataflow', icon: 'datafactory', name: 'Data Factory', sub: 'Cold · Scheduled', smallName: true },
+  { id: 'mirroring', top: 295, left: 410, width: 130, bg: 'sql-gray', icon: 'mirror', name: 'Mirroring', sub: 'SQL · Copy Job', smallName: true },
 ];
 
 const FABRIC_STORAGE: Tile[] = [
-  { top: 263, left: 620, width: 130, bg: 'eventhouse', icon: 'eventhouse', name: 'Eventhouse', sub: 'KQL · Real-time', smallName: true },
-  { top: 333, left: 620, width: 130, bg: 'lakehouse', icon: 'lakehouse', name: 'Lakehouse', sub: 'Bronze·Silver·Gold', smallName: true },
-  { top: 403, left: 620, width: 130, bg: 'mirror', icon: 'mirror', name: 'Mirrored Replica', sub: 'OneLake', smallName: true },
+  { id: 'eventhouse', top: 263, left: 620, width: 130, bg: 'eventhouse', icon: 'eventhouse', name: 'Eventhouse', sub: 'KQL · Real-time', smallName: true },
+  { id: 'lakehouse', top: 333, left: 620, width: 130, bg: 'lakehouse', icon: 'lakehouse', name: 'Lakehouse', sub: 'Bronze·Silver·Gold', smallName: true },
+  { id: 'mirrored-replica', top: 403, left: 620, width: 130, bg: 'mirror', icon: 'mirror', name: 'Mirrored Replica', sub: 'OneLake', smallName: true },
 ];
 
 const PROCESS_TILES: Tile[] = [
-  { top: 193, left: 880, width: 140, bg: 'kql-blue', icon: 'kql', name: 'KQL Queryset', sub: 'Telemetry' },
-  { top: 263, left: 880, width: 140, bg: 'spark-orange', icon: 'spark', name: 'Spark Notebook', sub: 'Lakehouse' },
-  { top: 333, left: 880, width: 140, bg: 'sql-gray', icon: 'sqlscript', name: 'SQL Scripts', sub: 'T-SQL Warehouse' },
-  { top: 403, left: 880, width: 140, bg: 'dataflow', icon: 'dataflow', name: 'Dataflow Gen2', sub: 'Power Query' },
+  { id: 'kql-queryset', top: 193, left: 880, width: 140, bg: 'kql-blue', icon: 'kql', name: 'KQL Queryset', sub: 'Telemetry' },
+  { id: 'spark-notebook', top: 263, left: 880, width: 140, bg: 'spark-orange', icon: 'spark', name: 'Spark Notebook', sub: 'Lakehouse' },
+  { id: 'sql-scripts', top: 333, left: 880, width: 140, bg: 'sql-gray', icon: 'sqlscript', name: 'SQL Scripts', sub: 'T-SQL Warehouse' },
+  { id: 'dataflow-gen2', top: 403, left: 880, width: 140, bg: 'dataflow', icon: 'dataflow', name: 'Dataflow Gen2', sub: 'Power Query' },
 ];
 
 const ENRICH: Tile[] = [
-  { top: 193, left: 1100, width: 140, bg: 'foundry-pink', icon: 'foundry', name: 'MS Foundry', sub: 'LLM · Agents' },
-  { top: 263, left: 1100, width: 140, bg: 'azure-ml', icon: 'azureml', name: 'Azure ML', sub: 'Custom Models' },
+  { id: 'foundry', top: 193, left: 1100, width: 140, bg: 'foundry-pink', icon: 'foundry', name: 'MS Foundry', sub: 'LLM · Agents' },
+  { id: 'azure-ml', top: 263, left: 1100, width: 140, bg: 'azure-ml', icon: 'azureml', name: 'Azure ML', sub: 'Custom Models' },
 ];
 
 const SERVE: Tile[] = [
-  { top: 193, left: 1300, width: 140, bg: 'pbi-yellow', icon: 'powerbi', name: 'Power BI', sub: '8 Dashboards' },
-  { top: 263, left: 1300, width: 140, bg: 'fabric-green', icon: 'dataagent', name: 'Data Agent', sub: 'Conv. AI' },
-  { top: 333, left: 1300, width: 140, bg: 'vector-purple', icon: 'vector', name: 'Vector Store', sub: 'RAG · Embeds' },
-  { top: 403, left: 1300, width: 140, bg: 'fabric-green', icon: 'fabric', name: 'External Share', sub: 'Curated Sets' },
+  { id: 'power-bi', top: 193, left: 1300, width: 140, bg: 'pbi-yellow', icon: 'powerbi', name: 'Power BI', sub: '8 Dashboards' },
+  { id: 'data-agent', top: 263, left: 1300, width: 140, bg: 'fabric-green', icon: 'dataagent', name: 'Data Agent', sub: 'Conv. AI' },
+  { id: 'vector-store', top: 333, left: 1300, width: 140, bg: 'vector-purple', icon: 'vector', name: 'Vector Store', sub: 'RAG · Embeds' },
+  { id: 'external-share', top: 403, left: 1300, width: 140, bg: 'fabric-green', icon: 'fabric', name: 'External Share', sub: 'Curated Sets' },
 ];
 
 const STACKS: (Tile & { stackKey: StackKey })[] = [
-  { stackKey: 'bi-stack', top: 80, left: 1500, width: 175, bg: 'pbi-yellow', icon: 'powerbi', name: 'BI · Eng. Dados', sub: '8 Proj · 4R 2P 1L 1B' },
-  { stackKey: 'ia-stack', top: 200, left: 1500, width: 175, bg: 'foundry-pink', icon: 'foundry', name: 'IA · Multiagentes', sub: '3 Proj · 1R 2P' },
-  { stackKey: 'sw-stack', top: 320, left: 1500, width: 175, bg: 'vector-purple', icon: 'vector', name: 'Software', sub: '9 Proj · 5R 3P 1L' },
-  { stackKey: 'rpa-stack', top: 440, left: 1500, width: 175, bg: 'dataflow', icon: 'dataflow', name: 'RPA · Automações', sub: '6 Proj · 2R 3P 1B' },
-  { stackKey: 'erp-stack', top: 560, left: 1500, width: 175, bg: 'totvs', icon: 'totvs', name: 'ERP+ · Melhorias', sub: '4 Proj · 1R 1P 2L' },
-  { stackKey: 'gen-stack', top: 680, left: 1500, width: 175, bg: 'sql-gray', icon: 'policy', name: 'Geral · Infra', sub: '5 Proj · 1R 4B' },
+  { id: 'bi-stack', stackKey: 'bi-stack', top: 80, left: 1500, width: 175, bg: 'pbi-yellow', icon: 'powerbi', name: 'BI · Eng. Dados', sub: '8 Proj · 4R 2P 1L 1B' },
+  { id: 'ia-stack', stackKey: 'ia-stack', top: 200, left: 1500, width: 175, bg: 'foundry-pink', icon: 'foundry', name: 'IA · Multiagentes', sub: '3 Proj · 1R 2P' },
+  { id: 'sw-stack', stackKey: 'sw-stack', top: 320, left: 1500, width: 175, bg: 'vector-purple', icon: 'vector', name: 'Software', sub: '9 Proj · 5R 3P 1L' },
+  { id: 'rpa-stack', stackKey: 'rpa-stack', top: 440, left: 1500, width: 175, bg: 'dataflow', icon: 'dataflow', name: 'RPA · Automações', sub: '6 Proj · 2R 3P 1B' },
+  { id: 'erp-stack', stackKey: 'erp-stack', top: 560, left: 1500, width: 175, bg: 'totvs', icon: 'totvs', name: 'ERP+ · Melhorias', sub: '4 Proj · 1R 1P 2L' },
+  { id: 'gen-stack', stackKey: 'gen-stack', top: 680, left: 1500, width: 175, bg: 'sql-gray', icon: 'policy', name: 'Geral · Infra', sub: '5 Proj · 1R 4B' },
 ];
 
 const CONDUITS: Conduit[] = [
@@ -114,12 +122,12 @@ const CONDUITS: Conduit[] = [
   { id: 'p-df-pbi', d: 'M 1020 430 C 1100 430, 1180 220, 1300 220', stroke: 'g-running', width: 2.4 },
   { id: 'p-foundry-agent', d: 'M 1240 220 C 1270 220, 1270 290, 1300 290', stroke: 'g-pending', width: 2.6 },
   { id: 'p-aml-vector', d: 'M 1240 290 C 1270 290, 1270 360, 1300 360', stroke: 'g-pending', width: 2.4 },
-  { id: 'p-pbi-bi', d: 'M 1440 220 C 1470 220, 1490 100, 1520 100', stroke: 'g-running', width: 3 },
-  { id: 'p-agent-ia', d: 'M 1440 290 C 1470 290, 1490 220, 1520 220', stroke: 'g-pending', width: 2.6 },
-  { id: 'p-vector-sw', d: 'M 1440 360 C 1470 360, 1490 340, 1520 340', stroke: 'g-running', width: 2.6 },
-  { id: 'p-share-rpa', d: 'M 1440 430 C 1470 430, 1490 460, 1520 460', stroke: 'g-pending', width: 2.4 },
-  { id: 'p-back-erp', d: 'M 670 320 C 700 320, 700 580, 1520 580', stroke: 'g-late', width: 2 },
-  { id: 'p-share-gen', d: 'M 1440 430 C 1470 430, 1490 700, 1520 700', stroke: 'g-backlog', width: 2 },
+  { id: 'p-pbi-bi', d: 'M 1440 220 C 1470 220, 1490 100, 1520 100', stroke: 'g-running', width: 3, feedsStack: 'bi-stack' },
+  { id: 'p-agent-ia', d: 'M 1440 290 C 1470 290, 1490 220, 1520 220', stroke: 'g-pending', width: 2.6, feedsStack: 'ia-stack' },
+  { id: 'p-vector-sw', d: 'M 1440 360 C 1470 360, 1490 340, 1520 340', stroke: 'g-running', width: 2.6, feedsStack: 'sw-stack' },
+  { id: 'p-share-rpa', d: 'M 1440 430 C 1470 430, 1490 460, 1520 460', stroke: 'g-pending', width: 2.4, feedsStack: 'rpa-stack' },
+  { id: 'p-back-erp', d: 'M 670 320 C 700 320, 700 580, 1520 580', stroke: 'g-late', width: 2, feedsStack: 'erp-stack' },
+  { id: 'p-share-gen', d: 'M 1440 430 C 1470 430, 1490 700, 1520 700', stroke: 'g-backlog', width: 2, feedsStack: 'gen-stack' },
 ];
 
 const PARTICLES: ParticleSpec[] = [
@@ -301,6 +309,77 @@ function StackDetail({
   );
 }
 
+function InfraDetail({ tile, meta }: { tile: Tile; meta: InfraMeta }) {
+  const tileNameById = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const t of [...SOURCES, ...INGEST, ...FABRIC_INGEST, ...FABRIC_STORAGE, ...PROCESS_TILES, ...ENRICH, ...SERVE, ...STACKS]) {
+      map[t.id] = t.name;
+    }
+    return map;
+  }, []);
+
+  return (
+    <>
+      <div className="pl-panel-id">{meta.category} · {meta.vendor}</div>
+      <h3>{tile.name}</h3>
+      <div className="pl-subhead">{meta.oneLiner}</div>
+      {meta.layer && <span className="pl-infra-layer">{meta.layer}</span>}
+
+      <p className="pl-infra-desc">{meta.description}</p>
+
+      <div className="pl-infra-section">
+        <h5>// Capacidades</h5>
+        <ul className="pl-infra-list">
+          {meta.capabilities.map((c, i) => (
+            <li key={i}>{c}</li>
+          ))}
+        </ul>
+      </div>
+
+      {(meta.fedBy.length > 0 || meta.feeds.length > 0) && (
+        <div className="pl-infra-section">
+          <h5>// Fluxo de dados</h5>
+          {meta.fedBy.length > 0 && (
+            <div className="pl-infra-flow">
+              <span className="pl-flow-label">recebe de</span>
+              <div className="pl-flow-pills">
+                {meta.fedBy.map((id) => (
+                  <span key={id} className="pl-flow-pill">{tileNameById[id] ?? id}</span>
+                ))}
+              </div>
+            </div>
+          )}
+          {meta.feeds.length > 0 && (
+            <div className="pl-infra-flow">
+              <span className="pl-flow-label">envia para</span>
+              <div className="pl-flow-pills">
+                {meta.feeds.map((id) => (
+                  <span key={id} className="pl-flow-pill out">{tileNameById[id] ?? id}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {meta.delpContext && (
+        <div className="pl-infra-section delp">
+          <h5>// Contexto Delp</h5>
+          <p className="pl-infra-desc">{meta.delpContext}</p>
+        </div>
+      )}
+
+      {meta.docsUrl && (
+        <div className="pl-infra-docs">
+          <a href={meta.docsUrl} target="_blank" rel="noreferrer noopener">
+            ↗ Microsoft Learn
+          </a>
+        </div>
+      )}
+    </>
+  );
+}
+
 function LiveClock() {
   const [now, setNow] = useState(new Date());
   useEffect(() => {
@@ -343,28 +422,59 @@ export default function PipelineView() {
   const view = useStore((s) => s.view);
   const setView = useStore((s) => s.setView);
   const carteira = useCarteira();
-  const [selectedStack, setSelectedStack] = useState<StackKey>('bi-stack');
+  const [selection, setSelection] = useState<Selection>({ kind: 'stack', key: 'bi-stack' });
 
   const aggregates = useMemo(() => {
-    const map = {} as Record<StackKey, ReturnType<typeof aggregateStack>>;
+    const map = {} as Record<StackKey, StackAggregate>;
     if (!carteira) return map;
     for (const s of STACKS) map[s.stackKey] = aggregateStack(carteira, s.stackKey);
     return map;
   }, [carteira]);
 
   const stackProjects = useMemo<CarteiraProject[]>(() => {
-    if (!carteira) return [];
+    if (!carteira || selection.kind !== 'stack') return [];
     return carteira
-      .filter((p) => p.stackKey === selectedStack)
+      .filter((p) => p.stackKey === selection.key)
       .sort((a, b) => {
         const order: Record<string, number> = { late: 0, running: 1, pending: 2, backlog: 3 };
         return order[a.status] - order[b.status];
       });
-  }, [carteira, selectedStack]);
+  }, [carteira, selection]);
 
-  const selectedStackTile = STACKS.find((s) => s.stackKey === selectedStack)!;
-  const selectedAgg = aggregates[selectedStack];
   const breachCount = Object.values(aggregates).reduce((n, a) => n + (a?.late ?? 0), 0);
+
+  // Conduit overrides: stack-feeders use derived stroke + width from aggregates
+  const conduitOverrides = useMemo(() => {
+    const map: Record<string, { stroke: string; width: number; cls: string }> = {};
+    for (const c of CONDUITS) {
+      if (!c.feedsStack) continue;
+      const agg = aggregates[c.feedsStack];
+      const stroke = conduitStrokeFor(agg);
+      map[c.id] = {
+        stroke,
+        width: conduitWidthFor(agg),
+        cls: stroke.replace(/^g-/, ''),
+      };
+    }
+    return map;
+  }, [aggregates]);
+
+  const allTiles = useMemo(
+    () => [...SOURCES, ...INGEST, ...FABRIC_INGEST, ...FABRIC_STORAGE, ...PROCESS_TILES, ...ENRICH, ...SERVE],
+    []
+  );
+
+  const selectedStackTile = selection.kind === 'stack' ? STACKS.find((s) => s.stackKey === selection.key)! : null;
+  const selectedStackAgg = selection.kind === 'stack' ? aggregates[selection.key] : undefined;
+  const selectedInfraTile = selection.kind === 'infra' ? allTiles.find((t) => t.id === selection.id) : null;
+  const selectedInfraMeta = selection.kind === 'infra' ? INFRA_META[selection.id] : undefined;
+
+  const isSelected = (id: string): boolean =>
+    (selection.kind === 'stack' && id === selection.key) ||
+    (selection.kind === 'infra' && id === selection.id);
+
+  const selectStack = (key: StackKey) => setSelection({ kind: 'stack', key });
+  const selectInfra = (id: string) => setSelection({ kind: 'infra', id });
 
   if (view !== 'pipeline') return null;
 
@@ -431,26 +541,43 @@ export default function PipelineView() {
                 <linearGradient id="g-azure" x1="0" x2="1"><stop offset="0" stopColor="#0078D4" stopOpacity="0.2" /><stop offset="1" stopColor="#0078D4" stopOpacity="0.55" /></linearGradient>
               </defs>
 
-              {CONDUITS.map((c) => (
-                <path key={c.id} id={c.id} className={`pl-conduit${c.cold ? ' cold' : ''}`} d={c.d} stroke={`url(#${c.stroke})`} strokeWidth={c.width} />
-              ))}
+              {CONDUITS.map((c) => {
+                const ovr = conduitOverrides[c.id];
+                const stroke = ovr?.stroke ?? c.stroke;
+                const width = ovr?.width ?? c.width;
+                return (
+                  <path
+                    key={c.id}
+                    id={c.id}
+                    className={`pl-conduit${c.cold ? ' cold' : ''}`}
+                    d={c.d}
+                    stroke={`url(#${stroke})`}
+                    strokeWidth={width}
+                  />
+                );
+              })}
 
-              {PARTICLES.map((p, i) => (
-                <circle key={i} r={p.r} className={`pl-particle ${p.cls}`}>
-                  <animateMotion dur={`${p.dur}s`} begin={p.begin !== undefined ? `${p.begin}s` : undefined} repeatCount="indefinite">
-                    <mpath href={`#${p.pathId}`} />
-                  </animateMotion>
-                </circle>
-              ))}
+              {PARTICLES.map((p, i) => {
+                const ovr = conduitOverrides[p.pathId];
+                const cls = ovr?.cls ?? p.cls;
+                return (
+                  <circle key={i} r={p.r} className={`pl-particle ${cls}`}>
+                    <animateMotion dur={`${p.dur}s`} begin={p.begin !== undefined ? `${p.begin}s` : undefined} repeatCount="indefinite">
+                      <mpath href={`#${p.pathId}`} />
+                    </animateMotion>
+                  </circle>
+                );
+              })}
             </svg>
 
-            {SOURCES.map((t) => <PipelineTile key={`src-${t.left}-${t.top}`} t={t} />)}
-            {INGEST.map((t) => <PipelineTile key={`ing-${t.left}-${t.top}`} t={t} />)}
-            {FABRIC_INGEST.map((t) => <PipelineTile key={`fi-${t.left}-${t.top}`} t={t} />)}
-            {FABRIC_STORAGE.map((t) => <PipelineTile key={`fs-${t.left}-${t.top}`} t={t} />)}
-            {PROCESS_TILES.map((t) => <PipelineTile key={`pr-${t.left}-${t.top}`} t={t} />)}
-            {ENRICH.map((t) => <PipelineTile key={`en-${t.left}-${t.top}`} t={t} />)}
-            {SERVE.map((t) => <PipelineTile key={`sv-${t.left}-${t.top}`} t={t} />)}
+            {allTiles.map((t) => (
+              <PipelineTile
+                key={t.id}
+                t={t}
+                selected={isSelected(t.id)}
+                onClick={() => selectInfra(t.id)}
+              />
+            ))}
 
             <div className="pl-annot lambda" style={{ top: 78, left: 480 }}>λ Lambda Architecture</div>
             <div className="pl-path-tag hot" style={{ top: 152, left: 432 }}>Hot Path</div>
@@ -466,8 +593,8 @@ export default function PipelineView() {
                 <PipelineTile
                   key={s.stackKey}
                   t={s}
-                  selected={selectedStack === s.stackKey}
-                  onClick={() => setSelectedStack(s.stackKey)}
+                  selected={isSelected(s.stackKey)}
+                  onClick={() => selectStack(s.stackKey)}
                   subOverride={agg ? formatStackSubtitle(agg) : s.sub}
                 />
               );
@@ -498,7 +625,15 @@ export default function PipelineView() {
         </div>
 
         <aside className="pl-detail">
-          <StackDetail tile={selectedStackTile} agg={selectedAgg} projects={stackProjects} />
+          {selection.kind === 'stack' && selectedStackTile && (
+            <StackDetail tile={selectedStackTile} agg={selectedStackAgg} projects={stackProjects} />
+          )}
+          {selection.kind === 'infra' && selectedInfraTile && selectedInfraMeta && (
+            <InfraDetail tile={selectedInfraTile} meta={selectedInfraMeta} />
+          )}
+          {selection.kind === 'infra' && selectedInfraTile && !selectedInfraMeta && (
+            <div className="pl-empty">Sem metadados para "{selectedInfraTile.id}".</div>
+          )}
         </aside>
       </main>
     </div>

@@ -783,3 +783,122 @@
   color: var(--pl-text-dim);
   padding: 8px 0 4px;
 }
+
+/* ====== infra tile drilldown panel ====== */
+.pl-infra-layer {
+  display: inline-block;
+  font-family: 'Geist Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pl-fabric-green);
+  border: 1px solid var(--pl-fabric-green);
+  padding: 3px 7px;
+  border-radius: 1px;
+  margin-bottom: 14px;
+}
+.pl-infra-desc {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--pl-text);
+  margin-bottom: 18px;
+}
+.pl-infra-section {
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--pl-line);
+}
+.pl-infra-section:last-of-type {
+  border-bottom: none;
+}
+.pl-infra-section h5 {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pl-text-faint);
+  margin-bottom: 9px;
+}
+.pl-infra-section.delp h5 {
+  color: var(--pl-running);
+}
+.pl-infra-section.delp .pl-infra-desc {
+  border-left: 2px solid var(--pl-running);
+  padding-left: 10px;
+  margin-bottom: 0;
+  color: var(--pl-text-dim);
+  font-size: 11.5px;
+  font-style: italic;
+}
+.pl-infra-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.pl-infra-list li {
+  font-size: 11.5px;
+  color: var(--pl-text-dim);
+  padding-left: 14px;
+  position: relative;
+}
+.pl-infra-list li::before {
+  content: '›';
+  position: absolute;
+  left: 2px;
+  color: var(--pl-text-faint);
+}
+.pl-infra-flow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.pl-infra-flow:last-child { margin-bottom: 0; }
+.pl-flow-label {
+  font-family: 'Geist Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--pl-text-faint);
+  flex-shrink: 0;
+  padding-top: 4px;
+  width: 70px;
+}
+.pl-flow-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.pl-flow-pill {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10.5px;
+  padding: 3px 7px;
+  background: var(--pl-surface-2);
+  border: 1px solid var(--pl-line-soft);
+  border-left: 2px solid var(--pl-azure);
+  color: var(--pl-text);
+  border-radius: 1px;
+}
+.pl-flow-pill.out {
+  border-left-color: var(--pl-fabric-green);
+}
+.pl-infra-docs {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--pl-line);
+}
+.pl-infra-docs a {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--pl-azure);
+  text-decoration: none;
+  transition: color 0.16s ease;
+}
+.pl-infra-docs a:hover {
+  color: var(--pl-gold);
+}

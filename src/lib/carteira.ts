@@ -163,6 +163,42 @@ export function formatStackSubtitle(agg: StackAggregate): string {
   return `${agg.total} Proj${breakdown}`;
 }
 
+// ====================================================================
+// Conduit visual rules · ajuste os limiares aqui pra recalibrar a vista
+// ====================================================================
+export const CONDUIT_THRESHOLDS = {
+  // % de projetos late que dispara cor crítica (vermelho)
+  lateCriticalPct: 0.20,
+  // % de projetos late que dispara cor de alerta (âmbar)
+  // qualquer 1 late já entra em alerta; ajuste pra 0 se quiser ser mais permissivo
+  lateWarnPct: 0.001,
+  // % de pending que domina sobre running (deixa âmbar mesmo sem late)
+  pendingDominantPct: 0.50,
+  // largura do conduíte: base + total * fator, capada em max
+  widthBase: 1.6,
+  widthPerProject: 0.18,
+  widthMax: 4.5,
+};
+
+export type ConduitStroke = 'g-running' | 'g-pending' | 'g-late' | 'g-backlog';
+
+export function conduitStrokeFor(agg: StackAggregate | undefined): ConduitStroke {
+  if (!agg || agg.total === 0) return 'g-backlog';
+  const T = CONDUIT_THRESHOLDS;
+  const latePct = agg.late / agg.total;
+  if (latePct >= T.lateCriticalPct) return 'g-late';
+  if (latePct >= T.lateWarnPct) return 'g-pending';
+  if (agg.pending / agg.total >= T.pendingDominantPct) return 'g-pending';
+  if (agg.running > 0) return 'g-running';
+  return 'g-backlog';
+}
+
+export function conduitWidthFor(agg: StackAggregate | undefined): number {
+  const T = CONDUIT_THRESHOLDS;
+  if (!agg) return T.widthBase;
+  return Math.min(T.widthMax, T.widthBase + agg.total * T.widthPerProject);
+}
+
 let cache: CarteiraProject[] | null = null;
 let inflight: Promise<CarteiraProject[]> | null = null;
 
