@@ -7,6 +7,6 @@ const Scene = dynamic(() => import('./Scene'), { ssr: false });
 
 export default function SceneClient() {
   const view = useStore((s) => s.view);
-  if (view === 'pipeline') return null;
+  if (view === 'pipeline' || view === 'universinid') return null;
   return <Scene />;
 }

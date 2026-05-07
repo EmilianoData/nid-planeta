@@ -5605,12 +5605,10 @@ function toggleModule(num) {
   chev.classList.toggle('collapsed');
 }
 
-// Load from hash on startup
+// Load from hash on startup; fallback to first screen
 window.addEventListener('load', () => {
   const hash = location.hash.replace('#', '');
-  if (hash) {
-    showScreen(hash);
-  }
+  showScreen(hash || 's0-1');
 });
 
 // ── Search ─────────────────────────────────────────────────────────
