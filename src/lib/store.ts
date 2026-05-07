@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 type Level = 'world' | 'planeta' | 'projeto';
-type View = 'solar' | 'pipeline';
+type View = 'solar' | 'pipeline' | 'universinid';
 
 type State = {
   view: View;

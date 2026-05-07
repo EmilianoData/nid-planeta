@@ -5,6 +5,8 @@ import KioskButton from '@/components/KioskButton';
 import CometPanel from '@/components/CometPanel';
 import PipelineView from '@/components/PipelineView';
 import PipelineEntryButton from '@/components/PipelineEntryButton';
+import UniversiNIDView from '@/components/UniversiNIDView';
+import UniversiNIDButton from '@/components/UniversiNIDButton';
 
 export default function Home() {
   return (
@@ -26,11 +28,13 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-2">
           <PipelineEntryButton />
+          <UniversiNIDButton />
           <InfoPanel />
           <KioskButton />
         </div>
       </header>
       <PipelineView />
+      <UniversiNIDView />
     </main>
   );
 }
