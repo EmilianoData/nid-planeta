@@ -271,6 +271,159 @@ body {
 .markdown-body strong { color: var(--nid-purple); }
 .markdown-body hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
 
+/* ── Callouts (info/tip/warning/danger) ── */
+.callout {
+  display: flex; gap: 12px;
+  padding: 12px 16px;
+  margin: 14px 0;
+  border-left: 4px solid;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(60,52,137,.08);
+}
+.callout-icon { font-size: 1.2rem; flex-shrink: 0; line-height: 1.4; }
+.callout-body { flex: 1; }
+.callout-body p { margin: 0 0 8px; line-height: 1.6; }
+.callout-body p:last-child { margin-bottom: 0; }
+.callout-body strong:first-child { display: inline-block; margin-right: 4px; }
+.callout.callout-info    { border-color: #4A90D9; background: #EAF3FB; }
+.callout.callout-tip     { border-color: #2E7D32; background: #EAF5EB; }
+.callout.callout-warning { border-color: #dd8f1a; background: #FDF3E1; }
+.callout.callout-danger  { border-color: #cc0f10; background: #FBE9EA; }
+.callout.callout-info    .callout-body strong:first-child { color: #1B5391; }
+.callout.callout-tip     .callout-body strong:first-child { color: #1F5C22; }
+.callout.callout-warning .callout-body strong:first-child { color: #8A5A14; }
+.callout.callout-danger  .callout-body strong:first-child { color: #8C0B0C; }
+
+/* ── Card grid ── */
+.markdown-body ul.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  list-style: none;
+  padding-left: 0;
+  margin: 16px 0;
+}
+.markdown-body ul.card-grid > li {
+  background: #fff;
+  border: 1px solid var(--nid-purple-light);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  box-shadow: 0 1px 3px rgba(60,52,137,.06);
+  transition: transform .15s, box-shadow .15s;
+  margin: 0;
+  line-height: 1.55;
+}
+.markdown-body ul.card-grid > li:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(60,52,137,.14);
+  border-color: var(--nid-purple-med);
+}
+.markdown-body ul.card-grid > li > strong:first-child {
+  display: block;
+  color: var(--nid-purple);
+  margin-bottom: 4px;
+  font-size: .92rem;
+}
+.markdown-body ul.card-grid > li > code:first-child {
+  display: block;
+  background: var(--nid-purple-light);
+  padding: 4px 8px;
+  border-radius: 3px;
+  margin-bottom: 4px;
+}
+
+/* ── Mermaid container ── */
+.markdown-body .mermaid {
+  background: #fff;
+  border: 1px solid var(--nid-purple-light);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin: 16px 0;
+  text-align: center;
+  overflow-x: auto;
+  /* Fallback offline: se Mermaid CDN falhar, mostra source como código */
+  white-space: pre;
+  font-family: "Consolas","Fira Code",monospace;
+  font-size: .82rem;
+  color: #444;
+  line-height: 1.45;
+}
+.markdown-body .mermaid[data-processed="true"] {
+  white-space: normal;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+.markdown-body .mermaid svg { max-width: 100%; height: auto; }
+
+/* ── SVG figure ── */
+.markdown-body .svg-figure {
+  margin: 18px 0;
+  text-align: center;
+  background: #fff;
+  border: 1px solid var(--nid-purple-light);
+  border-radius: var(--radius);
+  padding: 16px 12px 10px;
+}
+.markdown-body .svg-figure svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+.markdown-body .svg-figure figcaption {
+  margin-top: 8px;
+  color: #666;
+  font-size: .8rem;
+  font-style: italic;
+}
+
+/* ── Interactive table wrapper (criado por JS no client) ── */
+.table-wrapper {
+  margin: 14px 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--nid-purple-light);
+}
+.table-toolbar {
+  padding: 8px 12px;
+  background: var(--nid-purple-light);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.table-toolbar input[type="search"] {
+  flex: 1;
+  padding: 5px 12px;
+  border: 1px solid #c9c2ed;
+  border-radius: 14px;
+  font-size: .82rem;
+  outline: none;
+  background: #fff;
+}
+.table-toolbar input[type="search"]:focus { border-color: var(--nid-purple-med); }
+.table-toolbar .table-count {
+  color: #555;
+  font-size: .76rem;
+  white-space: nowrap;
+}
+.markdown-body .table-wrapper table { margin: 0; border-radius: 0; }
+.markdown-body .table-wrapper th {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-right: 22px;
+}
+.markdown-body .table-wrapper th::after {
+  content: "";
+  position: absolute;
+  right: 8px; top: 50%;
+  margin-top: -3px;
+  border: 4px solid transparent;
+  border-top-color: rgba(255,255,255,.5);
+  transition: transform .12s, border-color .12s;
+}
+.markdown-body .table-wrapper th.sort-asc::after  { border-top-color: transparent; border-bottom: 5px solid #fff; margin-top: -5px; }
+.markdown-body .table-wrapper th.sort-desc::after { border-top-color: #fff; }
+.markdown-body .table-wrapper tr.hidden { display: none; }
+
 /* ── Placeholder ── */
 .placeholder-banner {
   display: flex;
@@ -568,15 +721,61 @@ body {
 <h2>Resumo</h2>
 <p>SDD (Spec-Driven Development) é o ciclo de trabalho central do NID: primeiro você especifica <em>o que</em> quer, depois o agente planeja <em>como</em> fazer, e só então implementa. Isso elimina o maior desperdício do trabalho com IA — retrabalho por ambiguidade.</p>
 <h2>O problema que SDD resolve</h2>
-<p>Sem SDD, o fluxo típico com IA é:</p>
-<pre class="highlight"><code>&quot;Faz uma medida DAX de faturamento&quot; → IA entrega algo → &quot;não era isso&quot; → retrabalho
-</code></pre>
+<p>Sem SDD, o fluxo típico com IA é vago e gera retrabalho:</p>
+<div class="mermaid">flowchart LR
+  A["Pedido vago<br/>'faz uma medida DAX'"] --> B["IA entrega<br/>algo"]
+  B --> C{"É o que<br/>você queria?"}
+  C -->|Não| D["Retrabalho<br/>+ frustração"]
+  D --> A
+  classDef bad fill:#FBE9EA,stroke:#cc0f10,color:#8C0B0C
+  class A,D bad
+</div>
 
-<p>Com SDD, o fluxo é:</p>
-<pre class="highlight"><code>/nid:specify → spec aprovada → /nid:plan → plano aprovado → /nid:gate → GO → /nid:implement
-</code></pre>
+<p>Com SDD, cada fase tem aprovação humana explícita — o agente não avança sozinho:</p>
+<figure class="svg-figure"><svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ciclo SDD do NID">
+<defs><style>
+  .sd-stage{stroke-width:1.5;rx:6}
+  .sd-stage-label{font:600 13px "Barlow",sans-serif;fill:#fff;text-anchor:middle}
+  .sd-stage-cmd{font:11px "Consolas",monospace;fill:rgba(255,255,255,0.9);text-anchor:middle}
+  .sd-arrow{stroke:#3C3489;stroke-width:1.5;fill:none;marker-end:url(#sd-arr)}
+  .sd-gate{fill:#cc0f10}
+  .sd-impl{fill:#2E7D32}
+  .sd-stage-default{fill:#534AB7}
+  .sd-approve{font:italic 10px "Barlow",sans-serif;fill:#666;text-anchor:middle}
+</style>
+<marker id="sd-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3C3489"/></marker></defs>
+<g><rect class="sd-stage sd-stage-default" x="10" y="60" width="100" height="60"/>
+  <text class="sd-stage-label" x="60" y="85">1. Specify</text>
+  <text class="sd-stage-cmd" x="60" y="105">/nid:specify</text>
+</g>
+<g><rect class="sd-stage sd-stage-default" x="135" y="60" width="100" height="60"/>
+  <text class="sd-stage-label" x="185" y="85">2. Plan</text>
+  <text class="sd-stage-cmd" x="185" y="105">/nid:plan</text>
+</g>
+<g><rect class="sd-stage sd-stage-default" x="260" y="60" width="100" height="60"/>
+  <text class="sd-stage-label" x="310" y="85">3. Tasks</text>
+  <text class="sd-stage-cmd" x="310" y="105">/nid:tasks</text>
+</g>
+<g><rect class="sd-stage sd-gate" x="385" y="60" width="100" height="60"/>
+  <text class="sd-stage-label" x="435" y="85">4. Gate ⛔</text>
+  <text class="sd-stage-cmd" x="435" y="105">/nid:gate</text>
+</g>
+<g><rect class="sd-stage sd-impl" x="510" y="60" width="100" height="60"/>
+  <text class="sd-stage-label" x="560" y="85">5. Implement</text>
+  <text class="sd-stage-cmd" x="560" y="105">/nid:implement</text>
+</g>
+<line class="sd-arrow" x1="110" y1="90" x2="135" y2="90"/>
+<line class="sd-arrow" x1="235" y1="90" x2="260" y2="90"/>
+<line class="sd-arrow" x1="360" y1="90" x2="385" y2="90"/>
+<line class="sd-arrow" x1="485" y1="90" x2="510" y2="90"/>
+<text class="sd-approve" x="122" y="50">aprov.</text>
+<text class="sd-approve" x="247" y="50">aprov.</text>
+<text class="sd-approve" x="372" y="50">implícita</text>
+<text class="sd-approve" x="497" y="50">GO</text>
+<text class="sd-approve" x="310" y="160">⚠️ Gate é o único bloqueante automático (hook)</text>
+</svg><figcaption>Ciclo SDD — aprovação humana em cada transição; gate é bloqueante.</figcaption></figure>
 
-<p>A aprovação em cada etapa é <strong>humana e explícita</strong>. O agente não avança sozinho.</p>
+<p>A aprovação em cada etapa é <strong>humana e explícita</strong>.</p>
 <h2>As 5 fases do ciclo NID</h2>
 <table>
 <thead>
@@ -620,9 +819,7 @@ body {
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>Nota:</strong> Em <strong>modo Casual</strong>, você pode pular as fases formais. SDD completo é opcional — só obrigatório em projetos Formal (com <code>/nid:init</code>).</p>
-</blockquote>
+<aside class="callout callout-info"><span class="callout-icon">ℹ️</span><div class="callout-body"><p><strong>Nota:</strong> Em <strong>modo Casual</strong>, você pode pular as fases formais. SDD completo é opcional — só obrigatório em projetos Formal (com <code>/nid:init</code>).</p></div></aside>
 <h2>Por que "Spec antes de código"?</h2>
 <p>LLMs são excelentes executores mas péssimos leitores de mente. Quanto mais claro o <em>O QUE</em>, melhor o <em>COMO</em>. A spec funciona como contrato entre você (humano) e o agente.</p>
 <p><strong>Custo de ambiguidade:</strong></p>
@@ -714,9 +911,7 @@ body {
 <li><strong>Agentes</strong>: personas especializadas para cada domínio (BI, ETL, Azure, etc.)</li>
 <li><strong>Memória via arquivos</strong>: <code>knowledge/</code> e <code>CLAUDE.md</code> fornecem contexto persistente</li>
 </ul>
-<blockquote>
-<p><strong>Princípio NID #2</strong>: sempre responde em pt-BR. Código e identifiers ficam em inglês quando a stack pede.</p>
-</blockquote>
+<aside class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><p><strong>Princípio NID #2</strong>: sempre responde em pt-BR. Código e identifiers ficam em inglês quando a stack pede.</p></div></aside>
 <h2>Calibrando confiança</h2>
 <p>Use esta heurística ao receber output de um agente:</p>
 <pre class="highlight"><code>Fato sobre o mundo real DELP? → Verifique na fonte (knowledge/, doc Microsoft, etc.)
@@ -746,33 +941,52 @@ Texto/documentação? → Revise antes de publicar
 <h2>Resumo</h2>
 <p>Um único LLM generalista é bom em muitas coisas, mas agentes especializados são melhores em tarefas específicas. Orquestração de agentes é o padrão de despachar trabalho para especialistas (subagentes) e consolidar os resultados — parecido com delegar para uma equipe.</p>
 <h2>Analogia: equipe de desenvolvimento</h2>
-<pre class="highlight"><code>Você (PO)
-  └─ nid-tech-lead (orquestrador)
-        ├─ nid-bi-engineer      → cria medidas DAX
-        ├─ nid-data-engineer    → monta pipeline ETL
-        └─ nid-code-reviewer    → revisa os dois
-</code></pre>
+<div class="mermaid">flowchart TD
+  V["👤 Você (PO)"] --> TL["🧑‍💼 nid-tech-lead<br/>(orquestrador)"]
+  TL --> BI["📊 nid-bi-engineer<br/>medidas DAX"]
+  TL --> DE["🛠️ nid-data-engineer<br/>pipeline ETL"]
+  TL --> CR["🔎 nid-code-reviewer<br/>revisa os dois"]
+  classDef user fill:#dd8f1a,stroke:#dd8f1a,color:#fff
+  classDef lead fill:#3C3489,stroke:#3C3489,color:#fff
+  classDef worker fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+  class V user
+  class TL lead
+  class BI,DE,CR worker
+</div>
 
 <p>O <code>nid-tech-lead</code> não faz o trabalho — ele planeja, delega e consolida. Você só fala com ele.</p>
 <h2>Padrões de orquestração do NID</h2>
 <h3>Padrão 1 — Sequencial (pipeline)</h3>
 <p>Cada agente recebe o output do anterior:</p>
-<pre class="highlight"><code>nid-product-manager → [spec] → nid-architect → [plano] → nid-tech-lead → [tasks] → agentes verticais
-</code></pre>
+<div class="mermaid">flowchart LR
+  PM["nid-product-manager"] -->|spec| AR["nid-architect"]
+  AR -->|plano| TL["nid-tech-lead"]
+  TL -->|tasks| V["agentes verticais"]
+</div>
 
 <p><strong>Quando usar:</strong> ciclo SDD formal, quando cada etapa depende da anterior.</p>
 <h3>Padrão 2 — Paralelo (tarefas independentes)</h3>
 <p>Agentes rodam ao mesmo tempo, sem dependência entre si:</p>
-<pre class="highlight"><code>nid-bi-engineer (medidas DAX) ─┐
-nid-data-engineer (ETL)       ─┼→ nid-tech-lead consolida
-nid-documentation-engineer    ─┘
-</code></pre>
+<div class="mermaid">flowchart LR
+  BI["nid-bi-engineer<br/>medidas DAX"] --> TL
+  DE["nid-data-engineer<br/>ETL"] --> TL
+  DOC["nid-documentation-engineer"] --> TL
+  TL[["nid-tech-lead<br/>consolida"]]
+</div>
 
 <p><strong>Quando usar:</strong> quando as tarefas não se bloqueiam mutuamente. Economiza tempo.</p>
 <h3>Padrão 3 — Red-team (adversarial)</h3>
 <p>Um agente tenta quebrar o que outro fez:</p>
-<pre class="highlight"><code>nid-architect [proposta] → nid-red-team [critica adversarialmente] → GO ou REWORK
-</code></pre>
+<div class="mermaid">flowchart LR
+  AR["nid-architect"] -->|proposta| RT["nid-red-team<br/>(adversarial)"]
+  RT --> D{"Decisão"}
+  D -->|GO| OK["Implementar"]
+  D -->|REWORK| AR
+  classDef good fill:#EAF5EB,stroke:#2E7D32,color:#1F5C22
+  classDef adversarial fill:#FBE9EA,stroke:#cc0f10,color:#8C0B0C
+  class OK good
+  class RT adversarial
+</div>
 
 <p><strong>Quando usar:</strong> <code>/nid:gate</code> antes de qualquer implementação de projeto formal.</p>
 <h2>Por que o NID usa agentes especializados?</h2>
@@ -783,6 +997,46 @@ nid-documentation-engineer    ─┘
 <li><strong>Rastreabilidade</strong>: qual agente fez o quê fica claro no log</li>
 </ul>
 <h2>Agentes disponíveis no kit (28)</h2>
+<figure class="svg-figure"><svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Topologia dos 28 agentes NID">
+<defs><style>
+  .at-cat{stroke-width:1.5;rx:8}
+  .at-cat-orch{fill:#534AB7}
+  .at-cat-quality{fill:#dd8f1a}
+  .at-cat-support{fill:#4A90D9}
+  .at-cat-vert{fill:#3C3489}
+  .at-cat-name{font:700 13px "Barlow",sans-serif;fill:#fff;text-anchor:middle}
+  .at-cat-count{font:600 18px "Barlow",sans-serif;fill:#fff;text-anchor:middle}
+  .at-cat-desc{font:10px "Barlow",sans-serif;fill:rgba(255,255,255,0.85);text-anchor:middle}
+  .at-arrow{stroke:#aaa;stroke-width:1;fill:none;stroke-dasharray:2,3}
+  .at-center{fill:#fff;stroke:#3C3489;stroke-width:2}
+  .at-center-label{font:700 12px "Barlow",sans-serif;fill:#3C3489;text-anchor:middle}
+</style></defs>
+<circle class="at-center" cx="300" cy="140" r="44"/>
+<text class="at-center-label" x="300" y="135">Você</text>
+<text class="at-center-label" x="300" y="152" style="font-weight:400;font-size:10px;fill:#666">+ tarefa</text>
+<line class="at-arrow" x1="300" y1="100" x2="300" y2="50"/>
+<line class="at-arrow" x1="340" y1="140" x2="490" y2="140"/>
+<line class="at-arrow" x1="300" y1="180" x2="300" y2="240"/>
+<line class="at-arrow" x1="260" y1="140" x2="110" y2="140"/>
+<g><rect class="at-cat at-cat-orch" x="220" y="10" width="160" height="50"/>
+  <text class="at-cat-name" x="300" y="28">Orchestration</text>
+  <text class="at-cat-count" x="300" y="50">4</text>
+  <text class="at-cat-desc" x="300" y="58" transform="translate(0,-3)">tech-lead, architect…</text>
+</g>
+<g><rect class="at-cat at-cat-quality" x="490" y="115" width="100" height="50"/>
+  <text class="at-cat-name" x="540" y="133">Quality</text>
+  <text class="at-cat-count" x="540" y="155">8</text>
+</g>
+<g><rect class="at-cat at-cat-support" x="220" y="220" width="160" height="50"/>
+  <text class="at-cat-name" x="300" y="238">Support</text>
+  <text class="at-cat-count" x="300" y="260">5</text>
+</g>
+<g><rect class="at-cat at-cat-vert" x="10" y="115" width="100" height="50"/>
+  <text class="at-cat-name" x="60" y="133">Verticals</text>
+  <text class="at-cat-count" x="60" y="155">11</text>
+</g>
+</svg><figcaption>4 categorias × 28 agentes — orchestration coordena, verticals executam, quality verifica, support apoia.</figcaption></figure>
+
 <table>
 <thead>
 <tr>
@@ -1053,9 +1307,7 @@ git pull
 .\install.ps1  # re-executa instalação com nova versão
 </code></pre>
 
-<blockquote>
-<p><strong>Nota:</strong> O <code>install.ps1</code> atual está em versão beta — pode precisar de ajustes manuais dependendo da configuração Claude Code da sua máquina. Em caso de problema, reporte no canal NID.</p>
-</blockquote>
+<aside class="callout callout-info"><span class="callout-icon">ℹ️</span><div class="callout-body"><p><strong>Nota:</strong> O <code>install.ps1</code> atual está em versão beta — pode precisar de ajustes manuais dependendo da configuração Claude Code da sua máquina. Em caso de problema, reporte no canal NID.</p></div></aside>
 <h2>Resolução de problemas</h2>
 <table>
 <thead>
@@ -1192,9 +1444,7 @@ git pull
 <p>Isso cria <code>.claude/nid-project.json</code>, ativa hooks e gradua para modo Formal. O histórico da sessão é preservado.</p>
 <h2>Transitar de Formal para Casual</h2>
 <p>Basta abrir Claude Code em outra pasta sem <code>nid-project.json</code>. Não há "desativação" — é baseado em presença de arquivo.</p>
-<blockquote>
-<p><strong>Dica prática:</strong> Comece sempre em Casual para tarefas pontuais. Se o escopo crescer e precisar de rastreabilidade, rode <code>/nid:init</code> e continue.</p>
-</blockquote>
+<aside class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><p><strong>Dica prática:</strong> Comece sempre em Casual para tarefas pontuais. Se o escopo crescer e precisar de rastreabilidade, rode <code>/nid:init</code> e continue.</p></div></aside>
 <h2>Veja também</h2>
 <ul>
 <li><a href="../mod0/0.1.md">0.1 SDD</a></li>
@@ -1390,7 +1640,20 @@ retrabalho — DAX simples em modelo limpo vs DAX complexo em modelo ruim.
   <div class="screen-body markdown-body">
 <h2>Resumo</h2>
 <p>A <code>CONSTITUTION.md</code> define 10 princípios que todo agente NID segue sem exceção. Conhecê-los ajuda você a entender o comportamento dos agentes, a pedir melhor, e a identificar quando um agente saiu do padrão.</p>
-<h2>Os 10 Princípios</h2>
+<h2>Visão geral — todos em uma página</h2>
+<ul class="card-grid">
+<li><strong>1. Modo Didático</strong> — Toda resposta tem [O QUE / POR QUE / COMO]. Combate caixa-preta.</li>
+<li><strong>2. pt-BR</strong> — Output ao usuário em português; código fica em inglês.</li>
+<li><strong>3. VBC (Verification Before Completion)</strong> — Não declarar "pronto" sem evidência adequada à mídia.</li>
+<li><strong>4. Source-of-truth</strong> — Toda afirmação técnica cita fonte. Sem fonte = <code>[PENDENTE]</code>.</li>
+<li><strong>5. Não inventar dados</strong> — Regras DELP, schemas, parâmetros: <code>[PENDENTE]</code> + SIT se não souber.</li>
+<li><strong>6. Aprovação humana</strong> — Agente nunca avança gate sem confirmação explícita do humano.</li>
+<li><strong>7. Red-team antes de implementar</strong> — <code>/nid:gate</code> é bloqueante por hook em projetos formais.</li>
+<li><strong>8. Knowledge versionada</strong> — Conhecimento volátil mora em <code>knowledge/</code>, nunca no prompt.</li>
+<li><strong>9. Commits semânticos</strong> — <code>feat:</code>, <code>fix:</code>, <code>docs:</code>, <code>refactor:</code>, <code>chore:</code>, etc.</li>
+<li><strong>10. Trust user direction</strong> — O kit é servo, não policial. Override é permitido (com ADR).</li>
+</ul>
+<h2>Detalhamento</h2>
 <h3>1. Modo Didático sempre</h3>
 <p>Todo agente, em toda resposta, explica:</p>
 <pre class="highlight"><code>[O QUE]    — ação concreta sendo realizada
@@ -1549,9 +1812,7 @@ completar o painel de acompanhamento?
 &quot;Para esta tarefa, entrega direto sem explicação.&quot;
 </code></pre>
 
-<blockquote>
-<p><strong>Importante:</strong> Você pode pedir para reduzir o Modo Didático (Princípio #10 — Trust user direction). Mas nunca remova a parte de riscos/anti-patterns — isso protege a entrega.</p>
-</blockquote>
+<aside class="callout callout-warning"><span class="callout-icon">⚠️</span><div class="callout-body"><p><strong>Importante:</strong> Você pode pedir para reduzir o Modo Didático (Princípio #10 — Trust user direction). Mas nunca remova a parte de riscos/anti-patterns — isso protege a entrega.</p></div></aside>
 <h2>Modo Didático em code review</h2>
 <pre class="highlight"><code>[O QUE] Revisando medida Faturamento Bruto.
 
@@ -1583,21 +1844,21 @@ FILTER(ALL) = segundos.
 <h2>Resumo</h2>
 <p>O SDD (Spec-Driven Development) no NID é um ciclo de 5 fases com aprovação humana em cada transição. Este módulo detalha cada fase, o que acontece dentro dela, e quando você pode (ou deve) pular etapas.</p>
 <h2>Diagrama do ciclo</h2>
-<pre class="highlight"><code> ┌─────────────┐     aprovação    ┌─────────────┐     aprovação
- │ /nid:specify │ ──────────────► │  /nid:plan  │ ──────────────►
- │  Brainstorm  │                 │  Plano      │
- │  → Spec      │                 │  técnico    │
- └─────────────┘                 └─────────────┘
-                                                         │
-                                                  aprovação implícita
-                                                         │
- ┌─────────────┐  GO decidido    ┌─────────────┐         ▼
- │/nid:implement│ ◄────────────── │  /nid:gate  │ ◄── /nid:tasks
- │  Execução   │                 │  Red-team   │
- │  + verify   │                 │  GO/NO-GO   │
- └─────────────┘                 └─────────────┘
-</code></pre>
+<div class="mermaid">flowchart LR
+  S["1. /nid:specify<br/>Brainstorm → Spec"] -->|aprovação| P["2. /nid:plan<br/>Plano técnico"]
+  P -->|aprovação| T["3. /nid:tasks<br/>Lista de tarefas"]
+  T -->|implícita| G{"4. /nid:gate<br/>Red-team GO/NO-GO"}
+  G -->|GO| I["5. /nid:implement<br/>Execução + verify"]
+  G -->|NO-GO| P
+  classDef stage fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+  classDef gate fill:#FBE9EA,stroke:#cc0f10,color:#8C0B0C
+  classDef done fill:#EAF5EB,stroke:#2E7D32,color:#1F5C22
+  class S,P,T stage
+  class G gate
+  class I done
+</div>
 
+<aside class="callout callout-warning"><span class="callout-icon">⚠️</span><div class="callout-body"><p><strong>⚠️ Atenção:</strong> o Gate é o <strong>único</strong> checkpoint bloqueado automaticamente por hook. Sem GO explícito, <code>/nid:implement</code> não roda em projetos formais.</p></div></aside>
 <h2>Fase 1 — Especificação (<code>/nid:specify</code>)</h2>
 <p><strong>Quem:</strong> você + <code>nid-product-manager</code></p>
 <p><strong>O que acontece:</strong><br />
@@ -1815,9 +2076,7 @@ Retomar gate após correção.
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>Você decide.</strong> O <code>nid-red-team</code> recomenda, mas a decisão GO/NO-GO é sempre humana (Princípio #6).</p>
-</blockquote>
+<aside class="callout callout-info"><span class="callout-icon">ℹ️</span><div class="callout-body"><p><strong>Você decide.</strong> O <code>nid-red-team</code> recomenda, mas a decisão GO/NO-GO é sempre humana (Princípio #6).</p></div></aside>
 <h2>Override do gate (com justificativa)</h2>
 <p>Em casos excepcionais (protótipo descartável, demo interna):</p>
 <pre class="highlight"><code>&quot;Para esta sessão, declaro GO sem gate completo porque:
@@ -2085,9 +2344,7 @@ describe(&quot;apontamento&quot;, () =&gt; {
 <p>A <code>knowledge/</code> é a memória persistente do NID entre sessões. Tudo que os agentes precisam saber sobre o contexto DELP (ferramentas, regras de negócio, decisões, lições) fica aqui. Sem ela, cada sessão começa do zero.</p>
 <h2>Por que existe</h2>
 <p>LLMs não têm memória entre sessões. O agente que criou o ETL de faturamento ontem não "lembra" nada hoje. A <code>knowledge/</code> resolve isso: é lida pelos agentes no início de cada sessão como contexto persistente.</p>
-<blockquote>
-<p><strong>Princípio #8</strong>: "Conhecimento volátil mora em <code>knowledge/</code>. O NID acumula conhecimento, não esquece."</p>
-</blockquote>
+<aside class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><p><strong>Princípio #8</strong>: "Conhecimento volátil mora em <code>knowledge/</code>. O NID acumula conhecimento, não esquece."</p></div></aside>
 <h2>Estrutura atual</h2>
 <pre class="highlight"><code>knowledge/
 ├── portfólio/          # projetos ativos e seus stacks
@@ -2098,9 +2355,7 @@ describe(&quot;apontamento&quot;, () =&gt; {
 └── prompts/            # banco de prompts #001-499 (link para prompts/)
 </code></pre>
 
-<blockquote>
-<p><strong>Status atual (2026-05-07):</strong> <code>knowledge/</code> tem estrutura mas ainda sem conteúdo populado — pendente em sessões futuras do kit.</p>
-</blockquote>
+<aside class="callout callout-info"><span class="callout-icon">ℹ️</span><div class="callout-body"><p><strong>Status atual (2026-05-07):</strong> <code>knowledge/</code> tem estrutura mas ainda sem conteúdo populado — pendente em sessões futuras do kit.</p></div></aside>
 <h2>O que vai na knowledge base</h2>
 <table>
 <thead>
@@ -2958,9 +3213,7 @@ git commit -m &quot;docs(adr): override gate formal — hotfix crítico prod 202
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>Regra prática:</strong> se você vai fazer o override mais de uma vez no mesmo projeto, escreva um ADR.</p>
-</blockquote>
+<aside class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><p><strong>Regra prática:</strong> se você vai fazer o override mais de uma vez no mesmo projeto, escreva um ADR.</p></div></aside>
 <h2>Revisar ADRs antigos</h2>
 <p>ADRs não são imutáveis. Quando a situação muda:</p>
 <pre class="highlight"><code class="language-markdown">## Status
@@ -3941,9 +4194,7 @@ Erro:
 <pre class="highlight"><code>/nid:init web
 </code></pre>
 
-<blockquote>
-<p><strong>Nota:</strong> O ApontDELP tem seu próprio repositório e CLAUDE.md. <code>/nid:init web</code> cria a estrutura para <em>novos</em> projetos web NID, não modifica o ApontDELP existente.</p>
-</blockquote>
+<aside class="callout callout-info"><span class="callout-icon">ℹ️</span><div class="callout-body"><p><strong>Nota:</strong> O ApontDELP tem seu próprio repositório e CLAUDE.md. <code>/nid:init web</code> cria a estrutura para <em>novos</em> projetos web NID, não modifica o ApontDELP existente.</p></div></aside>
 <hr />
 <h2>Stack ApontDELP (referência — não modificar sem ADR)</h2>
 <pre class="highlight"><code>Frontend:   Next.js 14 (App Router) + TypeScript (strict, sem any)
@@ -4171,9 +4422,7 @@ docs/
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>Regra NID:</strong> ferramentas M365 (Teams, SharePoint, Outlook) → Power Automate. Integrações custom ou self-hosted → N8N.</p>
-</blockquote>
+<aside class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><p><strong>Regra NID:</strong> ferramentas M365 (Teams, SharePoint, Outlook) → Power Automate. Integrações custom ou self-hosted → N8N.</p></div></aside>
 <hr />
 <h2>Exemplo end-to-end</h2>
 <p><strong>Cenário:</strong> N8N recebe webhook de sistema de produção → enriquece dados → publica no SharePoint</p>
@@ -4430,9 +4679,7 @@ Ato 3 — Resultado (1-2 slides)
   - Próximo passo ou decisão necessária
 </code></pre>
 
-<blockquote>
-<p><strong>Regra de ouro:</strong> 1 mensagem por slide. Se o slide precisa de parágrafo, são 2 slides.</p>
-</blockquote>
+<aside class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><p><strong>Regra de ouro:</strong> 1 mensagem por slide. Se o slide precisa de parágrafo, são 2 slides.</p></div></aside>
 <hr />
 <h2>Exemplo end-to-end</h2>
 <p><strong>Cenário:</strong> Apresentar resultado do ApontDELP para diretoria</p>
@@ -4998,9 +5245,7 @@ Total: ~3 semanas (1 spec + 2 build + gate integrado)
 /nid:eval nid-dax-medidas
 </code></pre>
 
-<blockquote>
-<p><strong>Nota:</strong> Todos os 12 comandos estão disponíveis. Para usar, certifique-se de que o nid-spec-kit está instalado e registrado como plugin no Claude Code.</p>
-</blockquote>
+<aside class="callout callout-info"><span class="callout-icon">ℹ️</span><div class="callout-body"><p><strong>Nota:</strong> Todos os 12 comandos estão disponíveis. Para usar, certifique-se de que o nid-spec-kit está instalado e registrado como plugin no Claude Code.</p></div></aside>
 <h2>Veja também</h2>
 <ul>
 <li><a href="../mod0/0.1.md">0.1 SDD</a></li>
@@ -5227,6 +5472,245 @@ Total: ~3 semanas (1 spec + 2 build + gate integrado)
     <p class="screen-desc">Lista completa das 45 skills disponíveis organizadas por bucket — com quando usar cada uma</p>
   </div>
   <div class="screen-body markdown-body">
+<h2>Buscar todas as 45 skills</h2>
+<p>A tabela abaixo lista todas as skills do kit com seu bucket e quando usar. <strong>Use o filtro</strong> acima dela para localizar rapidamente, ou <strong>clique nos cabeçalhos</strong> para ordenar.</p>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Bucket</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nid-dax-medidas</code></td>
+<td>bi</td>
+<td>Criar ou refatorar medidas DAX</td>
+</tr>
+<tr>
+<td><code>nid-dax-time-intelligence</code></td>
+<td>bi</td>
+<td>Cálculos YTD, MTD, LY com dim_calendario</td>
+</tr>
+<tr>
+<td><code>nid-power-bi-modelagem</code></td>
+<td>bi</td>
+<td>Modelagem Kimball em Power BI</td>
+</tr>
+<tr>
+<td><code>nid-power-bi-html-tooltip</code></td>
+<td>bi</td>
+<td>Tooltips HTML avançados em Power BI</td>
+</tr>
+<tr>
+<td><code>nid-power-bi-narrativa-executiva</code></td>
+<td>bi</td>
+<td>Narrativa automática de KPIs executivos</td>
+</tr>
+<tr>
+<td><code>nid-etl-dim-fato</code></td>
+<td>data</td>
+<td>Pipelines ETL Kimball (dim/fato, upsert)</td>
+</tr>
+<tr>
+<td><code>nid-etl-pyarrow-troubleshoot</code></td>
+<td>data</td>
+<td>Debug de erros PyArrow/Pandas</td>
+</tr>
+<tr>
+<td><code>nid-data-quality-asserts</code></td>
+<td>data</td>
+<td>Asserções de DQ (Great Expectations style)</td>
+</tr>
+<tr>
+<td><code>nid-sql-server-sspi</code></td>
+<td>data</td>
+<td>Auth SQL Server/SSPI Windows + Azure</td>
+</tr>
+<tr>
+<td><code>nid-prompt-bank-format</code></td>
+<td>ai-engineering</td>
+<td>Formatar prompts no banco DELP #001-499</td>
+</tr>
+<tr>
+<td><code>nid-eval-suite</code></td>
+<td>ai-engineering</td>
+<td>Suite de eval para skill ou agente</td>
+</tr>
+<tr>
+<td><code>nid-claude-skills-author</code></td>
+<td>ai-engineering</td>
+<td>Criar skill NID seguindo padrão</td>
+</tr>
+<tr>
+<td><code>nid-rag-sharepoint</code></td>
+<td>ai-engineering</td>
+<td>RAG sobre SharePoint via Azure AI Search</td>
+</tr>
+<tr>
+<td><code>nid-iteracao-autonoma</code></td>
+<td>ai-engineering</td>
+<td>Loop autônomo Claude SDK + audit log</td>
+</tr>
+<tr>
+<td><code>nid-azure-functions-patterns</code></td>
+<td>azure-data</td>
+<td>Azure Functions Python v2 (triggers, MI)</td>
+</tr>
+<tr>
+<td><code>nid-azure-logic-apps</code></td>
+<td>azure-data</td>
+<td>Logic Apps Standard (M365, SQL, HTTP)</td>
+</tr>
+<tr>
+<td><code>nid-azure-data-factory</code></td>
+<td>azure-data</td>
+<td>ADF v2 (pipelines, IR, Tumbling Window)</td>
+</tr>
+<tr>
+<td><code>nid-azure-storage-events</code></td>
+<td>azure-data</td>
+<td>Event Grid + Storage (CloudEvents, DLQ)</td>
+</tr>
+<tr>
+<td><code>nid-azure-bicep-foundations</code></td>
+<td>azure-data</td>
+<td>IaC Bicep (módulos, OIDC, what-if)</td>
+</tr>
+<tr>
+<td><code>nid-azure-foundations</code></td>
+<td>azure-shared</td>
+<td>Referência transversal Azure (naming, MI, KV)</td>
+</tr>
+<tr>
+<td><code>nid-azure-foundry</code></td>
+<td>azure-ai</td>
+<td>Provisionar Hub+Project, deployments</td>
+</tr>
+<tr>
+<td><code>nid-azure-openai</code></td>
+<td>azure-ai</td>
+<td>Chat, embeddings, structured output, retry</td>
+</tr>
+<tr>
+<td><code>nid-azure-ai-search</code></td>
+<td>azure-ai</td>
+<td>Busca vetorial + híbrida + semântica</td>
+</tr>
+<tr>
+<td><code>nid-azure-document-intelligence</code></td>
+<td>azure-ai</td>
+<td>Extrair NFs/contratos via prebuilt/custom</td>
+</tr>
+<tr>
+<td><code>nid-copilot-studio-topics</code></td>
+<td>m365-power-platform</td>
+<td>Tópicos Copilot — triggers, nós, fallback</td>
+</tr>
+<tr>
+<td><code>nid-copilot-studio-power-fx</code></td>
+<td>m365-power-platform</td>
+<td>Expressões Power Fx em tópicos</td>
+</tr>
+<tr>
+<td><code>nid-copilot-studio-connectors</code></td>
+<td>m365-power-platform</td>
+<td>Conectores OpenAPI + OAuth</td>
+</tr>
+<tr>
+<td><code>nid-power-automate-flows</code></td>
+<td>m365-power-platform</td>
+<td>Flows — triggers, Try/Catch, loops</td>
+</tr>
+<tr>
+<td><code>nid-power-apps-canvas</code></td>
+<td>m365-power-platform</td>
+<td>Canvas App — Dataverse, Power Fx, UX DELP</td>
+</tr>
+<tr>
+<td><code>nid-power-platform-publishing</code></td>
+<td>m365-power-platform</td>
+<td>Publicar Solução + DLP + ambientes</td>
+</tr>
+<tr>
+<td><code>nid-rpa-n8n</code></td>
+<td>starters</td>
+<td>Workflows n8n com error workflow + deploy</td>
+</tr>
+<tr>
+<td><code>nid-sharepoint-html-embed</code></td>
+<td>starters</td>
+<td>Embedar HTML/iframe em SharePoint Online</td>
+</tr>
+<tr>
+<td><code>nid-postman-newman-tests</code></td>
+<td>starters</td>
+<td>Testes API Postman/Newman + CI/CD</td>
+</tr>
+<tr>
+<td><code>nid-slides-delp-template</code></td>
+<td>starters</td>
+<td>Apresentações com template DELP (3 atos)</td>
+</tr>
+<tr>
+<td><code>nid-slides-pptx</code></td>
+<td>communication</td>
+<td>Gerar .pptx programaticamente (python-pptx)</td>
+</tr>
+<tr>
+<td><code>nid-pre-leitura-executiva</code></td>
+<td>communication</td>
+<td>Doc 1 página antes de reunião de decisão</td>
+</tr>
+<tr>
+<td><code>nid-prompt-bank-publish</code></td>
+<td>communication</td>
+<td>Publicar e manter prompts do banco DELP</td>
+</tr>
+<tr>
+<td><code>nid-delp-visual-identity</code></td>
+<td>design</td>
+<td>Paleta, tipografia, CSS vars DELP</td>
+</tr>
+<tr>
+<td><code>nid-ui-ux-pro-max</code></td>
+<td>design</td>
+<td>Princípios UX (hierarquia, feedback, a11y)</td>
+</tr>
+<tr>
+<td><code>nid-verification-gates</code></td>
+<td>methodology</td>
+<td>Definir evidência VBC por mídia</td>
+</tr>
+<tr>
+<td><code>nid-universinid-author</code></td>
+<td>methodology</td>
+<td>Criar/atualizar telas do UniversiNID</td>
+</tr>
+<tr>
+<td><code>nid-spec-driven</code></td>
+<td>methodology</td>
+<td>Guia do ciclo SDD completo</td>
+</tr>
+<tr>
+<td><code>nid-red-team-review</code></td>
+<td>methodology</td>
+<td>Revisão adversarial de plano/spec</td>
+</tr>
+<tr>
+<td><code>nid-modo-didatico</code></td>
+<td>methodology</td>
+<td>Ativar O QUE/POR QUE/COMO em respostas</td>
+</tr>
+<tr>
+<td><code>nid-debugging-com-modo-didatico</code></td>
+<td>methodology</td>
+<td>Debug sistemático com root cause</td>
+</tr>
+</tbody>
+</table>
+<aside class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><p><strong>💡 Dica:</strong> Esta é uma tabela interativa — ela ganha automaticamente busca + ordenação no client. Funciona em qualquer cheatsheet com ≥8 linhas (5.2 também é interativa).</p></div></aside>
 <h2>BI (5 skills)</h2>
 <table>
 <thead>
@@ -5687,9 +6171,27 @@ cat &quot;$env:APPDATA\Claude\claude_desktop_config.json&quot;
 
 </div>
 
-<!-- Mermaid (soft dep — diagramas só com internet) -->
+<!-- Mermaid (soft dep — diagramas só com internet; fallback: CSS mostra source como monospace) -->
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-<script>try{ mermaid.initialize({startOnLoad:true, theme:'base', themeVariables:{primaryColor:'#3C3489', primaryTextColor:'#fff'}}) }catch(e){}</script>
+<script>
+// startOnLoad:false porque .screen está em display:none até a primeira navegação;
+// Mermaid mede width=0 em containers ocultos e renderiza diagramas truncados.
+// Solução: chamamos mermaid.run() per-screen em showScreen() depois de exibir.
+try{
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#EEEDFE',
+      primaryTextColor: '#3C3489',
+      primaryBorderColor: '#534AB7',
+      lineColor: '#534AB7',
+      secondaryColor: '#fff8e1',
+      tertiaryColor: '#FBE9EA',
+    },
+  });
+}catch(e){}
+</script>
 
 <script>
 // ── Search index ────────────────────────────────────────────────────
@@ -5722,6 +6224,87 @@ function showScreen(slug) {
     // Close search
     document.getElementById('search-results').style.display = 'none';
     document.getElementById('search-input').value = '';
+    // Lazy enhancements: tabelas interativas + render Mermaid (precisa da tela visível
+    // para medir width corretamente — daí ser per-screen, não global)
+    enhanceTablesIn(el);
+    renderMermaidIn(el);
+  }
+}
+
+// ── Tabelas interativas (busca + sort) — aplicado lazy quando a tela é exibida ──
+function enhanceTable(table) {
+  if (table.dataset.enhanced === 'true') return;
+  if (!table.tBodies.length) return;
+  const bodyRows = Array.from(table.tBodies[0].rows);
+  if (bodyRows.length < 8) return;            // só vale a pena em tabelas grandes
+  table.dataset.enhanced = 'true';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'table-wrapper';
+  table.parentNode.insertBefore(wrapper, table);
+
+  const toolbar = document.createElement('div');
+  toolbar.className = 'table-toolbar';
+  const input = document.createElement('input');
+  input.type = 'search';
+  input.placeholder = 'Filtrar nesta tabela...';
+  input.setAttribute('aria-label', 'Filtrar tabela');
+  const counter = document.createElement('span');
+  counter.className = 'table-count';
+  toolbar.appendChild(input);
+  toolbar.appendChild(counter);
+  wrapper.appendChild(toolbar);
+  wrapper.appendChild(table);
+
+  const updateCount = () => {
+    const visible = bodyRows.filter(r => !r.classList.contains('hidden')).length;
+    counter.textContent = visible + ' / ' + bodyRows.length;
+  };
+  updateCount();
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    bodyRows.forEach(r => {
+      const text = r.textContent.toLowerCase();
+      r.classList.toggle('hidden', q !== '' && !text.includes(q));
+    });
+    updateCount();
+  });
+
+  // Sort
+  if (table.tHead && table.tHead.rows.length) {
+    Array.from(table.tHead.rows[0].cells).forEach((th, idx) => {
+      th.addEventListener('click', () => {
+        const wasAsc = th.classList.contains('sort-asc');
+        Array.from(table.tHead.rows[0].cells).forEach(c => c.classList.remove('sort-asc','sort-desc'));
+        th.classList.add(wasAsc ? 'sort-desc' : 'sort-asc');
+        const dir = wasAsc ? -1 : 1;
+        const sorted = bodyRows.slice().sort((a, b) => {
+          const av = (a.cells[idx]?.textContent || '').trim();
+          const bv = (b.cells[idx]?.textContent || '').trim();
+          const an = parseFloat(av), bn = parseFloat(bv);
+          if (!isNaN(an) && !isNaN(bn)) return (an - bn) * dir;
+          return av.localeCompare(bv, 'pt-BR') * dir;
+        });
+        const tbody = table.tBodies[0];
+        sorted.forEach(r => tbody.appendChild(r));
+      });
+    });
+  }
+}
+
+function enhanceTablesIn(scope) {
+  scope.querySelectorAll('.markdown-body table').forEach(enhanceTable);
+}
+
+function renderMermaidIn(scope) {
+  if (typeof mermaid === 'undefined') return;        // CDN offline → fallback CSS mostra source
+  const blocks = scope.querySelectorAll('.mermaid:not([data-processed="true"])');
+  if (blocks.length === 0) return;
+  try {
+    mermaid.run({ nodes: Array.from(blocks) });
+  } catch(e) {
+    console.warn('Mermaid render falhou:', e);
   }
 }
 
