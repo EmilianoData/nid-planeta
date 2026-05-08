@@ -1091,13 +1091,20 @@ Texto/documentação? → Revise antes de publicar
 <h2>Resumo</h2>
 <p>O NID (Núcleo de Inovação DELP) gerencia um portfólio heterogêneo — BI/DAX, ETL Python, automações, Azure, M365, web apps MES, propostas técnicas. Antes do nid-spec-kit, cada projeto começava do zero. A adoção de IA agêntica com disciplina SDD resolve três problemas reais: acúmulo de conhecimento, onboarding e velocidade.</p>
 <h2>O portfólio NID antes do kit</h2>
-<pre class="highlight"><code>ApontDELP (MES web)      → 18 agentes próprios em silo
-Equipe Field (propostas) → 8 agentes próprios em silo
-BI/DAX                   → sem padronização
-ETL Python               → sem padronização
-Azure AI/Data            → sem padronização
-M365 Power Platform      → sem padronização
-</code></pre>
+<div class="mermaid">flowchart LR
+  NID(("NID DELP")) --> A["ApontDELP MES<br/>18 agentes em silo"]
+  NID --> B["Equipe Field<br/>8 agentes em silo"]
+  NID --> C["BI / DAX<br/>sem padrão"]
+  NID --> D["ETL Python<br/>sem padrão"]
+  NID --> E["Azure AI/Data<br/>sem padrão"]
+  NID --> F["M365 / Power Platform<br/>sem padrão"]
+  classDef silo fill:#FBE9EA,stroke:#cc0f10,color:#8C0B0C
+  classDef nopad fill:#FDF3E1,stroke:#dd8f1a,color:#8A5A14
+  classDef hub fill:#3C3489,stroke:#3C3489,color:#fff
+  class A,B silo
+  class C,D,E,F nopad
+  class NID hub
+</div>
 
 <p>Cada projeto tinha sua própria abordagem — ou nenhuma. Novo dev NID levava semanas para entender as convenções. Conhecimento ficava na cabeça das pessoas, não em <code>knowledge/</code>.</p>
 <h2>Os 3 problemas que o kit resolve</h2>
@@ -1130,12 +1137,17 @@ M365 Power Platform      → sem padronização
 <li><strong>Windows-first</strong>: equipe DELP usa Windows; Claude Code funciona bem no PowerShell</li>
 </ul>
 <h2>Resultado esperado</h2>
-<pre class="highlight"><code>dev DELP abre Claude Code em qualquer projeto NID
-    → kit instalado globalmente
-    → agentes disponíveis
-    → &quot;use a skill nid-dax-medidas&quot; → IA especialista em DAX DELP
-    → conhecimento acumulado, não reinventado
-</code></pre>
+<div class="mermaid">flowchart LR
+  D["👤 dev DELP<br/>abre Claude Code"] --> K["📦 kit instalado<br/>globalmente"]
+  K --> A["🤖 28 agentes +<br/>45 skills disponíveis"]
+  A --> S["💬 'use a skill<br/>nid-dax-medidas'"]
+  S --> R["✨ IA especialista<br/>em DAX DELP"]
+  R --> ACC["🧠 conhecimento<br/>acumulado, não reinventado"]
+  classDef good fill:#EAF5EB,stroke:#2E7D32,color:#1F5C22
+  classDef step fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+  class D step
+  class ACC,R good
+</div>
 
 <h2>Veja também</h2>
 <ul>
@@ -1354,9 +1366,15 @@ git pull
 <p>O NID tem dois modos de operação: <strong>Casual</strong> (skills e agentes à la carte, sem burocracia) e <strong>Formal</strong> (ciclo SDD completo com gates e hooks). A maioria das tarefas do dia a dia é Casual. Formal é para projetos que precisam de rastreabilidade.</p>
 <h2>Detecção automática</h2>
 <p>O hook <code>session-start/load-nid-context</code> detecta o modo automaticamente:</p>
-<pre class="highlight"><code>📁 pasta sem .claude/nid-project.json  →  MODO CASUAL
-📁 pasta com  .claude/nid-project.json  →  MODO FORMAL
-</code></pre>
+<div class="mermaid">flowchart LR
+  S["🟣 Claude Code abre<br/>na pasta"] --> Q{"Existe<br/>.claude/nid-project.json?"}
+  Q -->|Não| C["☕ MODO CASUAL<br/>skills + agentes à la carte"]
+  Q -->|Sim| F["🛂 MODO FORMAL<br/>SDD + gates + hooks"]
+  classDef casual fill:#EAF3FB,stroke:#4A90D9,color:#1B5391
+  classDef formal fill:#EAF5EB,stroke:#2E7D32,color:#1F5C22
+  class C casual
+  class F formal
+</div>
 
 <p>Não há nada para configurar manualmente — o kit detecta ao abrir o Claude Code na pasta.</p>
 <h2>Comparativo</h2>
@@ -1464,6 +1482,42 @@ git pull
 <p>Skills são ativadas por instrução direta no chat. Não há comando mágico — você simplesmente diz ao Claude para usar a skill. Vamos usar <code>nid-dax-medidas</code> como exemplo, mas o padrão vale para qualquer skill do kit.</p>
 <h2>Anatomia de uma skill</h2>
 <p>Toda skill NID tem a estrutura:</p>
+<figure class="svg-figure"><svg viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Anatomia de uma SKILL.md">
+<defs><style>
+  .sk-frame{fill:#fff;stroke:#534AB7;stroke-width:1.5}
+  .sk-fm{fill:#EEEDFE;stroke:#534AB7;stroke-width:1}
+  .sk-body{fill:#fff}
+  .sk-label{font:600 11px "Barlow",sans-serif;fill:#3C3489}
+  .sk-text{font:11px "Consolas",monospace;fill:#444}
+  .sk-arrow{stroke:#dd8f1a;stroke-width:1.5;fill:none;marker-end:url(#sk-arr)}
+  .sk-note{font:italic 10px "Barlow",sans-serif;fill:#666}
+</style>
+<marker id="sk-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#dd8f1a"/></marker></defs>
+<rect class="sk-frame" x="160" y="20" width="280" height="280" rx="6"/>
+<rect class="sk-fm" x="170" y="32" width="260" height="100" rx="3"/>
+<text class="sk-label" x="180" y="50">--- (frontmatter YAML)</text>
+<text class="sk-text" x="180" y="68">name: nid-dax-medidas</text>
+<text class="sk-text" x="180" y="83">description: Quando usar...</text>
+<text class="sk-text" x="180" y="98">verification: ≥3 medidas testadas</text>
+<text class="sk-text" x="180" y="113">references: [naming.md]</text>
+<text class="sk-label" x="180" y="128">---</text>
+<rect class="sk-body" x="170" y="142" width="260" height="148" rx="3" fill="#fafaff" stroke="#ccc"/>
+<text class="sk-label" x="180" y="158">## Quando usar</text>
+<text class="sk-text" x="180" y="174">- gatilhos concretos…</text>
+<text class="sk-label" x="180" y="194">## [Conteúdo]</text>
+<text class="sk-text" x="180" y="210">tabelas, código, anti-patterns</text>
+<text class="sk-label" x="180" y="232">## Anti-patterns</text>
+<text class="sk-label" x="180" y="252">## Veja também</text>
+<text class="sk-text" x="180" y="268">- nid-skill-relacionada</text>
+<text class="sk-label" x="20" y="80" font-size="12">FRONTMATTER</text>
+<text class="sk-note" x="20" y="95">contrato máquina-legível</text>
+<line class="sk-arrow" x1="120" y1="80" x2="160" y2="80"/>
+<text class="sk-label" x="450" y="155" font-size="12">CORPO MD</text>
+<text class="sk-note" x="450" y="170">conhecimento humano-legível</text>
+<line class="sk-arrow" x1="450" y1="200" x2="430" y2="200" transform="rotate(180 440 200)"/>
+</svg><figcaption>Anatomia de uma <code>SKILL.md</code> — frontmatter define contrato; corpo carrega o conhecimento.</figcaption></figure>
+
+<p>Na prática, no filesystem:</p>
 <pre class="highlight"><code>skills/bi/nid-dax-medidas/
 ├── SKILL.md          ← regras, quando usar, anti-patterns
 └── references/
@@ -1515,8 +1569,8 @@ nid-dax-medidas para adicionar as medidas de Faturamento MTD e YTD.&quot;
 <li>❌ Nomear medida sem seguir convenção NID (<code>fat MTD</code> em vez de <code>Faturamento MTD</code>)</li>
 <li>❌ Esquecer de testar a medida no modelo — sempre verificar no Power BI Desktop</li>
 </ul>
-<h2>Skills disponíveis (21 hoje)</h2>
-<p>Ver lista completa em <a href="../mod5/5.3.md">5.3 Cheatsheet skills</a>.</p>
+<h2>Skills disponíveis (45 hoje)</h2>
+<p>Ver lista completa e buscável em <a href="../mod5/5.3.md">5.3 Cheatsheet skills</a>.</p>
 <h2>Veja também</h2>
 <ul>
 <li><a href="../mod1/1.4.md">1.4 Primeiro agente</a></li>
@@ -2246,44 +2300,57 @@ describe(&quot;apontamento&quot;, () =&gt; {
 <h2>Resumo</h2>
 <p>Com 28 agentes disponíveis, a escolha certa acelera o trabalho. A lógica é simples: <strong>comece pelo domínio técnico da tarefa, depois refine pelo papel (fazer vs revisar vs coordenar)</strong>.</p>
 <h2>Árvore de decisão</h2>
-<pre class="highlight"><code>Qual é a natureza da tarefa?
-│
-├─ Criar algo em domínio técnico específico?
-│   ├─ Power BI / DAX / relatórios    → nid-bi-engineer
-│   ├─ ETL / pipeline Python          → nid-data-engineer
-│   ├─ IA generativa / RAG / evals    → nid-ai-engineer
-│   ├─ Azure AI (Foundry/OpenAI/Search) → nid-azure-ai-engineer
-│   ├─ Azure Data (Functions/ADF/LA)  → nid-azure-data-engineer
-│   ├─ API / backend serviço          → nid-backend-engineer
-│   ├─ Web / ApontDELP frontend       → nid-frontend-engineer
-│   ├─ SQL Server / banco relacional  → nid-database-engineer
-│   ├─ M365 / Power Automate / Apps   → nid-m365-low-code-engineer
-│   ├─ CI/CD / IaC / deploy           → nid-devops-engineer
-│   └─ SEO / web analytics            → nid-seo-specialist
-│
-├─ Planejar ou coordenar?
-│   ├─ Coordenar vários agentes       → nid-tech-lead
-│   ├─ Arquitetura / decisões técnicas→ nid-architect
-│   ├─ Requisitos / spec              → nid-product-manager
-│   └─ Status / visão geral           → nid-chief-of-staff
-│
-├─ Revisar qualidade?
-│   ├─ Code review geral              → nid-code-reviewer
-│   ├─ Testes / coverage              → nid-qa-engineer
-│   ├─ TDD específico                 → nid-tdd-coach
-│   ├─ Segurança / OWASP              → nid-security-engineer
-│   ├─ Performance / otimização       → nid-performance-engineer
-│   ├─ Acessibilidade / WCAG          → nid-accessibility-engineer
-│   ├─ Falhas silenciosas / edge cases→ nid-silent-failure-hunter
-│   └─ Ataque adversarial ao plano    → nid-red-team
-│
-└─ Apoio ao desenvolvimento?
-    ├─ Bug difícil de diagnosticar    → nid-debugger
-    ├─ Explorar codebase desconhecida → nid-code-explorer
-    ├─ Refatorar sem mudar comportamento → nid-refactor-cleaner
-    ├─ Documentar código/API          → nid-documentation-engineer
-    └─ Criar/refinar prompts do banco  → nid-prompt-curator
-</code></pre>
+<div class="mermaid">flowchart LR
+  Q{"Qual a natureza<br/>da tarefa?"}
+
+  Q --> C1["🔨 Criar (domínio)"]
+  Q --> C2["🧭 Coordenar / Planejar"]
+  Q --> C3["🔎 Revisar qualidade"]
+  Q --> C4["🛟 Apoio ao desenvolvimento"]
+
+  C1 --> V1[nid-bi-engineer<br/>Power BI / DAX]
+  C1 --> V2[nid-data-engineer<br/>ETL Python]
+  C1 --> V3[nid-ai-engineer<br/>IA / RAG / evals]
+  C1 --> V4[nid-azure-ai-engineer<br/>Foundry / OpenAI]
+  C1 --> V5[nid-azure-data-engineer<br/>Functions / ADF]
+  C1 --> V6[nid-backend-engineer<br/>API / serviço]
+  C1 --> V7[nid-frontend-engineer<br/>Web / ApontDELP]
+  C1 --> V8[nid-database-engineer<br/>SQL Server]
+  C1 --> V9[nid-m365-low-code-engineer<br/>Power Platform]
+  C1 --> V10[nid-devops-engineer<br/>CI/CD / IaC]
+  C1 --> V11[nid-seo-specialist<br/>SEO / analytics]
+
+  C2 --> O1[nid-tech-lead<br/>coordena agentes]
+  C2 --> O2[nid-architect<br/>arquitetura / ADR]
+  C2 --> O3[nid-product-manager<br/>spec / requisitos]
+  C2 --> O4[nid-chief-of-staff<br/>status / prioridades]
+
+  C3 --> Q1[nid-code-reviewer]
+  C3 --> Q2[nid-qa-engineer]
+  C3 --> Q3[nid-tdd-coach]
+  C3 --> Q4[nid-security-engineer]
+  C3 --> Q5[nid-performance-engineer]
+  C3 --> Q6[nid-accessibility-engineer]
+  C3 --> Q7[nid-silent-failure-hunter]
+  C3 --> Q8[nid-red-team<br/>adversarial — gate]
+
+  C4 --> S1[nid-debugger]
+  C4 --> S2[nid-code-explorer]
+  C4 --> S3[nid-refactor-cleaner]
+  C4 --> S4[nid-documentation-engineer]
+  C4 --> S5[nid-prompt-curator]
+
+  classDef cat fill:#3C3489,stroke:#3C3489,color:#fff
+  classDef vert fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+  classDef quality fill:#FDF3E1,stroke:#dd8f1a,color:#8A5A14
+  classDef support fill:#EAF3FB,stroke:#4A90D9,color:#1B5391
+  classDef orch fill:#FBE9EA,stroke:#cc0f10,color:#8C0B0C
+  class C1,C2,C3,C4 cat
+  class V1,V2,V3,V4,V5,V6,V7,V8,V9,V10,V11 vert
+  class O1,O2,O3,O4 orch
+  class Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8 quality
+  class S1,S2,S3,S4,S5 support
+</div>
 
 <h2>Dúvida entre 2 agentes? Use esta regra</h2>
 <p><strong>Se a tarefa cruza dois domínios</strong> (ex: ETL que vai para Power BI):<br />
@@ -2346,14 +2413,18 @@ describe(&quot;apontamento&quot;, () =&gt; {
 <p>LLMs não têm memória entre sessões. O agente que criou o ETL de faturamento ontem não "lembra" nada hoje. A <code>knowledge/</code> resolve isso: é lida pelos agentes no início de cada sessão como contexto persistente.</p>
 <aside class="callout callout-tip"><span class="callout-icon">💡</span><div class="callout-body"><p><strong>Princípio #8</strong>: "Conhecimento volátil mora em <code>knowledge/</code>. O NID acumula conhecimento, não esquece."</p></div></aside>
 <h2>Estrutura atual</h2>
-<pre class="highlight"><code>knowledge/
-├── portfólio/          # projetos ativos e seus stacks
-├── ferramentas/        # ferramentas homologadas e versões
-├── governança/         # regras DELP (calendário, naming, etc.)
-├── glossário/          # termos específicos DELP
-├── lições/             # lições aprendidas de incidentes/projetos
-└── prompts/            # banco de prompts #001-499 (link para prompts/)
-</code></pre>
+<div class="mermaid">flowchart LR
+  K(("knowledge/")) --> P["📁 portfólio/<br/>projetos ativos + stacks"]
+  K --> F["🛠️ ferramentas/<br/>homologadas + versões"]
+  K --> G["📏 governança/<br/>regras DELP"]
+  K --> GL["📚 glossário/<br/>termos DELP"]
+  K --> L["💡 lições/<br/>incidentes + aprendizados"]
+  K --> PR["🔖 prompts/<br/>banco #001-499"]
+  classDef root fill:#3C3489,stroke:#3C3489,color:#fff
+  classDef leaf fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+  class K root
+  class P,F,G,GL,L,PR leaf
+</div>
 
 <aside class="callout callout-info"><span class="callout-icon">ℹ️</span><div class="callout-body"><p><strong>Status atual (2026-05-07):</strong> <code>knowledge/</code> tem estrutura mas ainda sem conteúdo populado — pendente em sessões futuras do kit.</p></div></aside>
 <h2>O que vai na knowledge base</h2>
@@ -2596,13 +2667,21 @@ git commit -m &quot;feat(skills): add nid-power-apps-canvas&quot;
 <h2>Resumo</h2>
 <p><code>/nid:rules-distill</code> lê N exemplos de trabalho aprovado e propõe uma skill nova ou princípio novo. É o mecanismo de "aprendizado organizacional automatizado" — o que você fez bem vira regra do kit.</p>
 <h2>A lógica por trás</h2>
-<pre class="highlight"><code>3+ exemplos aprovados de X
-    → /nid:rules-distill &lt;pasta&gt;
-    → nid-rules-distill-agent analisa padrões
-    → proposta: skill nova OU princípio OU adição a skill existente
-    → você aprova ou refina
-    → codificado no kit
-</code></pre>
+<div class="mermaid">flowchart LR
+  E["📂 3+ exemplos<br/>aprovados de X"] --> C["/nid:rules-distill<br/>&lt;pasta&gt;"]
+  C --> A["🤖 agente analisa<br/>padrões comuns"]
+  A --> P{"Proposta"}
+  P --> P1["✨ Skill nova"]
+  P --> P2["📜 Princípio na<br/>Constituição"]
+  P --> P3["➕ Adição a skill<br/>existente"]
+  P1 & P2 & P3 --> H{"👤 Você aprova<br/>ou refina?"}
+  H -->|Aprovado| K["✅ Codificado<br/>no kit"]
+  H -->|Refinar| A
+  classDef good fill:#EAF5EB,stroke:#2E7D32,color:#1F5C22
+  classDef step fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+  class K good
+  class E,C,A step
+</div>
 
 <p>É o ciclo inverso da skill: em vez de escrever regras manualmente, você acumula exemplos e distila as regras.</p>
 <h2>Quando usar</h2>
@@ -3701,15 +3780,15 @@ src/
 <hr />
 <h2>Skills que usa</h2>
 <ul>
+<li><code>nid-azure-foundry</code> — Foundry como plataforma de modelo (Hub+Project, MI, deployments)</li>
+<li><code>nid-azure-openai</code> — Azure OpenAI (GPT-4o, embeddings, structured output, retry)</li>
+<li><code>nid-azure-ai-search</code> — AI Search: índices, semantic, reranker, query híbrida</li>
+<li><code>nid-azure-document-intelligence</code> — extração de NFs, formulários, contratos</li>
 <li><code>nid-azure-bicep-foundations</code> — IaC para provisionar AI Search, Foundry, OpenAI</li>
+<li><code>nid-azure-foundations</code> — referência transversal (naming, MI, KV, OIDC)</li>
 <li><code>nid-rag-sharepoint</code> — RAG completo sobre SharePoint via AI Search</li>
 <li><code>nid-azure-functions-patterns</code> — hospedar indexador/query em Function</li>
 </ul>
-<p><strong>Pendentes (Plan 3b azure-ai/ — próxima sessão):</strong><br />
-- <code>nid-azure-foundry</code> — Foundry como plataforma de modelo<br />
-- <code>nid-azure-openai</code> — Azure OpenAI (GPT-4o, embeddings)<br />
-- <code>nid-azure-ai-search</code> — AI Search: índices, semantic, reranker<br />
-- <code>nid-azure-document-intelligence</code> — extração de formulários/faturas</p>
 <hr />
 <h2>Stack NID Azure AI v0</h2>
 <table>
@@ -4063,12 +4142,14 @@ docs/
 </table>
 <hr />
 <h2>Skills que usa</h2>
-<p><strong>Pendentes (Plan 3b m365-power-platform/):</strong><br />
-- <code>nid-copilot-studio-topics</code> — criação de tópicos conversacionais<br />
-- <code>nid-copilot-studio-power-fx</code> — Power Fx em Copilot Studio<br />
-- <code>nid-power-automate-flows</code> — fluxos de automação aprovação, notificação<br />
-- <code>nid-power-apps-canvas</code> — Canvas Apps com WCAG 2.2 AA<br />
-- <code>nid-power-platform-publishing</code> — deploy, ALM, soluções gerenciadas</p>
+<ul>
+<li><code>nid-copilot-studio-topics</code> — criação de tópicos conversacionais (triggers, fallback)</li>
+<li><code>nid-copilot-studio-power-fx</code> — Power Fx em Copilot Studio</li>
+<li><code>nid-copilot-studio-connectors</code> — conectores OpenAPI + OAuth</li>
+<li><code>nid-power-automate-flows</code> — fluxos de automação (aprovação, notificação, Try/Catch)</li>
+<li><code>nid-power-apps-canvas</code> — Canvas Apps com WCAG 2.2 AA, Dataverse</li>
+<li><code>nid-power-platform-publishing</code> — deploy, ALM, soluções gerenciadas + DLP</li>
+</ul>
 <hr />
 <h2>Stack NID M365 v0</h2>
 <table>
@@ -4127,13 +4208,19 @@ Razão: conta pessoal → fluxo para quando o colaborador sai
 <hr />
 <h2>Exemplo end-to-end</h2>
 <p><strong>Cenário:</strong> Fluxo de aprovação de férias via Power Automate + Teams</p>
-<pre class="highlight"><code>1. Trigger: Form criado no SharePoint (lista &quot;Solicitações de Férias&quot;)
-2. Ação: Enviar card de aprovação no Teams para gestor
-3. Condição:
-   → Aprovado: atualizar SharePoint + notificar solicitante
-   → Rejeitado: notificar solicitante com motivo
-4. Timeout: 5 dias úteis sem resposta → escalar para RH
-</code></pre>
+<div class="mermaid">flowchart TD
+  T["📝 Form criado<br/>SharePoint 'Solicitações Férias'"] --> A["📨 Card de aprovação<br/>Teams → gestor"]
+  A --> D{"Decisão<br/>do gestor"}
+  D -->|✅ Aprovado| OK["📋 Atualiza SharePoint<br/>+ notifica solicitante"]
+  D -->|❌ Rejeitado| NO["📧 Notifica solicitante<br/>com motivo"]
+  A -->|⏰ 5 dias sem resposta| ESC["🚨 Escala para RH"]
+  classDef good fill:#EAF5EB,stroke:#2E7D32,color:#1F5C22
+  classDef bad fill:#FBE9EA,stroke:#cc0f10,color:#8C0B0C
+  classDef warn fill:#FDF3E1,stroke:#dd8f1a,color:#8A5A14
+  class OK good
+  class NO bad
+  class ESC warn
+</div>
 
 <p><strong>Teste scripted conversation (Copilot Studio):</strong></p>
 <pre class="highlight"><code>Caminho feliz:
@@ -4382,8 +4469,9 @@ docs/
 </table>
 <hr />
 <h2>Skills que usa</h2>
-<p><strong>Pendente (Plan 3b starters/):</strong><br />
-- <code>nid-rpa-n8n</code> — padrões de automação RPA e N8N</p>
+<ul>
+<li><code>nid-rpa-n8n</code> — workflows n8n (triggers, credenciais seguras, error workflow, deploy Azure Container)</li>
+</ul>
 <hr />
 <h2>Decisão: quando usar N8N vs Power Automate</h2>
 <table>
@@ -4530,8 +4618,9 @@ docs/
 </table>
 <hr />
 <h2>Skills que usa</h2>
-<p><strong>Pendente (Plan 3b starters/):</strong><br />
-- <code>nid-postman-newman-tests</code> — padrão de collection e scripts de teste NID</p>
+<ul>
+<li><code>nid-postman-newman-tests</code> — coleção, assertions, OAuth, integração com CI/CD via newman</li>
+</ul>
 <hr />
 <h2>Padrão de testes Newman</h2>
 <pre class="highlight"><code class="language-javascript">// Postman Test Script — verificação por schema e status
@@ -4646,7 +4735,7 @@ docs/
 </tr>
 <tr>
 <td>Narrativa</td>
-<td><code>nid-communication-designer</code></td>
+<td><code>nid-product-manager</code> (estrutura 3 atos)</td>
 </tr>
 <tr>
 <td>Conteúdo técnico</td>
@@ -4660,9 +4749,12 @@ docs/
 </table>
 <hr />
 <h2>Skills que usa</h2>
-<p><strong>Pendente (Plan 3b communication/):</strong><br />
-- <code>nid-slide-narrativa</code> — estrutura de narrativa executiva DELP<br />
-- <code>nid-marp-deck</code> — padrão de deck Marp com paleta DELP</p>
+<ul>
+<li><code>nid-slides-delp-template</code> — template DELP, estrutura 3 atos, slide-tipo, checklist</li>
+<li><code>nid-slides-pptx</code> — gerar .pptx programaticamente (python-pptx, dados → slides)</li>
+<li><code>nid-pre-leitura-executiva</code> — doc 1 página antes de reunião de decisão</li>
+<li><code>nid-delp-visual-identity</code> — paleta, tipografia, espaçamento DELP</li>
+</ul>
 <hr />
 <h2>Estrutura narrativa NID (3 atos)</h2>
 <pre class="highlight"><code>Ato 1 — Contexto (1-2 slides)
@@ -4749,7 +4841,7 @@ marp slides/deck.md --pptx --output slides/deck.pptx
 <ul>
 <li><a href="../mod4/4.5.md">4.5 Playbook Azure Data</a> — evidências técnicas para slides de infraestrutura</li>
 <li><a href="../mod4/4.7.md">4.7 Playbook Web / MES</a> — capturas e métricas de sistemas web</li>
-<li><code>nid-communication-designer</code></li>
+<li><code>nid-slides-delp-template</code>, <code>nid-slides-pptx</code>, <code>nid-pre-leitura-executiva</code></li>
 </ul>
   </div>
 </div>
@@ -4811,8 +4903,11 @@ docs/
 </table>
 <hr />
 <h2>Skills que usa</h2>
-<p><strong>Pendente (Plan 3b starters/):</strong><br />
-- <code>nid-sharepoint-embed</code> — padrões de embed e CSP para SharePoint Online</p>
+<ul>
+<li><code>nid-sharepoint-html-embed</code> — métodos de embed (Embed WebPart / SPFx / iframe), CSP troubleshooting, hospedagem de universinid.html</li>
+<li><code>nid-delp-visual-identity</code> — paleta e CSS vars DELP para HTML embedável</li>
+<li><code>nid-ui-ux-pro-max</code> — UX em formulários e widgets internos</li>
+</ul>
 <hr />
 <h2>Restrições SharePoint Online (CSP)</h2>
 <pre class="highlight"><code>SharePoint Online impõe Content Security Policy restritiva:
