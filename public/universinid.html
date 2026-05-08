@@ -5755,7 +5755,7 @@ searchInput.addEventListener('input', () => {
   } else {
     searchResults.innerHTML = hits.slice(0, 8).map(h => {
       const title = h.title.replace(new RegExp(q, 'gi'), m => '<strong>' + m + '</strong>');
-      return '<a href="#' + h.id + '" onclick="showScreen('' + h.id + ''); return false;">' + title + '</a>';
+      return '<a href="#' + h.id + '" onclick="showScreen(\'' + h.id + '\'); return false;">' + title + '</a>';
     }).join('');
   }
   searchResults.style.display = 'block';
