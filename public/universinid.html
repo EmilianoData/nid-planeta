@@ -534,7 +534,7 @@ body {
     </a>
     <a class="nav-item" href="#s5-3" onclick="showScreen('s5-3')">
       <span class="nav-id">5.3</span>
-      <span class="nav-title">Cheatsheet — 21 skills nid-* (v2026-05-07)</span>
+      <span class="nav-title">Cheatsheet — 45 skills nid-* (v2026-05-08)</span>
     </a>
     <a class="nav-item" href="#s5-4" onclick="showScreen('s5-4')">
       <span class="nav-id">5.4</span>
@@ -4999,7 +4999,7 @@ Total: ~3 semanas (1 spec + 2 build + gate integrado)
 </code></pre>
 
 <blockquote>
-<p><strong>Nota:</strong> Comandos disponíveis após Plan 4 do kit (pendente). Hoje, use via instrução direta: <em>"Execute o comportamento de /nid:gate no plano acima"</em>.</p>
+<p><strong>Nota:</strong> Todos os 12 comandos estão disponíveis. Para usar, certifique-se de que o nid-spec-kit está instalado e registrado como plugin no Claude Code.</p>
 </blockquote>
 <h2>Veja também</h2>
 <ul>
@@ -5165,7 +5165,7 @@ Total: ~3 semanas (1 spec + 2 build + gate integrado)
 <tr>
 <td><code>nid-azure-ai-engineer</code></td>
 <td>Foundry, OpenAI, AI Search</td>
-<td>azure-ai/* (pendente Plan 3b)</td>
+<td>nid-azure-foundry, nid-azure-openai, nid-azure-ai-search, nid-azure-document-intelligence</td>
 </tr>
 <tr>
 <td><code>nid-azure-data-engineer</code></td>
@@ -5175,12 +5175,12 @@ Total: ~3 semanas (1 spec + 2 build + gate integrado)
 <tr>
 <td><code>nid-backend-engineer</code></td>
 <td>APIs, serviços backend</td>
-<td>starters/nid-postman-newman-tests (pendente)</td>
+<td>nid-postman-newman-tests</td>
 </tr>
 <tr>
 <td><code>nid-frontend-engineer</code></td>
 <td>Web, MES, HTML/CSS/TS</td>
-<td>starters/* (pendente)</td>
+<td>nid-sharepoint-html-embed, nid-ui-ux-pro-max, nid-delp-visual-identity</td>
 </tr>
 <tr>
 <td><code>nid-database-engineer</code></td>
@@ -5195,7 +5195,7 @@ Total: ~3 semanas (1 spec + 2 build + gate integrado)
 <tr>
 <td><code>nid-m365-low-code-engineer</code></td>
 <td>Power Automate, Power Apps, Copilot Studio</td>
-<td>m365-power-platform/* (pendente)</td>
+<td>nid-power-automate-flows, nid-power-apps-canvas, nid-copilot-studio-topics</td>
 </tr>
 <tr>
 <td><code>nid-seo-specialist</code></td>
@@ -5222,9 +5222,9 @@ Total: ~3 semanas (1 spec + 2 build + gate integrado)
 </div>
 <div class="screen" id="s5-3" data-status="ready">
   <div class="screen-header">
-    <div class="screen-meta"><span class="badge-module">⚡ Referência Rápida</span><span class="badge-time">3 min</span></div>
-    <h1 class="screen-title"><span class="screen-id">5.3</span> Cheatsheet — 21 skills nid-* (v2026-05-07)</h1>
-    <p class="screen-desc">Lista completa das skills disponíveis (21 entregues) com quando usar cada uma</p>
+    <div class="screen-meta"><span class="badge-module">⚡ Referência Rápida</span><span class="badge-time">4 min</span></div>
+    <h1 class="screen-title"><span class="screen-id">5.3</span> Cheatsheet — 45 skills nid-* (v2026-05-08)</h1>
+    <p class="screen-desc">Lista completa das 45 skills disponíveis organizadas por bucket — com quando usar cada uma</p>
   </div>
   <div class="screen-body markdown-body">
 <h2>BI (5 skills)</h2>
@@ -5347,7 +5347,153 @@ Total: ~3 semanas (1 spec + 2 build + gate integrado)
 </tr>
 </tbody>
 </table>
-<h2>Methodology (2 skills)</h2>
+<h2>Azure Shared (1 skill)</h2>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nid-azure-foundations</code></td>
+<td>Referência transversal Azure — naming, MI, Key Vault, RG layout, OIDC (toda skill Azure cita esta)</td>
+</tr>
+</tbody>
+</table>
+<h2>Azure AI (4 skills)</h2>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nid-azure-foundry</code></td>
+<td>Provisionar Azure AI Foundry — Hub+Project, deployments de modelo, prompt flows</td>
+</tr>
+<tr>
+<td><code>nid-azure-openai</code></td>
+<td>Integrar Azure OpenAI — chat, embeddings, structured output, retry, custo</td>
+</tr>
+<tr>
+<td><code>nid-azure-ai-search</code></td>
+<td>Busca vetorial + híbrida + semântica — index, indexer, skillset, RAG</td>
+</tr>
+<tr>
+<td><code>nid-azure-document-intelligence</code></td>
+<td>Extrair dados de NFs, formulários e contratos via prebuilt/custom models</td>
+</tr>
+</tbody>
+</table>
+<h2>M365 Power Platform (6 skills)</h2>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nid-copilot-studio-topics</code></td>
+<td>Criar tópicos Copilot Studio — trigger phrases, nós, fallback, conversational design</td>
+</tr>
+<tr>
+<td><code>nid-copilot-studio-power-fx</code></td>
+<td>Expressões Power Fx em tópicos — formatação, condições, tabelas</td>
+</tr>
+<tr>
+<td><code>nid-copilot-studio-connectors</code></td>
+<td>Conectores personalizados (OpenAPI + OAuth) para Copilot Studio</td>
+</tr>
+<tr>
+<td><code>nid-power-automate-flows</code></td>
+<td>Flows Power Automate — triggers, Try/Catch, loops, resposta para bot</td>
+</tr>
+<tr>
+<td><code>nid-power-apps-canvas</code></td>
+<td>Canvas App — telas, Dataverse, fórmulas Power Fx, UX DELP</td>
+</tr>
+<tr>
+<td><code>nid-power-platform-publishing</code></td>
+<td>Publicar soluções Power Platform em produção (Solução + DLP + ambientes)</td>
+</tr>
+</tbody>
+</table>
+<h2>Starters (4 skills)</h2>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nid-rpa-n8n</code></td>
+<td>Automações RPA/iPaaS n8n — workflows, credenciais seguras, error workflow, deploy Azure</td>
+</tr>
+<tr>
+<td><code>nid-sharepoint-html-embed</code></td>
+<td>Embedar HTML/iframe em SharePoint Online — métodos, CSP, hospedar universinid.html</td>
+</tr>
+<tr>
+<td><code>nid-postman-newman-tests</code></td>
+<td>Testes de API Postman/Newman — coleção, assertions, OAuth, CI/CD</td>
+</tr>
+<tr>
+<td><code>nid-slides-delp-template</code></td>
+<td>Apresentações com template DELP — estrutura 3 atos, slides-tipo, checklist</td>
+</tr>
+</tbody>
+</table>
+<h2>Communication (3 skills)</h2>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nid-slides-pptx</code></td>
+<td>Gerar .pptx programaticamente com python-pptx (relatórios em lote, dados → slides)</td>
+</tr>
+<tr>
+<td><code>nid-pre-leitura-executiva</code></td>
+<td>Documento de 1 página enviado antes de reunião de decisão com liderança</td>
+</tr>
+<tr>
+<td><code>nid-prompt-bank-publish</code></td>
+<td>Publicar e manter prompts do banco DELP — formato canônico, curadoria, indexação</td>
+</tr>
+</tbody>
+</table>
+<h2>Design (2 skills)</h2>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nid-delp-visual-identity</code></td>
+<td>Paleta, tipografia, espaçamento e CSS vars DELP para HTML, Power Apps e slides</td>
+</tr>
+<tr>
+<td><code>nid-ui-ux-pro-max</code></td>
+<td>Princípios UX — hierarquia visual, feedback de estado, formulários, acessibilidade</td>
+</tr>
+</tbody>
+</table>
+<h2>Methodology (6 skills)</h2>
 <table>
 <thead>
 <tr>
@@ -5364,52 +5510,34 @@ Total: ~3 semanas (1 spec + 2 build + gate integrado)
 <td><code>nid-universinid-author</code></td>
 <td>Criar/atualizar telas do UniversiNID (docs/universinid/*.md)</td>
 </tr>
-</tbody>
-</table>
-<h2>Pendentes (✈️ próximas sessões)</h2>
-<table>
-<thead>
 <tr>
-<th>Bucket</th>
-<th>Skills pendentes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>methodology/</code></td>
-<td>nid-spec-driven, nid-red-team-review, nid-modo-didatico, nid-debugging-com-modo-didatico</td>
+<td><code>nid-spec-driven</code></td>
+<td>Guia do ciclo SDD completo — quando usar formal vs casual, progressão de fases</td>
 </tr>
 <tr>
-<td><code>azure-ai/</code></td>
-<td>nid-azure-foundry, nid-azure-openai, nid-azure-ai-search, nid-azure-document-intelligence</td>
+<td><code>nid-red-team-review</code></td>
+<td>Revisão adversarial de plano/spec — 6 dimensões, GO/NO-GO</td>
 </tr>
 <tr>
-<td><code>m365-power-platform/</code></td>
-<td>nid-copilot-studio-topics, nid-copilot-studio-power-fx, nid-power-automate-flows, nid-power-apps-canvas, +</td>
+<td><code>nid-modo-didatico</code></td>
+<td>Ativar formato O QUE/POR QUE/COMO em respostas (Princípio #1 da Constituição)</td>
 </tr>
 <tr>
-<td><code>starters/</code></td>
-<td>nid-rpa-n8n, nid-sharepoint-html-embed, nid-postman-newman-tests, nid-slides-delp-template</td>
-</tr>
-<tr>
-<td><code>communication/</code></td>
-<td>nid-slides-pptx, nid-pre-leitura-executiva, nid-prompt-bank-publish</td>
-</tr>
-<tr>
-<td><code>design/</code></td>
-<td>nid-delp-visual-identity, nid-ui-ux-pro-max</td>
+<td><code>nid-debugging-com-modo-didatico</code></td>
+<td>Debug sistemático com explicação de root cause — reproduzir → identificar → corrigir</td>
 </tr>
 </tbody>
 </table>
+<hr />
 <h2>Como usar uma skill</h2>
 <pre class="highlight"><code># Invocar diretamente:
-&quot;Use a skill nid-dax-medidas. [contexto]&quot;
+&quot;Use a skill nid-azure-openai. [contexto do problema]&quot;
 
 # Via agente vertical (preferido para tarefas complexas):
-&quot;Aja como nid-bi-engineer usando nid-dax-medidas. [contexto]&quot;
+&quot;Aja como nid-azure-ai-engineer usando nid-azure-foundry. [contexto]&quot;
 
-# Carregar referências aprofundadas:
-&quot;Carregue as referências de time-intelligence da skill nid-dax-medidas.&quot;
+# Pedir skill específica durante trabalho:
+&quot;Para este formulário, aplique nid-ui-ux-pro-max antes de implementar.&quot;
 </code></pre>
 
 <h2>Veja também</h2>
@@ -5565,7 +5693,7 @@ cat &quot;$env:APPDATA\Claude\claude_desktop_config.json&quot;
 
 <script>
 // ── Search index ────────────────────────────────────────────────────
-const SEARCH_INDEX = [{"id": "s0-1", "title": "SDD — Spec-Driven Development", "text": "sdd — spec-driven development o que é sdd e por que o nid adotou como padrão de trabalho com ia sdd spec especificação ciclo desenvolvimento plan implement"}, {"id": "s0-2", "title": "LLM — O que é e como usar bem", "text": "llm — o que é e como usar bem como llms funcionam na prática e o que saber para trabalhar bem com eles llm modelo contexto tokens claude prompt limitações"}, {"id": "s0-3", "title": "Agent Orchestration — como agentes trabalham juntos", "text": "agent orchestration — como agentes trabalham juntos como o nid usa múltiplos agentes especializados em paralelo ou em sequência agente orchestration subagent paralelismo multi-agent orquestrador"}, {"id": "s0-4", "title": "Por que o NID adotou IA agêntica", "text": "por que o nid adotou ia agêntica o contexto e motivação por trás da adoção de ia agêntica no nid delp nid delp adoção motivação histórico portfólio decisão"}, {"id": "s0-5", "title": "Glossário Visual", "text": "glossário visual termos chave do universo nid com definições visuais e analogias glossário termos vocabulário definições sdd skill agente gate knowledge"}, {"id": "s1-1", "title": "Instalação do nid-spec-kit", "text": "instalação do nid-spec-kit como instalar o nid-spec-kit globalmente no claude code (windows + linux/mac) instalação install setup plugin global powershell windows"}, {"id": "s1-2", "title": "Casual vs Formal — dois modos de uso", "text": "casual vs formal — dois modos de uso quando usar cada modo e como transitar entre eles casual formal modo nid-project init hooks gate"}, {"id": "s1-3", "title": "Primeira skill — usando nid-dax-medidas", "text": "primeira skill — usando nid-dax-medidas passo a passo para usar sua primeira skill nid em um exemplo real skill usar primeiro dax medidas exemplo casual"}, {"id": "s1-4", "title": "Primeiro agente — nid-bi-engineer", "text": "primeiro agente — nid-bi-engineer como invocar e trabalhar com agentes especializados nid agente bi-engineer persona primeiro exemplo invocar"}, {"id": "s1-5", "title": "Os 10 Princípios da Constituição NID", "text": "os 10 princípios da constituição nid os 10 princípios universais que todo agente nid segue — e você precisa conhecer constituição princípios regras não-negociável vbc modo didático pt-br"}, {"id": "s1-6", "title": "Modo Didático — aprender enquanto entrega", "text": "modo didático — aprender enquanto entrega como o modo didático funciona na prática, com exemplos reais de antes e depois modo didático o que por que como aprender ensinar explicar"}, {"id": "s2-1", "title": "Ciclo SDD — do brief ao código", "text": "ciclo sdd — do brief ao código o ciclo sdd completo passo a passo: do brief inicial ao código revisado sdd ciclo specify plan gate implement fluxo fases formal"}, {"id": "s2-2", "title": "/nid:gate — o checkpoint bloqueante", "text": "/nid:gate — o checkpoint bloqueante como funciona o /nid:gate, o que o nid-red-team verifica, e como tomar a decisão go/no-go gate red-team bloqueante go no-go adversarial risco hook"}, {"id": "s2-3", "title": "Verificação por mídia — VBC na prática", "text": "verificação por mídia — vbc na prática como aplicar verification before completion em cada tipo de projeto nid vbc verificação evidência mídia bi etl ai m365 web testes"}, {"id": "s2-4", "title": "Árvore de decisão — qual agente usar?", "text": "árvore de decisão — qual agente usar? guia visual para escolher o agente certo para cada situação agente decisão escolha qual usar árvore domínio tarefa"}, {"id": "s2-5", "title": "Knowledge base — como usar e manter", "text": "knowledge base — como usar e manter como a knowledge base funciona, o que vai nela, e como mantê-la atualizada knowledge base knowledge/ manter atualizar versionada lições portfólio"}, {"id": "s3-1", "title": "/nid:skill-create — criando novas skills", "text": "/nid:skill-create — criando novas skills como criar uma skill nova no nid-spec-kit seguindo o padrão nid skill-create criar skill skill nova contribuir nid-claude-skills-author bucket"}, {"id": "s3-2", "title": "/nid:rules-distill — extraindo padrões de exemplos", "text": "/nid:rules-distill — extraindo padrões de exemplos como usar /nid:rules-distill para transformar exemplos aprovados em skill ou princípio rules-distill regras padrões distilação exemplos skill princípio"}, {"id": "s3-3", "title": "/nid:eval — avaliando skills e agentes", "text": "/nid:eval — avaliando skills e agentes como usar /nid:eval para verificar que skills e agentes continuam no padrão eval avaliação golden métrica drift qualidade skill agente"}, {"id": "s3-4", "title": "Manter knowledge — o curador do kit", "text": "manter knowledge — o curador do kit processo e responsabilidades de quem mantém a knowledge base do nid-spec-kit knowledge curador manter atualizar lições portfólio ferramentas"}, {"id": "s3-5", "title": "Contribuir com PR — fluxo de contribuição", "text": "contribuir com pr — fluxo de contribuição como contribuir com melhorias ao nid-spec-kit via pull request pr pull request contribuir branch review merge git github"}, {"id": "s3-6", "title": "Override de constituição — quando e como usar ADR", "text": "override de constituição — quando e como usar adr como fazer override de um princípio da constituição nid e registrar em adr override constituição adr architecture decision record exceção princípio bypass"}, {"id": "s4-1", "title": "Playbook BI / DAX", "text": "playbook bi / dax referência completa para projetos de business intelligence com power bi e dax no nid bi dax power bi modelagem kimball medidas relatório narrativa"}, {"id": "s4-2", "title": "Playbook ETL Python", "text": "playbook etl python referência completa para pipelines etl python seguindo padrão nid kimball etl python pipeline dim fato kimball pyarrow data quality azure"}, {"id": "s4-3", "title": "Playbook AI Engineering", "text": "playbook ai engineering referência para projetos de ia generativa com claude sdk, rag e agentes autônomos ai engineering claude sdk rag agente eval prompt autônomo"}, {"id": "s4-4", "title": "Playbook Azure AI", "text": "playbook azure ai referência para projetos usando azure ai — foundry, openai, ai search, document intelligence azure ai foundry openai ai search document intelligence embedding"}, {"id": "s4-5", "title": "Playbook Azure Data", "text": "playbook azure data referência para projetos de dados em azure — functions, adf, logic apps, storage events, iac azure data functions adf logic apps storage bicep event grid pipeline"}, {"id": "s4-6", "title": "Playbook M365 / Power Platform", "text": "playbook m365 / power platform referência para projetos de automação e low-code com microsoft 365 e power platform m365 power platform copilot studio power automate power apps teams sharepoint"}, {"id": "s4-7", "title": "Playbook Web / MES (ApontDELP)", "text": "playbook web / mes (apontdelp) referência para desenvolvimento web e mes no apontdelp (next.js + typescript + prisma) web mes apontdelp nextjs typescript prisma postgresql tdd playwright"}, {"id": "s4-8", "title": "Playbook RPA / N8N", "text": "playbook rpa / n8n referência para automações rpa e fluxos n8n no nid delp rpa n8n automação robô workflow webhook integração starter"}, {"id": "s4-9", "title": "Playbook API / Postman", "text": "playbook api / postman referência para documentação e testes de api com postman e newman api postman newman rest testes collection schema endpoint"}, {"id": "s4-10", "title": "Playbook Slides / Comunicação", "text": "playbook slides / comunicação referência para criação de apresentações e comunicação executiva no nid delp slides apresentação powerpoint comunicação narrativa executivo storytelling marp"}, {"id": "s4-11", "title": "Playbook SharePoint HTML Embed", "text": "playbook sharepoint html embed referência para embutir conteúdo html/js customizado em portais sharepoint online sharepoint html embed web part script editor iframe portal intranet"}, {"id": "s4-12", "title": "Playbook Propostas (referência)", "text": "playbook propostas (referência) referência para estruturar e formalizar propostas de projetos nid proposta projeto sdd brief spec escopo estimativa kickoff"}, {"id": "s5-1", "title": "Cheatsheet — 12 comandos /nid:*", "text": "cheatsheet — 12 comandos /nid:* referência rápida dos 12 comandos /nid:* com quando usar cada um comandos cheatsheet nid slash init specify plan gate implement skill-create eval"}, {"id": "s5-2", "title": "Cheatsheet — 28 agentes nid-*", "text": "cheatsheet — 28 agentes nid-* lista completa dos 28 agentes nid com papel e quando invocar agentes cheatsheet nid lista completa referência quick-ref"}, {"id": "s5-3", "title": "Cheatsheet — 21 skills nid-* (v2026-05-07)", "text": "cheatsheet — 21 skills nid-* (v2026-05-07) lista completa das skills disponíveis (21 entregues) com quando usar cada uma skills cheatsheet lista completa referência buckets"}, {"id": "s5-4", "title": "Glossário DELP", "text": "glossário delp termos específicos do contexto delp que os agentes nid conhecem e aplicam glossário delp termos vocabulário negócio fábrica kimball apontdelp"}, {"id": "s5-5", "title": "FAQ — Perguntas frequentes", "text": "faq — perguntas frequentes respostas para as dúvidas mais comuns ao usar o nid-spec-kit faq perguntas dúvidas frequentes erro ajuda troubleshoot"}];
+const SEARCH_INDEX = [{"id": "s0-1", "title": "SDD — Spec-Driven Development", "text": "sdd — spec-driven development o que é sdd e por que o nid adotou como padrão de trabalho com ia sdd spec especificação ciclo desenvolvimento plan implement"}, {"id": "s0-2", "title": "LLM — O que é e como usar bem", "text": "llm — o que é e como usar bem como llms funcionam na prática e o que saber para trabalhar bem com eles llm modelo contexto tokens claude prompt limitações"}, {"id": "s0-3", "title": "Agent Orchestration — como agentes trabalham juntos", "text": "agent orchestration — como agentes trabalham juntos como o nid usa múltiplos agentes especializados em paralelo ou em sequência agente orchestration subagent paralelismo multi-agent orquestrador"}, {"id": "s0-4", "title": "Por que o NID adotou IA agêntica", "text": "por que o nid adotou ia agêntica o contexto e motivação por trás da adoção de ia agêntica no nid delp nid delp adoção motivação histórico portfólio decisão"}, {"id": "s0-5", "title": "Glossário Visual", "text": "glossário visual termos chave do universo nid com definições visuais e analogias glossário termos vocabulário definições sdd skill agente gate knowledge"}, {"id": "s1-1", "title": "Instalação do nid-spec-kit", "text": "instalação do nid-spec-kit como instalar o nid-spec-kit globalmente no claude code (windows + linux/mac) instalação install setup plugin global powershell windows"}, {"id": "s1-2", "title": "Casual vs Formal — dois modos de uso", "text": "casual vs formal — dois modos de uso quando usar cada modo e como transitar entre eles casual formal modo nid-project init hooks gate"}, {"id": "s1-3", "title": "Primeira skill — usando nid-dax-medidas", "text": "primeira skill — usando nid-dax-medidas passo a passo para usar sua primeira skill nid em um exemplo real skill usar primeiro dax medidas exemplo casual"}, {"id": "s1-4", "title": "Primeiro agente — nid-bi-engineer", "text": "primeiro agente — nid-bi-engineer como invocar e trabalhar com agentes especializados nid agente bi-engineer persona primeiro exemplo invocar"}, {"id": "s1-5", "title": "Os 10 Princípios da Constituição NID", "text": "os 10 princípios da constituição nid os 10 princípios universais que todo agente nid segue — e você precisa conhecer constituição princípios regras não-negociável vbc modo didático pt-br"}, {"id": "s1-6", "title": "Modo Didático — aprender enquanto entrega", "text": "modo didático — aprender enquanto entrega como o modo didático funciona na prática, com exemplos reais de antes e depois modo didático o que por que como aprender ensinar explicar"}, {"id": "s2-1", "title": "Ciclo SDD — do brief ao código", "text": "ciclo sdd — do brief ao código o ciclo sdd completo passo a passo: do brief inicial ao código revisado sdd ciclo specify plan gate implement fluxo fases formal"}, {"id": "s2-2", "title": "/nid:gate — o checkpoint bloqueante", "text": "/nid:gate — o checkpoint bloqueante como funciona o /nid:gate, o que o nid-red-team verifica, e como tomar a decisão go/no-go gate red-team bloqueante go no-go adversarial risco hook"}, {"id": "s2-3", "title": "Verificação por mídia — VBC na prática", "text": "verificação por mídia — vbc na prática como aplicar verification before completion em cada tipo de projeto nid vbc verificação evidência mídia bi etl ai m365 web testes"}, {"id": "s2-4", "title": "Árvore de decisão — qual agente usar?", "text": "árvore de decisão — qual agente usar? guia visual para escolher o agente certo para cada situação agente decisão escolha qual usar árvore domínio tarefa"}, {"id": "s2-5", "title": "Knowledge base — como usar e manter", "text": "knowledge base — como usar e manter como a knowledge base funciona, o que vai nela, e como mantê-la atualizada knowledge base knowledge/ manter atualizar versionada lições portfólio"}, {"id": "s3-1", "title": "/nid:skill-create — criando novas skills", "text": "/nid:skill-create — criando novas skills como criar uma skill nova no nid-spec-kit seguindo o padrão nid skill-create criar skill skill nova contribuir nid-claude-skills-author bucket"}, {"id": "s3-2", "title": "/nid:rules-distill — extraindo padrões de exemplos", "text": "/nid:rules-distill — extraindo padrões de exemplos como usar /nid:rules-distill para transformar exemplos aprovados em skill ou princípio rules-distill regras padrões distilação exemplos skill princípio"}, {"id": "s3-3", "title": "/nid:eval — avaliando skills e agentes", "text": "/nid:eval — avaliando skills e agentes como usar /nid:eval para verificar que skills e agentes continuam no padrão eval avaliação golden métrica drift qualidade skill agente"}, {"id": "s3-4", "title": "Manter knowledge — o curador do kit", "text": "manter knowledge — o curador do kit processo e responsabilidades de quem mantém a knowledge base do nid-spec-kit knowledge curador manter atualizar lições portfólio ferramentas"}, {"id": "s3-5", "title": "Contribuir com PR — fluxo de contribuição", "text": "contribuir com pr — fluxo de contribuição como contribuir com melhorias ao nid-spec-kit via pull request pr pull request contribuir branch review merge git github"}, {"id": "s3-6", "title": "Override de constituição — quando e como usar ADR", "text": "override de constituição — quando e como usar adr como fazer override de um princípio da constituição nid e registrar em adr override constituição adr architecture decision record exceção princípio bypass"}, {"id": "s4-1", "title": "Playbook BI / DAX", "text": "playbook bi / dax referência completa para projetos de business intelligence com power bi e dax no nid bi dax power bi modelagem kimball medidas relatório narrativa"}, {"id": "s4-2", "title": "Playbook ETL Python", "text": "playbook etl python referência completa para pipelines etl python seguindo padrão nid kimball etl python pipeline dim fato kimball pyarrow data quality azure"}, {"id": "s4-3", "title": "Playbook AI Engineering", "text": "playbook ai engineering referência para projetos de ia generativa com claude sdk, rag e agentes autônomos ai engineering claude sdk rag agente eval prompt autônomo"}, {"id": "s4-4", "title": "Playbook Azure AI", "text": "playbook azure ai referência para projetos usando azure ai — foundry, openai, ai search, document intelligence azure ai foundry openai ai search document intelligence embedding"}, {"id": "s4-5", "title": "Playbook Azure Data", "text": "playbook azure data referência para projetos de dados em azure — functions, adf, logic apps, storage events, iac azure data functions adf logic apps storage bicep event grid pipeline"}, {"id": "s4-6", "title": "Playbook M365 / Power Platform", "text": "playbook m365 / power platform referência para projetos de automação e low-code com microsoft 365 e power platform m365 power platform copilot studio power automate power apps teams sharepoint"}, {"id": "s4-7", "title": "Playbook Web / MES (ApontDELP)", "text": "playbook web / mes (apontdelp) referência para desenvolvimento web e mes no apontdelp (next.js + typescript + prisma) web mes apontdelp nextjs typescript prisma postgresql tdd playwright"}, {"id": "s4-8", "title": "Playbook RPA / N8N", "text": "playbook rpa / n8n referência para automações rpa e fluxos n8n no nid delp rpa n8n automação robô workflow webhook integração starter"}, {"id": "s4-9", "title": "Playbook API / Postman", "text": "playbook api / postman referência para documentação e testes de api com postman e newman api postman newman rest testes collection schema endpoint"}, {"id": "s4-10", "title": "Playbook Slides / Comunicação", "text": "playbook slides / comunicação referência para criação de apresentações e comunicação executiva no nid delp slides apresentação powerpoint comunicação narrativa executivo storytelling marp"}, {"id": "s4-11", "title": "Playbook SharePoint HTML Embed", "text": "playbook sharepoint html embed referência para embutir conteúdo html/js customizado em portais sharepoint online sharepoint html embed web part script editor iframe portal intranet"}, {"id": "s4-12", "title": "Playbook Propostas (referência)", "text": "playbook propostas (referência) referência para estruturar e formalizar propostas de projetos nid proposta projeto sdd brief spec escopo estimativa kickoff"}, {"id": "s5-1", "title": "Cheatsheet — 12 comandos /nid:*", "text": "cheatsheet — 12 comandos /nid:* referência rápida dos 12 comandos /nid:* com quando usar cada um comandos cheatsheet nid slash init specify plan gate implement skill-create eval"}, {"id": "s5-2", "title": "Cheatsheet — 28 agentes nid-*", "text": "cheatsheet — 28 agentes nid-* lista completa dos 28 agentes nid com papel e quando invocar agentes cheatsheet nid lista completa referência quick-ref"}, {"id": "s5-3", "title": "Cheatsheet — 45 skills nid-* (v2026-05-08)", "text": "cheatsheet — 45 skills nid-* (v2026-05-08) lista completa das 45 skills disponíveis organizadas por bucket — com quando usar cada uma skills cheatsheet lista completa referência buckets catálogo"}, {"id": "s5-4", "title": "Glossário DELP", "text": "glossário delp termos específicos do contexto delp que os agentes nid conhecem e aplicam glossário delp termos vocabulário negócio fábrica kimball apontdelp"}, {"id": "s5-5", "title": "FAQ — Perguntas frequentes", "text": "faq — perguntas frequentes respostas para as dúvidas mais comuns ao usar o nid-spec-kit faq perguntas dúvidas frequentes erro ajuda troubleshoot"}];
 
 // ── Navigation ──────────────────────────────────────────────────────
 let activeSlug = null;
