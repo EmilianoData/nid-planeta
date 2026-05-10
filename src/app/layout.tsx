@@ -2,8 +2,15 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'NID · Planeta Delp',
-  description: 'Núcleo de Inovação Delp — apresentação interativa',
+  title: 'NID · Planeta — Núcleo de Inovação Delp',
+  description:
+    'Petronius e a equipe do Núcleo de Inovação da Delp Engenharia. Um time desbravador e inovador construindo o futuro do canteiro.',
+  openGraph: {
+    title: 'NID · Planeta — Núcleo de Inovação Delp',
+    description: 'Petronius é a IA companion do NID Delp. Sistema Solar, Pipeline e UniversiNID.',
+    type: 'website',
+    locale: 'pt_BR',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
