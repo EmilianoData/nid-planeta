@@ -1,40 +1,77 @@
-import Scene from '@/components/SceneClient';
-import Hud from '@/components/Hud';
-import InfoPanel from '@/components/InfoPanel';
-import KioskButton from '@/components/KioskButton';
-import CometPanel from '@/components/CometPanel';
-import PipelineView from '@/components/PipelineView';
-import PipelineEntryButton from '@/components/PipelineEntryButton';
-import UniversiNIDView from '@/components/UniversiNIDView';
-import UniversiNIDButton from '@/components/UniversiNIDButton';
+'use client';
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+import Header from '@/components/landing/Header';
+import { RimBlobs, Starfield } from '@/components/landing/Decor';
+import HeroText from '@/components/landing/HeroText';
+import { HudLeft, HudRight } from '@/components/landing/Huds';
+import PetroniusAvatar from '@/components/landing/PetroniusAvatar';
+import CrewBench from '@/components/landing/CrewBench';
+import SpeechBubble from '@/components/landing/SpeechBubble';
+import PortalDock from '@/components/landing/PortalDock';
+import CustomCursor from '@/components/landing/CustomCursor';
+import { useScrollProgress } from '@/lib/landing/useScrollProgress';
+import './landing.css';
+
+/**
+ * NID · Planeta — Landing.
+ * Three acts driven by `useScrollProgress`:
+ *   Act 1 (0–30%): Petronius hero, rim blobs, hero text.
+ *   Act 2 (30–70%): bench reveals, speech bubble types, right HUD lights up.
+ *   Act 3 (70–100%): portal dock rises with the warp-on-click transition.
+ */
+export default function NidPlanetaLanding() {
+  const trackRef = useScrollProgress();
+  const act2Live = useThresholdGate(0.2);
+
   return (
-    <main className="relative h-screen w-screen overflow-hidden">
-      <Scene />
-      <Hud />
-      <CometPanel />
-      <header className="pointer-events-none absolute top-0 left-0 right-0 px-10 py-6 z-10 flex items-start justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="h-12 w-12 bg-gradient-to-br from-delp-orange to-delp-yellow" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }} />
-          <div>
-            <h1 className="font-display text-2xl tracking-widest">
-              NID · <span className="text-delp-orange">Núcleo de Inovação</span>
-            </h1>
-            <p className="font-mono text-xs tracking-widest text-delp-gray uppercase mt-1">
-              Sistema Solar Delp · Facilitar a vida do usuário final
-            </p>
+    <div className="landing-root">
+      <CustomCursor />
+
+      {/* Scroll track: stage is sticky, spacer below pushes scroll-height. */}
+      <div className="landing-track" ref={trackRef}>
+        <div className="landing-stage">
+          <Starfield />
+          <RimBlobs />
+          <Header />
+          <HudLeft />
+          <HudRight mounted={act2Live} />
+
+          <HeroText />
+
+          <div className="stage-center">
+            <PetroniusAvatar typing={act2Live} />
           </div>
+
+          <CrewBench />
+          <SpeechBubble visible={act2Live} />
+
+          <PortalDock />
         </div>
-        <div className="flex items-center gap-2">
-          <PipelineEntryButton />
-          <UniversiNIDButton />
-          <InfoPanel />
-          <KioskButton />
-        </div>
-      </header>
-      <PipelineView />
-      <UniversiNIDView />
-    </main>
+        <div className="landing-spacer" />
+      </div>
+    </div>
   );
+}
+
+/**
+ * Lazy-mount gate driven by the global `--p` CSS var. Returns `true` once
+ * scroll progress crosses `threshold`, then sticks. Keeps the bench / right
+ * HUD / speech bubble out of the DOM during Act 1.
+ */
+function useThresholdGate(threshold: number) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (open) return;
+    const html = document.documentElement;
+    const id = window.setInterval(() => {
+      const p = parseFloat(html.style.getPropertyValue('--p') || '0');
+      if (p > threshold) {
+        setOpen(true);
+        window.clearInterval(id);
+      }
+    }, 150);
+    return () => window.clearInterval(id);
+  }, [open, threshold]);
+  return open;
 }
