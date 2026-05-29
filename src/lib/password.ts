@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 
-const ROUNDS = 10;
+const ROUNDS = 12;
 
 export function hashPassword(plain: string): Promise<string> {
   return bcrypt.hash(plain, ROUNDS);

@@ -27,4 +27,10 @@ describe('catálogo UniversiNID', () => {
     expect(r?.licao.screenId).toBe('s0-3');
     expect(r?.modulo.id).toBe('m0');
   });
+
+  it('ordem de cada lição bate com a posição no array', () => {
+    for (const m of CATALOGO) {
+      m.licoes.forEach((l, i) => expect(l.ordem).toBe(i + 1));
+    }
+  });
 });

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildDashboard, type ProgressRow } from './dashboard';
+import { todasLicoes } from './catalogo';
 
 const d = (s: string) => new Date(s + 'T12:00:00Z');
 
@@ -62,5 +63,22 @@ describe('buildDashboard', () => {
     expect(r.trilha.licoes).toHaveLength(5);
     expect(r.trilha.licoes[0].status).toBe('COMPLETED');
     expect(r.trilha.licoes[1].status).toBe('NOT_STARTED');
+  });
+
+  it('tudo concluído: proxima=null, trilha aponta para módulo da lição mais recente', () => {
+    const baseDate = d('2026-05-01');
+    const rows: ProgressRow[] = todasLicoes().map((l) => ({
+      lessonSlug: l.slug,
+      status: 'COMPLETED' as const,
+      pct: 100,
+      updatedAt: baseDate,
+    }));
+    // Override faq (last lesson, module m5 "Referência Rápida") with a later date
+    const faqIdx = rows.findIndex((r) => r.lessonSlug === 'faq');
+    rows[faqIdx] = { ...rows[faqIdx], updatedAt: d('2026-05-29') };
+
+    const r = buildDashboard(rows, d('2026-05-29'));
+    expect(r.proxima).toBeNull();
+    expect(r.trilha.moduloTitulo).toBe('Referência Rápida');
   });
 });

@@ -50,7 +50,9 @@ export function buildDashboard(rows: ProgressRow[], now: Date): DashboardData {
   const bySlug = new Map(rows.map((r) => [r.lessonSlug, r]));
   const licoes = todasLicoes();
   const totalLicoes = licoes.length;
-  const licoesConcluidas = rows.filter((r) => r.status === 'COMPLETED').length;
+  const licoesConcluidas = licoes.filter(
+    (l) => bySlug.get(l.slug)?.status === 'COMPLETED',
+  ).length;
   const pctGeral = totalLicoes === 0 ? 0 : Math.round((licoesConcluidas / totalLicoes) * 100);
 
   const modulosAtivos = CATALOGO.filter((m) =>
@@ -66,6 +68,11 @@ export function buildDashboard(rows: ProgressRow[], now: Date): DashboardData {
 
   let proxima: DashboardData['proxima'] = null;
   let trilhaModuloId = CATALOGO[0].id;
+  if (!alvo && rows.length > 0) {
+    const maisRecente = [...rows].sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())[0];
+    const ref = getLicao(maisRecente.lessonSlug);
+    if (ref) trilhaModuloId = ref.modulo.id;
+  }
   if (alvo) {
     const ref = getLicao(alvo.slug)!;
     proxima = {
