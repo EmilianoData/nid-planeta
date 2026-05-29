@@ -234,8 +234,11 @@ SEED_ADMIN_PASSWORD="troque-no-primeiro-login"
 
 - [ ] **Step 6: Criar `.env` local (não commitado)**
 
-Criar Neon DB, copiar a connection string para `.env` (mesmas chaves do `.env.example`).
-Gerar o secret: `npx auth secret` (preenche `AUTH_SECRET` em `.env`).
+Criar Neon DB, copiar a connection string para `DATABASE_URL` em `.env` (mesmas chaves do
+`.env.example`). Gerar o `AUTH_SECRET` (NextAuth v5 lê essa variável) com:
+`node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+e colar em `.env`. **Não** usar `npx auth secret` — esse comando baixa o pacote `better-auth`
+e imprime `BETTER_AUTH_SECRET` (nome errado para o NextAuth).
 
 - [ ] **Step 7: Criar o client singleton**
 
