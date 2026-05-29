@@ -1,9 +1,9 @@
-import './universinid.css';
+import '../universinid.css';
 import type { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { getProgressMap, getDashboardData } from '@/lib/universinid/actions';
-import { ShellChrome } from './ShellChrome';
+import { ShellChrome } from '../ShellChrome';
 
 export default async function UniversinidLayout({ children }: { children: ReactNode }) {
   const session = await auth();
