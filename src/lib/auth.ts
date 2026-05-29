@@ -1,13 +1,19 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { verifyPassword } from '@/lib/password';
 import { authConfig } from '@/lib/auth.config';
 
+const DUMMY_HASH = bcrypt.hashSync('timing-guard-not-a-real-password', 12);
+
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(1).max(72),
+  password: z.string().min(1).refine(
+    (s) => new TextEncoder().encode(s).length <= 72,
+    { message: 'Senha muito longa' },
+  ),
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -24,11 +30,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!parsed.success) return null;
         const { email, password } = parsed.data;
 
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user || !user.isActive) return null;
+        let user;
+        try {
+          user = await prisma.user.findUnique({ where: { email } });
+        } catch (err) {
+          console.error('auth:db-unavailable', { email, err });
+          throw err;
+        }
 
-        const ok = await verifyPassword(password, user.passwordHash);
-        if (!ok) return null;
+        const hashToCompare = user?.isActive ? user.passwordHash : DUMMY_HASH;
+        const ok = await verifyPassword(password, hashToCompare);
+        if (!user || !user.isActive || !ok) return null;
 
         return { id: user.id, email: user.email, nome: user.name, role: user.role };
       },

@@ -1,7 +1,7 @@
 import type { NextAuthConfig } from 'next-auth';
 
 export const authConfig: NextAuthConfig = {
-  session: { strategy: 'jwt' },
+  session: { strategy: 'jwt', maxAge: 8 * 60 * 60 },
   pages: { signIn: '/universinid/login' },
   providers: [], // preenchido em auth.ts (mantém middleware sem Prisma)
   callbacks: {
