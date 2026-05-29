@@ -1,15 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Header from '@/components/landing/Header';
 import { RimBlobs, Starfield } from '@/components/landing/Decor';
 import HeroText from '@/components/landing/HeroText';
 import { HudLeft, HudRight } from '@/components/landing/Huds';
 import PetroniusAvatar from '@/components/landing/PetroniusAvatar';
+import Avatar from '@/components/landing/Avatar';
+import { PETRONIUS } from '@/lib/landing/team';
 import CrewBench from '@/components/landing/CrewBench';
 import SpeechBubble from '@/components/landing/SpeechBubble';
 import PortalDock from '@/components/landing/PortalDock';
 import CustomCursor from '@/components/landing/CustomCursor';
+import NidPresentation from '@/components/landing/NidPresentation';
 import { useScrollProgress } from '@/lib/landing/useScrollProgress';
 import './landing.css';
 
@@ -40,7 +43,13 @@ export default function NidPlanetaLanding() {
           <HeroText />
 
           <div className="stage-center">
-            <PetroniusAvatar typing={act2Live} />
+            <Suspense
+              fallback={
+                <Avatar color={PETRONIUS.color} scale={2.4} alive={false} gaze={{ x: 0, y: 0 }} />
+              }
+            >
+              <PetroniusAvatar typing={act2Live} />
+            </Suspense>
           </div>
 
           <CrewBench />
@@ -49,6 +58,7 @@ export default function NidPlanetaLanding() {
           <PortalDock />
         </div>
         <div className="landing-spacer" />
+        <NidPresentation />
       </div>
     </div>
   );
