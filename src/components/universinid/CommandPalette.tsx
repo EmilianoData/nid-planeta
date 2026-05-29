@@ -50,9 +50,11 @@ export function CommandPalette({ open, onClose, isAdmin }:
       style={{ position: 'fixed', inset: 0, background: 'rgba(20,15,46,.45)', zIndex: 100,
         display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '12vh' }}>
       <div onClick={(e) => e.stopPropagation()}
+        role="dialog" aria-modal="true" aria-label="Buscar lições e páginas"
         style={{ width: 'min(560px,92vw)', background: '#fff', borderRadius: 14, overflow: 'hidden',
           boxShadow: '0 24px 60px rgba(20,15,46,.4)' }}>
         <input autoFocus value={q} onChange={(e) => setQ(e.target.value)}
+          aria-label="Buscar lições e páginas"
           placeholder="Buscar lições, páginas…"
           style={{ width: '100%', padding: '16px 18px', border: 'none', borderBottom: '1px solid #ececf6',
             fontSize: '1rem', outline: 'none' }} />
@@ -63,7 +65,9 @@ export function CommandPalette({ open, onClose, isAdmin }:
               style={{ display: 'flex', width: '100%', textAlign: 'left', gap: 10, padding: '12px 18px',
                 border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '.9rem', alignItems: 'center' }}
               onMouseEnter={(e) => (e.currentTarget.style.background = '#f5f4ff')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+              onFocus={(e) => (e.currentTarget.style.background = '#f5f4ff')}
+              onBlur={(e) => (e.currentTarget.style.background = 'transparent')}>
               <span style={{ flex: 1 }}>{i.label}</span>
               <span style={{ fontSize: '.66rem', color: '#a6a3c4' }}>{i.hint}</span>
             </button>

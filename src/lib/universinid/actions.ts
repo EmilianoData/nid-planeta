@@ -1,5 +1,6 @@
 'use server';
 
+import { cache } from 'react';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/lib/auth';
@@ -8,6 +9,10 @@ import { hashPassword } from '@/lib/password';
 import { Prisma } from '@/generated/prisma';
 import { getLicao } from './catalogo';
 import { buildDashboard, type ProgressRow, type DashboardData } from './dashboard';
+
+const buscarLinhasProgresso = cache((userId: string) =>
+  prisma.lessonProgress.findMany({ where: { userId } }),
+);
 
 async function exigirSessao() {
   const session = await auth();
@@ -44,7 +49,7 @@ export async function markLessonProgress(input: z.infer<typeof progressSchema>) 
 
 export async function getDashboardData(): Promise<DashboardData & { nome: string }> {
   const user = await exigirSessao();
-  const rows = await prisma.lessonProgress.findMany({ where: { userId: user.id } });
+  const rows = await buscarLinhasProgresso(user.id);
   const progress: ProgressRow[] = rows.map((r) => ({
     lessonSlug: r.lessonSlug,
     status: r.status as ProgressRow['status'],
@@ -56,7 +61,7 @@ export async function getDashboardData(): Promise<DashboardData & { nome: string
 
 export async function getProgressMap(): Promise<Record<string, { status: string; pct: number }>> {
   const user = await exigirSessao();
-  const rows = await prisma.lessonProgress.findMany({ where: { userId: user.id } });
+  const rows = await buscarLinhasProgresso(user.id);
   return Object.fromEntries(rows.map((r) => [r.lessonSlug, { status: r.status, pct: r.pct }]));
 }
 

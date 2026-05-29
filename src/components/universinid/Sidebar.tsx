@@ -23,8 +23,10 @@ export function Sidebar({ progress }: { progress: StatusMap }) {
             const p = st === 'COMPLETED' ? 100 : (progress[l.slug]?.pct ?? 0);
             return (
               <Link key={l.slug} href={`/universinid/licao/${l.slug}`}
-                className={`uni-nav ${pathname.endsWith(l.slug) ? 'on' : ''}`}>
-                <span className="uni-rg" style={{ background: anel(p, st === 'COMPLETED') }} />
+                className={`uni-nav ${pathname === `/universinid/licao/${l.slug}` ? 'on' : ''}`}>
+                <span className="uni-rg" role="img"
+                  aria-label={st === 'COMPLETED' ? 'Concluída' : `${p}% concluído`}
+                  style={{ background: anel(p, st === 'COMPLETED') }} />
                 {l.titulo}
               </Link>
             );

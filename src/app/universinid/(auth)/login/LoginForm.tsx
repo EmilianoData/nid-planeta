@@ -9,7 +9,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl: string }) {
     <form action={formAction} className="form">
       <h1>Bem-vindo</h1>
       <p>Acesso restrito à equipe NID · DELP</p>
-      {error && <div className="err">{error}</div>}
+      {error && <div className="err" role="alert">{error}</div>}
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
       <label htmlFor="email">E-mail</label>
       <input id="email" name="email" type="email" required autoComplete="email" />

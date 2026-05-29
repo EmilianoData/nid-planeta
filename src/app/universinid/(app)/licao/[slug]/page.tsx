@@ -16,7 +16,7 @@ export default async function LicaoPage({ params }: { params: Promise<{ slug: st
     <div className="uni-lesson">
       <div className="uni-lesson-bar">
         <Link href="/universinid" className="uni-wm" style={{ fontSize: '.85rem' }}>← Voltar</Link>
-        <h2>{ref.modulo.emoji} {ref.licao.titulo}</h2>
+        <h1>{ref.modulo.emoji} {ref.licao.titulo}</h1>
         <span className="met"><span className="chip">{ref.licao.tempoMin} min</span><span className="chip">{ref.licao.dificuldade}</span></span>
         <MarkComplete slug={slug} concluida={st === 'COMPLETED'} />
       </div>

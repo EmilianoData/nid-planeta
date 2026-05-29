@@ -47,14 +47,14 @@ export function AdminUsers({ users }: { users: Row[] }) {
       <h1 className="uni-hi">Gestão de usuários</h1>
       <p className="uni-sub">Crie e desative acessos. Sem auto-cadastro — você controla quem entra.</p>
 
-      {erro && <div className="err" style={{ marginBottom: 16 }}>{erro}</div>}
+      {erro && <div className="err" role="alert" style={{ marginBottom: 16 }}>{erro}</div>}
 
       <form action={onCreate} style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 24, alignItems: 'flex-end' }}>
-        <div><label>Nome</label><br /><input name="name" required style={inp} /></div>
-        <div><label>E-mail</label><br /><input name="email" type="email" required style={inp} /></div>
-        <div><label>Senha inicial</label><br /><input name="password" type="text" minLength={6} required style={inp} /></div>
-        <div><label>Papel</label><br />
-          <select name="role" style={inp}><option value="STUDENT">Aluno</option><option value="ADMIN">Admin</option></select>
+        <div><label htmlFor="adm-name">Nome</label><br /><input id="adm-name" name="name" required style={inp} /></div>
+        <div><label htmlFor="adm-email">E-mail</label><br /><input id="adm-email" name="email" type="email" required style={inp} /></div>
+        <div><label htmlFor="adm-pass">Senha inicial</label><br /><input id="adm-pass" name="password" type="text" minLength={6} required style={inp} /></div>
+        <div><label htmlFor="adm-role">Papel</label><br />
+          <select id="adm-role" name="role" style={inp}><option value="STUDENT">Aluno</option><option value="ADMIN">Admin</option></select>
         </div>
         <button className="uni-btn" type="submit" disabled={pending}>{pending ? 'Criando…' : 'Criar usuário'}</button>
       </form>

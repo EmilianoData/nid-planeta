@@ -1,5 +1,5 @@
 .uni-shell { --p:#3C3489; --pm:#534AB7; --pl:#f0eeff; --red:#cc0f10; --org:#dd8f1a;
-  --ink:#1d1840; --muted:#7c799c; --line:#ececf6; --bg:#faf9ff;
+  --ink:#1d1840; --muted:#5e5b7a; --line:#ececf6; --bg:#faf9ff;
   font-family: "Barlow","Open Sans",system-ui,sans-serif; color:var(--ink);
   background:var(--bg); min-height:100vh; display:flex; flex-direction:column; }
 .uni-shell *{ box-sizing:border-box; }
@@ -9,16 +9,16 @@
 .uni-wm b{ color:var(--red); }
 .uni-k{ margin-left:8px; flex:1; max-width:360px; display:flex; align-items:center; gap:8px;
   background:#f3f2fb; border:1px solid #e7e5f4; border-radius:10px; padding:8px 12px;
-  color:#9794b5; font-size:.85rem; cursor:pointer; }
+  color:#5e5b80; font-size:.85rem; cursor:pointer; }
 .uni-k .cmd{ margin-left:auto; font-size:.68rem; background:#fff; border:1px solid #e2e0f0;
   border-radius:5px; padding:1px 6px; color:#6b6890; font-family:ui-monospace,monospace; }
-.uni-streak{ display:flex; align-items:center; gap:6px; font-size:.85rem; font-weight:700; color:var(--org); }
+.uni-streak{ display:flex; align-items:center; gap:6px; font-size:.85rem; font-weight:700; color:#8a5a00; }
 .uni-av{ width:34px; height:34px; border-radius:50%; border:none; cursor:pointer;
   background:radial-gradient(circle at 35% 30%,#7a6ff0,#3C3489 65%); box-shadow:0 0 0 1px #d9d6ee; color:#fff; font-weight:700; }
 .uni-body{ display:flex; flex:1; }
 .uni-side{ width:230px; background:#fff; border-right:1px solid var(--line); padding:16px 12px;
   flex-shrink:0; overflow-y:auto; }
-.uni-lbl{ font-size:.62rem; letter-spacing:1.2px; color:#a6a3c4; font-weight:700; margin:8px 8px 8px; }
+.uni-lbl{ font-size:.62rem; letter-spacing:1.2px; color:#6b6890; font-weight:700; margin:8px 8px 8px; }
 .uni-nav{ display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:9px;
   margin-bottom:2px; font-size:.85rem; color:#4a4770; text-decoration:none; }
 .uni-nav:hover{ background:#f5f4ff; }
@@ -43,11 +43,11 @@
 .uni-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
 .uni-stat{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
 .uni-stat .n{ font-size:1.5rem; font-weight:800; }
-.uni-stat .n small{ font-size:.78rem; color:#a6a3c4; font-weight:600; }
-.uni-stat.acc .n{ color:var(--org); }
-.uni-stat .t{ font-size:.72rem; color:#8a87a8; margin-top:2px; }
+.uni-stat .n small{ font-size:.78rem; color:#6b6890; font-weight:600; }
+.uni-stat.acc .n{ color:#b3720f; }
+.uni-stat .t{ font-size:.72rem; color:#615e7c; margin-top:2px; }
 .uni-sec{ font-size:.82rem; font-weight:750; color:#4a4770; margin:0 0 12px; }
-.uni-sec b{ color:#a6a3c4; font-weight:600; }
+.uni-sec b{ color:#6b6890; font-weight:600; }
 .uni-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
 .uni-ls{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; text-decoration:none; color:inherit; display:block; }
 .uni-ls:hover{ border-color:#cdbffb; box-shadow:0 6px 16px rgba(60,52,137,.1); }
@@ -56,11 +56,11 @@
 .uni-ls .ico{ width:32px; height:32px; border-radius:8px; background:var(--pl); display:flex; align-items:center; justify-content:center; }
 .uni-ls .done{ width:20px; height:20px; border-radius:50%; background:#0B861D; color:#fff; display:flex; align-items:center; justify-content:center; font-size:.66rem; }
 .uni-ls h4{ font-size:.85rem; margin:0 0 8px; font-weight:650; line-height:1.25; }
-.uni-ls .met{ display:flex; gap:8px; font-size:.66rem; color:#9794b5; }
+.uni-ls .met{ display:flex; gap:8px; font-size:.66rem; color:#5e5b80; }
 .uni-ls .chip{ background:#f3f2fb; border-radius:20px; padding:2px 8px; }
 .uni-lesson{ flex:1; display:flex; flex-direction:column; }
 .uni-lesson-bar{ display:flex; align-items:center; gap:14px; padding:14px 30px; border-bottom:1px solid var(--line); background:#fff; }
-.uni-lesson-bar h2{ font-size:1rem; margin:0; flex:1; }
+.uni-lesson-bar h1{ font-size:1rem; margin:0; flex:1; }
 .uni-frame{ flex:1; border:none; width:100%; background:#fff; min-height:70vh; }
 .uni-btn{ background:var(--p); color:#fff; border:none; border-radius:10px; padding:9px 16px; font-weight:700; font-size:.82rem; cursor:pointer; }
 .uni-btn.ok{ background:#0B861D; }

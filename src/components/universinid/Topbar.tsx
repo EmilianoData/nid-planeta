@@ -8,10 +8,10 @@ export function Topbar({ streak, onOpenPalette }: { streak: number; onOpenPalett
     <header className="uni-top">
       <Link href="/universinid" className="uni-wm">Universi<b>NID</b></Link>
       <button className="uni-k" onClick={onOpenPalette} aria-label="Abrir busca">
-        🔍 Buscar lições, skills, agentes… <span className="cmd">⌘K</span>
+        <span aria-hidden="true">🔍</span> Buscar lições, skills, agentes… <span className="cmd">⌘K</span>
       </button>
-      <span className="uni-streak">🔥 {streak} dias</span>
-      <button className="uni-av" onClick={() => signOut({ callbackUrl: '/universinid/login' })} title="Sair" aria-label="Sair">⎋</button>
+      <span className="uni-streak"><span aria-hidden="true">🔥</span> {streak} dias</span>
+      <button className="uni-av" onClick={() => signOut({ callbackUrl: '/universinid/login' })} title="Sair" aria-label="Sair"><span aria-hidden="true">⎋</span></button>
     </header>
   );
 }

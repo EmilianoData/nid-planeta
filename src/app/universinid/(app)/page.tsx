@@ -9,7 +9,7 @@ export default async function DashboardPage() {
 
   return (
     <main className="uni-main">
-      <h1 className="uni-hi">Olá, <span>{d.nome.split(' ')[0]}</span> 👋</h1>
+      <h1 className="uni-hi">Olá, <span>{d.nome.split(' ')[0]}</span> <span aria-hidden="true">👋</span></h1>
       <p className="uni-sub">
         {d.proxima
           ? <>Você está a {faltam} lições de concluir o UniversiNID.</>
@@ -34,7 +34,7 @@ export default async function DashboardPage() {
         <div className="uni-stat"><div className="n">{d.streakDias}<small> dias</small></div><div className="t">Sequência (streak)</div></div>
       </div>
 
-      <h3 className="uni-sec">Continuar na trilha <b>· {d.trilha.moduloTitulo}</b></h3>
+      <h2 className="uni-sec">Continuar na trilha <b>· {d.trilha.moduloTitulo}</b></h2>
       <div className="uni-cards">
         {d.trilha.licoes.map((l) => (
           <Link key={l.slug} href={`/universinid/licao/${l.slug}`}
