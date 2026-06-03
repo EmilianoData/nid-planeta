@@ -4,6 +4,10 @@ generator client {
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
 datasource db {
   provider = "postgresql"
 }
@@ -44,4 +48,77 @@ enum ProgressStatus {
   NOT_STARTED
   IN_PROGRESS
   COMPLETED
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum Dificuldade {
+  INICIANTE
+  INTERMEDIARIO
+  AVANCADO
+}
+
+model Course {
+  id        String        @id @default(cuid())
+  slug      String        @unique
+  title     String
+  subtitle  String?
+  position  Int           @default(0)
+  status    ContentStatus @default(DRAFT)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  modules   Module[]
+
+  @@map("courses")
+}
+
+model Module {
+  id        String        @id @default(cuid())
+  courseId  String
+  title     String
+  emoji     String        @default("📘")
+  position  Int           @default(0)
+  status    ContentStatus @default(DRAFT)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  course    Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+
+  @@index([courseId])
+  @@map("modules")
+}
+
+model Lesson {
+  id               String            @id @default(cuid())
+  moduleId         String
+  slug             String            @unique
+  title            String
+  tempoMin         Int               @default(5)
+  dificuldade      Dificuldade       @default(INICIANTE)
+  position         Int               @default(0)
+  status           ContentStatus     @default(DRAFT)
+  /// [BlockDoc]
+  contentDraft     Json?
+  /// [BlockDoc]
+  contentPublished Json?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  module           Module            @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  aliases          LessonSlugAlias[]
+
+  @@index([moduleId])
+  @@map("lessons")
+}
+
+model LessonSlugAlias {
+  oldSlug   String   @id
+  lessonId  String
+  createdAt DateTime @default(now())
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+  @@map("lesson_slug_aliases")
 }
