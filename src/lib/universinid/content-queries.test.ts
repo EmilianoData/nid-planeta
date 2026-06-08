@@ -1,10 +1,49 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-const { lessonFindUnique, aliasFindUnique } = vi.hoisted(() => ({ lessonFindUnique: vi.fn(), aliasFindUnique: vi.fn() }));
+const { lessonFindUnique, aliasFindUnique, lessonProgressCount } = vi.hoisted(() => ({
+  lessonFindUnique: vi.fn(),
+  aliasFindUnique: vi.fn(),
+  lessonProgressCount: vi.fn(),
+}));
 vi.mock('@/lib/prisma', () => ({ prisma: {
   lesson: { findUnique: lessonFindUnique },
   lessonSlugAlias: { findUnique: aliasFindUnique },
+  lessonProgress: { count: lessonProgressCount },
 } }));
-import { resolveLessonBySlug } from './content-queries';
+import { resolveLessonBySlug, hasStudentProgress } from './content-queries';
+
+describe('hasStudentProgress', () => {
+  beforeEach(() => { lessonProgressCount.mockReset(); });
+
+  it('retorna false para array vazio sem chamar prisma', async () => {
+    const result = await hasStudentProgress([]);
+    expect(result).toBe(false);
+    expect(lessonProgressCount).not.toHaveBeenCalled();
+  });
+
+  it('retorna false quando count = 0', async () => {
+    lessonProgressCount.mockResolvedValue(0);
+    const result = await hasStudentProgress(['aula-1', 'aula-2']);
+    expect(result).toBe(false);
+  });
+
+  it('retorna true quando count > 0', async () => {
+    lessonProgressCount.mockResolvedValue(3);
+    const result = await hasStudentProgress(['aula-1']);
+    expect(result).toBe(true);
+  });
+
+  it('filtra status com { not: NOT_STARTED }', async () => {
+    lessonProgressCount.mockResolvedValue(1);
+    await hasStudentProgress(['aula-x']);
+    expect(lessonProgressCount).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          status: { not: 'NOT_STARTED' },
+        }),
+      }),
+    );
+  });
+});
 
 describe('resolveLessonBySlug', () => {
   beforeEach(() => { lessonFindUnique.mockReset(); aliasFindUnique.mockReset(); });

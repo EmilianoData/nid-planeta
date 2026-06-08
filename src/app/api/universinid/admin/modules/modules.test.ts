@@ -1,18 +1,44 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
-const { authMock, moduleFindMany, moduleCreate, moduleAggregate, moduleUpdateMany, transactionMock } = vi.hoisted(() => ({
-  authMock: vi.fn(), moduleFindMany: vi.fn(), moduleCreate: vi.fn(), moduleAggregate: vi.fn(), moduleUpdateMany: vi.fn(), transactionMock: vi.fn(),
+const {
+  authMock,
+  moduleFindMany,
+  moduleCreate,
+  moduleAggregate,
+  moduleUpdateMany,
+  moduleFindUnique,
+  moduleUpdate,
+  moduleDelete,
+  lessonFindMany,
+  lessonProgressCount,
+  transactionMock,
+} = vi.hoisted(() => ({
+  authMock: vi.fn(),
+  moduleFindMany: vi.fn(),
+  moduleCreate: vi.fn(),
+  moduleAggregate: vi.fn(),
+  moduleUpdateMany: vi.fn(),
+  moduleFindUnique: vi.fn(),
+  moduleUpdate: vi.fn(),
+  moduleDelete: vi.fn(),
+  lessonFindMany: vi.fn(),
+  lessonProgressCount: vi.fn(),
+  transactionMock: vi.fn(),
 }));
 vi.mock('@/lib/auth', () => ({ auth: authMock }));
 vi.mock('@/lib/prisma', () => ({
   prisma: {
-    module: { findMany: moduleFindMany, create: moduleCreate, aggregate: moduleAggregate, updateMany: moduleUpdateMany },
+    module: { findMany: moduleFindMany, create: moduleCreate, aggregate: moduleAggregate, updateMany: moduleUpdateMany, findUnique: moduleFindUnique, update: moduleUpdate, delete: moduleDelete },
+    lesson: { findMany: lessonFindMany },
+    lessonProgress: { count: lessonProgressCount },
     $transaction: transactionMock,
   },
 }));
 import { GET, POST } from './route';
+import { PATCH, DELETE } from './[id]/route';
 import { POST as REORDER } from './reorder/route';
 const ADMIN = { user: { id: 'a', role: 'ADMIN' } };
+const ctx = (id: string) => ({ params: Promise.resolve({ id }) });
 function getReq(courseId?: string) {
   const url = courseId
     ? `http://t/api/universinid/admin/modules?courseId=${courseId}`
@@ -31,6 +57,9 @@ describe('modules route', () => {
     authMock.mockReset(); authMock.mockResolvedValue(ADMIN);
     moduleFindMany.mockReset(); moduleCreate.mockReset(); moduleAggregate.mockReset();
     moduleUpdateMany.mockReset(); transactionMock.mockReset();
+    moduleFindUnique.mockReset(); moduleUpdate.mockReset(); moduleDelete.mockReset();
+    lessonFindMany.mockReset(); lessonFindMany.mockResolvedValue([]);
+    lessonProgressCount.mockReset(); lessonProgressCount.mockResolvedValue(0);
   });
   it('GET 200 lista módulos do curso', async () => {
     moduleFindMany.mockResolvedValue([{ id: 'm1', position: 0 }]);
@@ -69,5 +98,38 @@ describe('modules route', () => {
     expect(res.status).toBe(200);
     expect(moduleUpdateMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ id: 'm1', courseId: 'c1' }) }));
     expect(moduleUpdateMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ id: 'm2', courseId: 'c1' }) }));
+  });
+
+  it('DELETE 404 quando módulo inexistente', async () => {
+    moduleFindUnique.mockResolvedValue(null);
+    const res = await DELETE(
+      new NextRequest('http://t/api/universinid/admin/modules/x', { method: 'DELETE' }),
+      ctx('x'),
+    );
+    expect(res.status).toBe(404);
+    expect(moduleDelete).not.toHaveBeenCalled();
+  });
+
+  it('DELETE 200 quando módulo existe e sem progresso', async () => {
+    moduleFindUnique.mockResolvedValue({ id: 'm1' });
+    moduleDelete.mockResolvedValue({ id: 'm1' });
+    const res = await DELETE(
+      new NextRequest('http://t/api/universinid/admin/modules/m1', { method: 'DELETE' }),
+      ctx('m1'),
+    );
+    expect(res.status).toBe(200);
+    expect(moduleDelete).toHaveBeenCalledWith({ where: { id: 'm1' } });
+  });
+
+  it('DELETE 409 quando há progresso de alunos no módulo', async () => {
+    moduleFindUnique.mockResolvedValue({ id: 'm1' });
+    lessonFindMany.mockResolvedValue([{ slug: 'aula-1' }, { slug: 'aula-2' }]);
+    lessonProgressCount.mockResolvedValue(1);
+    const res = await DELETE(
+      new NextRequest('http://t/api/universinid/admin/modules/m1', { method: 'DELETE' }),
+      ctx('m1'),
+    );
+    expect(res.status).toBe(409);
+    expect(moduleDelete).not.toHaveBeenCalled();
   });
 });

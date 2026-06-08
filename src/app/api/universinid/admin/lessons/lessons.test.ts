@@ -11,6 +11,7 @@ const {
   lessonAggregate,
   lessonUpdateMany,
   transactionMock,
+  lessonProgressCount,
 } = vi.hoisted(() => ({
   authMock: vi.fn(),
   lessonFindMany: vi.fn(),
@@ -21,6 +22,7 @@ const {
   lessonAggregate: vi.fn(),
   lessonUpdateMany: vi.fn(),
   transactionMock: vi.fn(),
+  lessonProgressCount: vi.fn(),
 }));
 
 vi.mock('@/lib/auth', () => ({ auth: authMock }));
@@ -35,6 +37,7 @@ vi.mock('@/lib/prisma', () => ({
       aggregate: lessonAggregate,
       updateMany: lessonUpdateMany,
     },
+    lessonProgress: { count: lessonProgressCount },
     $transaction: transactionMock,
   },
 }));
@@ -74,6 +77,8 @@ describe('lessons route', () => {
     lessonAggregate.mockReset();
     lessonUpdateMany.mockReset();
     transactionMock.mockReset();
+    lessonProgressCount.mockReset();
+    lessonProgressCount.mockResolvedValue(0);
   });
 
   it('POST 403 p/ não-admin', async () => {
@@ -154,7 +159,7 @@ describe('lessons route', () => {
       ctx('x'),
     );
     expect(r404.status).toBe(404);
-    lessonFindUnique.mockResolvedValueOnce({ id: 'l1' });
+    lessonFindUnique.mockResolvedValueOnce({ id: 'l1', slug: 'aula-1' });
     lessonDelete.mockResolvedValue({ id: 'l1' });
     const r200 = await DELETE(
       new NextRequest('http://t/api/universinid/admin/lessons/l1', { method: 'DELETE' }),
@@ -162,6 +167,17 @@ describe('lessons route', () => {
     );
     expect(r200.status).toBe(200);
     expect(lessonDelete).toHaveBeenCalledWith({ where: { id: 'l1' } });
+  });
+
+  it('DELETE 409 quando há progresso de alunos na lição', async () => {
+    lessonFindUnique.mockResolvedValue({ id: 'l1', slug: 'aula-1' });
+    lessonProgressCount.mockResolvedValue(2);
+    const res = await DELETE(
+      new NextRequest('http://t/api/universinid/admin/lessons/l1', { method: 'DELETE' }),
+      ctx('l1'),
+    );
+    expect(res.status).toBe(409);
+    expect(lessonDelete).not.toHaveBeenCalled();
   });
 
   it('PUBLISH copia contentDraft -> contentPublished + status PUBLISHED', async () => {

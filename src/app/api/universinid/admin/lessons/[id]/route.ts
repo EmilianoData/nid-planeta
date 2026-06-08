@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { withAuth, apiResponse, apiError, parseBody } from '@/lib/api-utils';
 import { updateLessonSchema } from '@/lib/universinid/validators';
 import { validateContentDoc } from '@/lib/universinid/sanitize-content';
+import { hasStudentProgress } from '@/lib/universinid/content-queries';
 import type { Prisma } from '@/generated/prisma';
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -34,6 +35,9 @@ export async function DELETE(_request: NextRequest, ctx: Ctx) {
   const { id } = await ctx.params;
   const existing = await prisma.lesson.findUnique({ where: { id } });
   if (!existing) return apiError('Lição não encontrada', 404);
+  if (await hasStudentProgress([existing.slug])) {
+    return apiError('Há progresso de alunos nesta lição — despublique em vez de excluir.', 409);
+  }
   await prisma.lesson.delete({ where: { id } });
   return apiResponse({ deleted: true });
 }
