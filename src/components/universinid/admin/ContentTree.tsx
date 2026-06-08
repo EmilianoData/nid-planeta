@@ -114,14 +114,8 @@ function EditCourseDialog({
   const [title, setTitle] = useState(course?.title ?? '');
   const [subtitle, setSubtitle] = useState(course?.subtitle ?? '');
 
-  // sync when course changes
+  // Montado sob demanda (ver render) → useState já inicializa com o curso certo.
   const courseId = course?.id;
-  const courseTitle = course?.title;
-  const courseSubtitle = course?.subtitle;
-  if (open && courseTitle !== undefined && title === '' && courseTitle !== '') {
-    setTitle(courseTitle);
-    setSubtitle(courseSubtitle ?? '');
-  }
 
   function submit() {
     if (!courseId || !title.trim()) return;
@@ -202,13 +196,8 @@ function EditModuleDialog({
   const [title, setTitle] = useState(mod?.title ?? '');
   const [emoji, setEmoji] = useState(mod?.emoji ?? '📘');
 
+  // Montado sob demanda (ver render) → useState já inicializa com o módulo certo.
   const modId = mod?.id;
-  const modTitle = mod?.title;
-  const modEmoji = mod?.emoji;
-  if (open && modTitle !== undefined && title === '' && modTitle !== '') {
-    setTitle(modTitle);
-    setEmoji(modEmoji ?? '📘');
-  }
 
   function submit() {
     if (!modId || !title.trim()) return;
@@ -614,42 +603,30 @@ export function ContentTree() {
         )}
       </div>
 
-      {/* ── Dialogs (single instance each) ── */}
-      <CreateCourseDialog
-        open={dialog.type === 'create-course'}
-        onOpenChange={(v) => { if (!v) closeDialog(); }}
-      />
-
-      <EditCourseDialog
-        course={dialog.type === 'edit-course' ? dialog.course : null}
-        open={dialog.type === 'edit-course'}
-        onOpenChange={(v) => { if (!v) closeDialog(); }}
-      />
-
-      <CreateModuleDialog
-        courseId={dialog.type === 'create-module' ? dialog.courseId : null}
-        open={dialog.type === 'create-module'}
-        onOpenChange={(v) => { if (!v) closeDialog(); }}
-      />
-
-      <EditModuleDialog
-        mod={dialog.type === 'edit-module' ? dialog.mod : null}
-        open={dialog.type === 'edit-module'}
-        onOpenChange={(v) => { if (!v) closeDialog(); }}
-      />
-
-      <CreateLessonDialog
-        moduleId={dialog.type === 'create-lesson' ? dialog.moduleId : null}
-        open={dialog.type === 'create-lesson'}
-        onOpenChange={(v) => { if (!v) closeDialog(); }}
-      />
-
-      <ConfirmDeleteDialog
-        label={dialog.type === 'delete' ? dialog.label : ''}
-        open={dialog.type === 'delete'}
-        onOpenChange={(v) => { if (!v) closeDialog(); }}
-        onConfirm={dialog.type === 'delete' ? dialog.onConfirm : () => { /* no-op */ }}
-      />
+      {/* ── Dialogs: montados só enquanto abertos → estado fresco por alvo ── */}
+      {dialog.type === 'create-course' && (
+        <CreateCourseDialog open onOpenChange={(v) => { if (!v) closeDialog(); }} />
+      )}
+      {dialog.type === 'edit-course' && (
+        <EditCourseDialog course={dialog.course} open onOpenChange={(v) => { if (!v) closeDialog(); }} />
+      )}
+      {dialog.type === 'create-module' && (
+        <CreateModuleDialog courseId={dialog.courseId} open onOpenChange={(v) => { if (!v) closeDialog(); }} />
+      )}
+      {dialog.type === 'edit-module' && (
+        <EditModuleDialog mod={dialog.mod} open onOpenChange={(v) => { if (!v) closeDialog(); }} />
+      )}
+      {dialog.type === 'create-lesson' && (
+        <CreateLessonDialog moduleId={dialog.moduleId} open onOpenChange={(v) => { if (!v) closeDialog(); }} />
+      )}
+      {dialog.type === 'delete' && (
+        <ConfirmDeleteDialog
+          label={dialog.label}
+          open
+          onOpenChange={(v) => { if (!v) closeDialog(); }}
+          onConfirm={dialog.onConfirm}
+        />
+      )}
     </main>
   );
 }
