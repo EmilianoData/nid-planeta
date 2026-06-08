@@ -269,10 +269,8 @@ export function useLessonsMutations() {
   const saveContent = useMutation({
     mutationFn: ({ id, contentDraft }: { id: string; contentDraft: UniBlockDoc }) =>
       apiFetch<LessonSummary>(`${BASE}/lessons/${id}`, 'PATCH', { contentDraft }),
-    onSuccess: () => {
-      toast.success('Conteúdo salvo');
-      invalidate();
-    },
+    // Autosave silencioso: sem toast (dispararia a cada debounce) e sem invalidar a
+    // árvore — salvar conteúdo não altera id/slug/title/status/position exibidos nela.
     onError: (err: Error) => toast.error(err.message),
   });
 
