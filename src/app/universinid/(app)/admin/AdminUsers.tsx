@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createUser, toggleUserActive } from '@/lib/universinid/actions';
+import { AdminTabs } from '@/components/universinid/admin/AdminTabs';
 
 type Row = { id: string; email: string; name: string; role: string; isActive: boolean };
 
@@ -44,6 +45,7 @@ export function AdminUsers({ users }: { users: Row[] }) {
 
   return (
     <main className="uni-main">
+      <AdminTabs />
       <h1 className="uni-hi">Gestão de usuários</h1>
       <p className="uni-sub">Crie e desative acessos. Sem auto-cadastro — você controla quem entra.</p>
 
