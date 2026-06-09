@@ -24,3 +24,17 @@ export function legacyEmbedDoc(screenId: string): UniBlockDoc {
 export function isLegacyEmbed(doc: unknown): boolean {
   return Array.isArray(doc) && doc.length === 1 && (doc[0] as { type?: string })?.type === 'legacy-embed';
 }
+
+// Remove blocos de imagem sem URL (incompletos/abandonados — ex.: upload que falhou ou foi
+// interrompido). Persistidos, eles quebram o BlockNote ao recarregar (RangeError "Index 0 out
+// of range"). Imagens em upload ATIVO vivem em memória e não passam por aqui (só no load).
+export function stripIncompleteImages(doc: unknown): unknown[] {
+  if (!Array.isArray(doc)) return [];
+  return doc.filter((b) => {
+    const block = b as { type?: string; props?: { url?: unknown } };
+    if (block?.type === 'image') {
+      return typeof block.props?.url === 'string' && block.props.url.length > 0;
+    }
+    return true;
+  });
+}

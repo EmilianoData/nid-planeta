@@ -8,7 +8,7 @@ import { useCreateBlockNote } from '@blocknote/react';
 import { BlockNoteView } from '@blocknote/mantine';
 import { useCallback, useRef } from 'react';
 import type { PartialBlock } from '@blocknote/core';
-import { isLegacyEmbed } from '@/lib/universinid/content-types';
+import { isLegacyEmbed, stripIncompleteImages } from '@/lib/universinid/content-types';
 
 async function uploadImage(file: File): Promise<string> {
   const res = await fetch(
@@ -29,9 +29,11 @@ export function LessonEditor({ initial, onSave }: LessonEditorProps) {
   // GUARD: legacy-embed NÃO é um bloco do schema do BlockNote — passá-lo como
   // initialContent faz o editor lançar/descartar. Lição ainda-legada → editor vazio + aviso.
   const legacy = isLegacyEmbed(initial);
+  // Descarta imagens sem URL (incompletas) antes de hidratar — senão o BlockNote quebra
+  // (RangeError "Index 0 out of range") ao recarregar um doc com bloco de imagem vazio.
+  const cleaned = legacy ? [] : stripIncompleteImages(initial);
   const editor = useCreateBlockNote({
-    initialContent:
-      !legacy && initial && initial.length ? (initial as PartialBlock[]) : undefined,
+    initialContent: cleaned.length ? (cleaned as PartialBlock[]) : undefined,
     uploadFile: uploadImage,
   });
 
