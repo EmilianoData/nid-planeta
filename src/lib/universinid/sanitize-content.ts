@@ -3,7 +3,13 @@ const VIDEODELIVERY = /\.videodelivery\.net$/;
 
 export function isSafeHttpUrl(raw: unknown): raw is string {
   if (typeof raw !== 'string') return false;
-  try { const u = new URL(raw); return u.protocol === 'http:' || u.protocol === 'https:'; } catch { return false; }
+  try {
+    const u = new URL(raw);
+    // Rejeita credenciais embutidas (ex.: http://youtube.com@evil.com) — o host "visível"
+    // é só userinfo; o destino real é outro. Deception/phishing em conteúdo visto pelo aluno.
+    if (u.username || u.password) return false;
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch { return false; }
 }
 export function isAllowedEmbed(raw: unknown): boolean {
   if (!isSafeHttpUrl(raw)) return false;
