@@ -14,7 +14,14 @@ export function validateContentDoc(doc: unknown): ContentCheck {
   if (!Array.isArray(doc)) return { ok: false, error: 'conteúdo deve ser um array de blocos' };
   for (const block of doc) {
     const b = block as { type?: string; props?: { url?: unknown } };
-    if (b?.type === 'image' && !isSafeHttpUrl(b.props?.url)) return { ok: false, error: 'imagem: URL deve ser http(s)' };
+    if (b?.type === 'image') {
+      // URL vazia/ausente = bloco de imagem incompleto (recém-inserido, upload em andamento) → permite,
+      // senão o autosave debounced rejeita (422) durante o upload. URL PRESENTE deve ser http(s) seguro
+      // (bloqueia javascript:/data:/etc.); o whitelist de leitura (RenderBlocks, Fase 5.1) é a defesa final.
+      const url = b.props?.url;
+      const incompleta = url === undefined || url === null || url === '';
+      if (!incompleta && !isSafeHttpUrl(url)) return { ok: false, error: 'imagem: URL deve ser http(s)' };
+    }
     if (b?.type === 'embed' && !isAllowedEmbed(b.props?.url)) return { ok: false, error: 'embed: só YouTube/Vimeo/Stream' };
   }
   return { ok: true };
