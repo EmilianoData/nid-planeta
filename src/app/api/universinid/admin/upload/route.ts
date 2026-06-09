@@ -18,6 +18,18 @@ export async function POST(request: NextRequest) {
   // não consegue re-ler um stream já consumido. Um ArrayBuffer é estático e re-legível.
   const bytes = await request.arrayBuffer();
   if (bytes.byteLength > MAX) return apiError('Imagem acima de 4,5MB — use uma menor (client-upload virá depois)', 413);
-  const blob = await put(`universinid/${Date.now()}-${filename}`, bytes, { access: 'public', contentType });
-  return apiResponse({ url: blob.url });
+  try {
+    const blob = await put(`universinid/${Date.now()}-${filename}`, bytes, {
+      access: 'public',
+      contentType,
+      abortSignal: AbortSignal.timeout(15000), // falha rápido se não alcançar o Blob (ex.: rede bloqueando a saída)
+    });
+    return apiResponse({ url: blob.url });
+  } catch (e) {
+    console.error('[upload] put falhou:', e);
+    return apiError(
+      'Não foi possível enviar a imagem ao Blob (falha de conexão). Em dev atrás de rede corporativa o acesso ao Blob pode estar bloqueado — teste o upload em um deploy de preview.',
+      502,
+    );
+  }
 }
