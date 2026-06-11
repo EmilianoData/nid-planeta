@@ -1,12 +1,22 @@
-import { CATALOGO, todasLicoes, getLicao, type Dificuldade } from './catalogo';
-
 export type Status = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED';
+
+// Rótulo pt-BR (o enum do banco INICIANTE/INTERMEDIARIO/AVANCADO é convertido
+// por getDashboardData antes de chegar aqui).
+export type Dificuldade = 'Iniciante' | 'Intermediário' | 'Avançado';
 
 export interface ProgressRow {
   lessonSlug: string;
   status: Status;
   pct: number;
   updatedAt: Date;
+}
+
+// Estrutura mínima da árvore publicada que o dashboard precisa (E2):
+// módulos achatados (curso é irrelevante para os números) + lições por position.
+export interface DashModulo {
+  id: string;
+  titulo: string;
+  licoes: { slug: string; titulo: string; tempoMin: number; dificuldade: Dificuldade }[];
 }
 
 export interface DashboardData {
@@ -46,16 +56,17 @@ function calcStreak(rows: ProgressRow[], now: Date): number {
   return streak;
 }
 
-export function buildDashboard(rows: ProgressRow[], now: Date): DashboardData {
+export function buildDashboard(rows: ProgressRow[], now: Date, modulos: DashModulo[]): DashboardData {
   const bySlug = new Map(rows.map((r) => [r.lessonSlug, r]));
-  const licoes = todasLicoes();
+  const moduloDe = new Map(modulos.flatMap((m) => m.licoes.map((l) => [l.slug, m] as const)));
+  const licoes = modulos.flatMap((m) => m.licoes);
   const totalLicoes = licoes.length;
   const licoesConcluidas = licoes.filter(
     (l) => bySlug.get(l.slug)?.status === 'COMPLETED',
   ).length;
   const pctGeral = totalLicoes === 0 ? 0 : Math.round((licoesConcluidas / totalLicoes) * 100);
 
-  const modulosAtivos = CATALOGO.filter((m) =>
+  const modulosAtivos = modulos.filter((m) =>
     m.licoes.some((l) => {
       const s = bySlug.get(l.slug)?.status;
       return s === 'IN_PROGRESS' || s === 'COMPLETED';
@@ -67,27 +78,27 @@ export function buildDashboard(rows: ProgressRow[], now: Date): DashboardData {
   const alvo = emCurso ?? naoConcluida ?? null;
 
   let proxima: DashboardData['proxima'] = null;
-  let trilhaModuloId = CATALOGO[0].id;
+  let trilhaModuloId = modulos[0]?.id;
   if (!alvo && rows.length > 0) {
     const maisRecente = [...rows].sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())[0];
-    const ref = getLicao(maisRecente.lessonSlug);
-    if (ref) trilhaModuloId = ref.modulo.id;
+    const mod = moduloDe.get(maisRecente.lessonSlug);
+    if (mod) trilhaModuloId = mod.id;
   }
   if (alvo) {
-    const ref = getLicao(alvo.slug)!;
+    const mod = moduloDe.get(alvo.slug)!;
     proxima = {
       slug: alvo.slug,
       titulo: alvo.titulo,
-      moduloTitulo: ref.modulo.titulo,
+      moduloTitulo: mod.titulo,
       pct: bySlug.get(alvo.slug)?.pct ?? 0,
     };
-    trilhaModuloId = ref.modulo.id;
+    trilhaModuloId = mod.id;
   }
 
-  const modulo = CATALOGO.find((m) => m.id === trilhaModuloId) ?? CATALOGO[0];
+  const modulo = modulos.find((m) => m.id === trilhaModuloId) ?? modulos[0] ?? null;
   const trilha = {
-    moduloTitulo: modulo.titulo,
-    licoes: modulo.licoes.map((l) => ({
+    moduloTitulo: modulo?.titulo ?? '',
+    licoes: (modulo?.licoes ?? []).map((l) => ({
       slug: l.slug,
       titulo: l.titulo,
       tempoMin: l.tempoMin,

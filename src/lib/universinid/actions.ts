@@ -8,7 +8,8 @@ import { prisma } from '@/lib/prisma';
 import { hashPassword } from '@/lib/password';
 import { Prisma } from '@/generated/prisma';
 import { getLicao } from './catalogo';
-import { buildDashboard, type ProgressRow, type DashboardData } from './dashboard';
+import { getPublishedTree } from './content-queries';
+import { buildDashboard, type ProgressRow, type DashboardData, type DashModulo, type Dificuldade } from './dashboard';
 
 const buscarLinhasProgresso = cache((userId: string) =>
   prisma.lessonProgress.findMany({ where: { userId } }),
@@ -47,16 +48,36 @@ export async function markLessonProgress(input: z.infer<typeof progressSchema>) 
   revalidatePath(`/universinid/licao/${slug}`);
 }
 
+const DIFICULDADE_LABEL: Record<string, Dificuldade> = {
+  INICIANTE: 'Iniciante',
+  INTERMEDIARIO: 'Intermediário',
+  AVANCADO: 'Avançado',
+};
+
 export async function getDashboardData(): Promise<DashboardData & { nome: string }> {
   const user = await exigirSessao();
-  const rows = await buscarLinhasProgresso(user.id);
+  const [rows, tree] = await Promise.all([buscarLinhasProgresso(user.id), getPublishedTree()]);
   const progress: ProgressRow[] = rows.map((r) => ({
     lessonSlug: r.lessonSlug,
     status: r.status as ProgressRow['status'],
     pct: r.pct,
     updatedAt: r.updatedAt,
   }));
-  return { ...buildDashboard(progress, new Date()), nome: user.nome };
+  // Achata Course→Module na estrutura mínima do dashboard (E2): os números
+  // passam a ser função da árvore PUBLICADA, não do catálogo estático.
+  const modulos: DashModulo[] = tree.flatMap((c) =>
+    c.modules.map((m) => ({
+      id: m.id,
+      titulo: m.title,
+      licoes: m.lessons.map((l) => ({
+        slug: l.slug,
+        titulo: l.title,
+        tempoMin: l.tempoMin,
+        dificuldade: DIFICULDADE_LABEL[l.dificuldade] ?? 'Iniciante',
+      })),
+    })),
+  );
+  return { ...buildDashboard(progress, new Date(), modulos), nome: user.nome };
 }
 
 export async function getProgressMap(): Promise<Record<string, { status: string; pct: number }>> {
