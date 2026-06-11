@@ -2,7 +2,7 @@
 date: 2026-06-03
 spec: 2026-06-03-universinid-fase2a-design.md
 adr: 0001-universinid-editor-blocos-hibrido.md
-status: em-execucao — Fases 0-5 + rider A3 + C1 CONCLUIDAS (2026-06-11); faltam Fases 6-7
+status: em-execucao — Fases 0-6 + riders A3/A8 + C1 + extensoes E1/E2/E3 CONCLUIDAS (2026-06-11); falta Fase 7
 gate_aprovado_em: 2026-06-03
 tipo: web
 ---
@@ -32,7 +32,23 @@ tipo: web
 
 **Observações p/ Fase 6:** (1) `markLessonProgress` (actions.ts:38) valida slug contra o **catálogo estático** → lições novas criadas no banco ainda não rastreiam progresso (console: "track open falhou… Lição inexistente") — resolver quando a sidebar/vitrine lerem do banco; (2) `.uni-side` não tem teto de altura (estica o shell além do viewport; pré-existente da Fase 1, não tocado pela 5.3); (3) rodar `next start` local exige `AUTH_TRUST_HOST=true` (`.env.production.local`, git-ignored — na Vercel é automático); (4) sobraram no banco a lição de teste `licao-de-teste-fase-5` (DRAFT) e o usuário `aluno.teste.fase5@delp.com.br` — úteis p/ smoke da Fase 6, remover no fechamento da 2a.
 
-**▶ PRÓXIMO (outra sessão): Fase 6** — vitrine + sidebar lendo do banco (`especificacoes/2-fila/FASE-06`). Depois Fase 7 (CSP completa B4 + review final).
+**Fase 6: CONCLUÍDA (2026-06-11)** — SPEC executada em `especificacoes/` (FASE-06), com as 3 extensões aprovadas pelo dono do quadro (fecham a dupla fonte de verdade por completo). Commits:
+- **6.1** vitrine Course→Module→Lesson do banco (+ export `PublishedTree`/`PublishedCourse`) `2a5632f`.
+- **6.2** sidebar 3 níveis do banco via props (layout→ShellChrome→Sidebar), `.uni-course` no CSS escopado, ⌘K intacto `a6c8673`.
+- **6.3** `catalogo.test.ts` documenta condição de aposentadoria `8e1469a`.
+- **E1** palette ⌘K lista lições do banco (por prop, atalho intacto) `ef9d8c2`.
+- **E2 (TDD)** `buildDashboard(rows, now, modulos)` parametrizado pela árvore publicada — fixtures explícitas, denominador dinâmico, árvore vazia não quebra; `getDashboardData` converte enum→rótulo `d7b260b`.
+- **E3 (TDD)** guarda de `markLessonProgress` validada no BANCO via `resolveLessonBySlug` (cobre alias/risco #1) — lições novas rastreiam progresso `750a31b`.
+
+**Decisões do dono do quadro (§4-D da SPEC):** E1+E2+E3 aprovadas; Neon de prod = MESMO banco já semeado (A8 vira verificação); título do curso sempre visível na sidebar; vitrine SUBSTITUI a seção "Continuar na trilha".
+
+**Verificação (navegador real, dev):** vitrine = 1 curso → 6 módulos → 40 lições publicadas; publicar lição nova → aparece na vitrine, sidebar E busca ⌘K sem rebuild; despublicar → some das três; DRAFT nunca listado (nem p/ admin); progresso por slug intacto (ícones/anéis/EM CURSO); stats dinâmicos (3/40→4/40 ao concluir lição nativa do banco, console limpo — fim do "track open falhou"); item ativo da sidebar destaca; legada abre iframe; `/` e `/sistema-solar` intactos.
+
+**Rider A8 (cutover prod):** mesmo Neon ⇒ `db:push`/`db:seed` desnecessários. Contagens verificadas (2026-06-11, read-only): `courses=1, modules=6, lessons=41 (40 publicadas — 39 do seed + lição de teste; 1 draft), lesson_progress=8`. **Resta apenas (pós-deploy, dono do quadro): abrir `/universinid` em produção e confirmar vitrine/sidebar populadas.**
+
+**Sobras de teste no banco (limpar na Fase 7):** lições `licao-de-teste-fase-5` (PUBLISHED) e `licao-vitrine-6-1` (DRAFT) + usuário `aluno.teste.fase5@delp.com.br`.
+
+**▶ PRÓXIMO (outra sessão): Fase 7** — CSP completa (B4) + revisão final + smoke (fechamento da Fase 2a) — `especificacoes/2-fila/FASE-07`.
 
 ---
 
