@@ -7,8 +7,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { hashPassword } from '@/lib/password';
 import { Prisma } from '@/generated/prisma';
-import { getLicao } from './catalogo';
-import { getPublishedTree } from './content-queries';
+import { getPublishedTree, resolveLessonBySlug } from './content-queries';
 import { buildDashboard, type ProgressRow, type DashboardData, type DashModulo, type Dificuldade } from './dashboard';
 
 const buscarLinhasProgresso = cache((userId: string) =>
@@ -36,7 +35,9 @@ const progressSchema = z.object({
 export async function markLessonProgress(input: z.infer<typeof progressSchema>) {
   const user = await exigirSessao();
   const { slug, status, pct } = progressSchema.parse(input);
-  if (!getLicao(slug)) throw new Error(`Lição inexistente: ${slug}`);
+  // Guarda no BANCO (extensão E3): lições criadas no admin também rastreiam
+  // progresso. Resolve por slug direto e por alias (risco #1 — slug renomeado).
+  if (!(await resolveLessonBySlug(slug))) throw new Error(`Lição inexistente: ${slug}`);
 
   await prisma.lessonProgress.upsert({
     where: { userId_lessonSlug: { userId: user.id, lessonSlug: slug } },
