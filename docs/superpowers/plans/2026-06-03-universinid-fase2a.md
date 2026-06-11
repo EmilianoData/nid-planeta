@@ -2,14 +2,14 @@
 date: 2026-06-03
 spec: 2026-06-03-universinid-fase2a-design.md
 adr: 0001-universinid-editor-blocos-hibrido.md
-status: em-execucao — Fases 0-4 + rider A3 CONCLUIDAS (2026-06-09); faltam Fases 5-7
+status: em-execucao — Fases 0-5 + rider A3 + C1 CONCLUIDAS (2026-06-11); faltam Fases 6-7
 gate_aprovado_em: 2026-06-03
 tipo: web
 ---
 
 # UniversiNID Fase 2a — Implementation Plan
 
-## ✅ EXECUÇÃO — status real (atualizado 2026-06-09)
+## ✅ EXECUÇÃO — status real (atualizado 2026-06-11)
 
 **Fases 0–4 + rider A3: CONCLUÍDAS, commitadas e verificadas** em `feature/nid-planeta`
 (`npm run build` ok · `npm run test` 80/80 · `tsc` 0 · smoke de navegador real). Commits:
@@ -22,7 +22,17 @@ tipo: web
 
 **⚠️ Pendência NÃO-código — upload de imagem:** `put()` do Vercel Blob dá `ConnectTimeout` a partir do **localhost na rede corporativa DELP** (Node não usa o proxy do navegador). Código correto → **verificar em deploy de preview**. Peers `@mantine/core`+`@mantine/hooks` ^8 adicionados (a Fase 0 original esquecera).
 
-**▶ PRÓXIMO (outra sessão): Fase 5** — decompor o iframe legado → `RenderBlocks` (whitelist de leitura) + fix do scroll. Sem dependência de Blob. Depois Fase 6 (vitrine lê do banco) e Fase 7 (CSP completa B4 + review final).
+**Fase 5: CONCLUÍDA (2026-06-11)** — SPEC executada em `especificacoes/` (FASE-05). Commits:
+- **5.1** `RenderBlocks` (whitelist de leitura, rider A2 no read, teto de profundidade) `efc225a`.
+- **5.2** lição lê do banco; iframe só p/ `legacy-embed`; admin pré-visualiza draft, aluno 404 `7ec7871`.
+- **5.3** scroll escopado: `.uni-lesson` com altura `calc(100vh-56px)` + `.uni-content{overflow-y:auto}` `9c25799` — `git diff globals.css` vazio.
+- **C1 (segurança, fora do plano original)** `/api/reseed` estava 100% público (middleware não cobre `/api/**`) → `withAuth(['ADMIN'])`, TDD 401/403/200 `8c5bfd9`.
+
+**Verificação da Fase 5 (navegador real, dev + build de produção `next start`):** lição legada renderiza iframe e rola internamente (sem regressão); TrackOpen prova IN_PROGRESS (módulos ativos 1→2, streak 0→1) e Concluir reflete no dashboard (2/39→3/39) — chave = slug (risco #1 intacto); lição de teste autorada no editor (3 parágrafos + imagem + embed YouTube) publica e renderiza **nativa** (sem iframe); em **DRAFT**: admin vê preview, aluno (role STUDENT) recebe **404 sem vazamento** (verificado no build de produção — em dev o flight do devtools serializa a query, MAS é dev-only); slug inexistente 404; lição longa (25 §) rola DENTRO de `.uni-content` (scrollTop 0→3057, body parado, topbar fixa); landing `/` e `/sistema-solar` intactos.
+
+**Observações p/ Fase 6:** (1) `markLessonProgress` (actions.ts:38) valida slug contra o **catálogo estático** → lições novas criadas no banco ainda não rastreiam progresso (console: "track open falhou… Lição inexistente") — resolver quando a sidebar/vitrine lerem do banco; (2) `.uni-side` não tem teto de altura (estica o shell além do viewport; pré-existente da Fase 1, não tocado pela 5.3); (3) rodar `next start` local exige `AUTH_TRUST_HOST=true` (`.env.production.local`, git-ignored — na Vercel é automático); (4) sobraram no banco a lição de teste `licao-de-teste-fase-5` (DRAFT) e o usuário `aluno.teste.fase5@delp.com.br` — úteis p/ smoke da Fase 6, remover no fechamento da 2a.
+
+**▶ PRÓXIMO (outra sessão): Fase 6** — vitrine + sidebar lendo do banco (`especificacoes/2-fila/FASE-06`). Depois Fase 7 (CSP completa B4 + review final).
 
 ---
 
