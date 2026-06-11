@@ -2,21 +2,20 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { todasLicoes } from '@/lib/universinid/catalogo';
 
-export function CommandPalette({ open, onClose, isAdmin }:
-  { open: boolean; onClose: () => void; isAdmin: boolean }) {
+export function CommandPalette({ open, onClose, isAdmin, lessons }:
+  { open: boolean; onClose: () => void; isAdmin: boolean; lessons: { label: string; href: string }[] }) {
   const router = useRouter();
   const [q, setQ] = useState('');
 
   const itens = useMemo(() => {
-    const base = todasLicoes().map((l) => ({ label: l.titulo, href: `/universinid/licao/${l.slug}`, hint: 'Lição' }));
+    const base = lessons.map((l) => ({ ...l, hint: 'Lição' }));
     const extra = [
       { label: 'Dashboard', href: '/universinid', hint: 'Página' },
       ...(isAdmin ? [{ label: 'Gestão de usuários', href: '/universinid/admin', hint: 'Admin' }] : []),
     ];
     return [...extra, ...base];
-  }, [isAdmin]);
+  }, [isAdmin, lessons]);
 
   const filtrados = useMemo(() => {
     const t = q.trim().toLowerCase();

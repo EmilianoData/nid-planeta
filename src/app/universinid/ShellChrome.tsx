@@ -16,6 +16,11 @@ export function ShellChrome({ progress, streak, isAdmin, tree, children }:
     window.addEventListener('uni-open-palette', openPalette);
     return () => window.removeEventListener('uni-open-palette', openPalette);
   }, []);
+  const lessonItems = tree.flatMap((c) =>
+    c.modules.flatMap((m) =>
+      m.lessons.map((l) => ({ label: l.title, href: `/universinid/licao/${l.slug}` })),
+    ),
+  );
   return (
     <>
       <Topbar streak={streak} onOpenPalette={() => setOpen(true)} />
@@ -23,7 +28,7 @@ export function ShellChrome({ progress, streak, isAdmin, tree, children }:
         <Sidebar progress={progress} tree={tree} />
         {children}
       </div>
-      <CommandPalette open={open} onClose={() => setOpen(false)} isAdmin={isAdmin} />
+      <CommandPalette open={open} onClose={() => setOpen(false)} isAdmin={isAdmin} lessons={lessonItems} />
     </>
   );
 }
