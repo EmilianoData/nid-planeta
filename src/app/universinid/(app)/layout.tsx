@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { getProgressMap, getDashboardData } from '@/lib/universinid/actions';
+import { getPublishedTree } from '@/lib/universinid/content-queries';
 import { ShellChrome } from '../ShellChrome';
 import { QueryProvider } from '@/components/universinid/QueryProvider';
 
@@ -10,12 +11,17 @@ export default async function UniversinidLayout({ children }: { children: ReactN
   const session = await auth();
   if (!session?.user) redirect('/universinid/login');
 
-  const [progress, dash] = await Promise.all([getProgressMap(), getDashboardData()]);
+  const [progress, dash, tree] = await Promise.all([
+    getProgressMap(),
+    getDashboardData(),
+    getPublishedTree(),
+  ]);
 
   return (
     <div className="uni-shell">
       <QueryProvider>
-        <ShellChrome progress={progress} streak={dash.streakDias} isAdmin={session.user.role === 'ADMIN'}>
+        <ShellChrome progress={progress} streak={dash.streakDias}
+          isAdmin={session.user.role === 'ADMIN'} tree={tree}>
           {children}
         </ShellChrome>
       </QueryProvider>

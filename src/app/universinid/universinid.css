@@ -21,6 +21,9 @@
 .uni-side{ width:230px; background:#fff; border-right:1px solid var(--line); padding:16px 12px;
   flex-shrink:0; overflow-y:auto; }
 .uni-lbl{ font-size:.62rem; letter-spacing:1.2px; color:#6b6890; font-weight:700; margin:8px 8px 8px; }
+/* Nível 1 da sidebar (Course) — acima dos módulos (.uni-lbl). */
+.uni-course{ padding:14px 8px 4px; font-size:.72rem; font-weight:800; letter-spacing:.06em;
+  text-transform:uppercase; color:#3C3489; }
 .uni-nav{ display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:9px;
   margin-bottom:2px; font-size:.85rem; color:#4a4770; text-decoration:none; }
 .uni-nav:hover{ background:#f5f4ff; }
