@@ -34,3 +34,7 @@ export async function getPublishedTree() {
     },
   });
 }
+
+// Tipo da árvore publicada (derivado do select — propositalmente SEM content*).
+export type PublishedTree = Awaited<ReturnType<typeof getPublishedTree>>;
+export type PublishedCourse = PublishedTree[number];
