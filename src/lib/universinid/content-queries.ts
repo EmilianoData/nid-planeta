@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 
 export async function hasStudentProgress(lessonSlugs: string[]): Promise<boolean> {
@@ -15,7 +16,9 @@ export async function resolveLessonBySlug(slug: string) {
   return alias?.lesson ?? null;
 }
 
-export async function getPublishedTree() {
+// cache() dedup das múltiplas chamadas no mesmo render (layout + page + getDashboardData),
+// como buscarLinhasProgresso em actions.ts. Não muda a interface nem o select (risco #4 intacto).
+export const getPublishedTree = cache(async () => {
   return prisma.course.findMany({
     where: { status: 'PUBLISHED' },
     orderBy: { position: 'asc' },
@@ -33,7 +36,7 @@ export async function getPublishedTree() {
       },
     },
   });
-}
+});
 
 // Tipo da árvore publicada (derivado do select — propositalmente SEM content*).
 export type PublishedTree = Awaited<ReturnType<typeof getPublishedTree>>;

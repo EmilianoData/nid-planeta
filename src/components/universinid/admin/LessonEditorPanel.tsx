@@ -32,7 +32,10 @@ export function LessonEditorPanel({
         <h1>{title}</h1>
         <span className="met">
           <span className="chip">{status === 'PUBLISHED' ? 'Publicada' : 'Rascunho'}</span>
-          {lessons.isSaving && <span className="chip">Salvando…</span>}
+          {/* Live region sempre no DOM (sem render condicional) para anunciar o autosave (WCAG 4.1.3). */}
+          <span role="status" aria-live="polite" aria-atomic="true" className={lessons.isSaving ? 'chip' : ''}>
+            {lessons.isSaving ? 'Salvando…' : ''}
+          </span>
         </span>
         <Button
           variant="success"

@@ -83,11 +83,11 @@ function CreateCourseDialog({
         <DialogDescription>Preencha os dados básicos do curso.</DialogDescription>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <label style={labelSt}>Título</label>
-          <Input value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Ex: Fundamentos de Subsea" />
+          <Input aria-label="Título" value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Ex: Fundamentos de Subsea" />
           <label style={labelSt}>Slug</label>
-          <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="ex: fundamentos-subsea" />
+          <Input aria-label="Slug" value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="ex: fundamentos-subsea" />
           <label style={labelSt}>Subtítulo (opcional)</label>
-          <Input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder="Descrição curta" />
+          <Input aria-label="Subtítulo (opcional)" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder="Descrição curta" />
         </div>
         <DialogFooter>
           <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>Cancelar</Button>
@@ -129,9 +129,9 @@ function EditCourseDialog({
         <DialogTitle>Editar curso</DialogTitle>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <label style={labelSt}>Título</label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+          <Input aria-label="Título" value={title} onChange={(e) => setTitle(e.target.value)} />
           <label style={labelSt}>Subtítulo (opcional)</label>
-          <Input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} />
+          <Input aria-label="Subtítulo (opcional)" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} />
         </div>
         <DialogFooter>
           <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>Cancelar</Button>
@@ -169,9 +169,9 @@ function CreateModuleDialog({
         <DialogTitle>Novo módulo</DialogTitle>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <label style={labelSt}>Título</label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Módulo 1 – Introdução" />
+          <Input aria-label="Título" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Módulo 1 – Introdução" />
           <label style={labelSt}>Emoji</label>
-          <Input value={emoji} onChange={(e) => setEmoji(e.target.value)} placeholder="📘" maxLength={4} />
+          <Input aria-label="Emoji" value={emoji} onChange={(e) => setEmoji(e.target.value)} placeholder="📘" maxLength={4} />
         </div>
         <DialogFooter>
           <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>Cancelar</Button>
@@ -211,9 +211,9 @@ function EditModuleDialog({
         <DialogTitle>Editar módulo</DialogTitle>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <label style={labelSt}>Título</label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+          <Input aria-label="Título" value={title} onChange={(e) => setTitle(e.target.value)} />
           <label style={labelSt}>Emoji</label>
-          <Input value={emoji} onChange={(e) => setEmoji(e.target.value)} maxLength={4} />
+          <Input aria-label="Emoji" value={emoji} onChange={(e) => setEmoji(e.target.value)} maxLength={4} />
         </div>
         <DialogFooter>
           <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>Cancelar</Button>
@@ -264,13 +264,14 @@ function CreateLessonDialog({
         <DialogTitle>Nova lição</DialogTitle>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <label style={labelSt}>Título</label>
-          <Input value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Ex: Conceitos básicos" />
+          <Input aria-label="Título" value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Ex: Conceitos básicos" />
           <label style={labelSt}>Slug</label>
-          <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="ex: conceitos-basicos" />
+          <Input aria-label="Slug" value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="ex: conceitos-basicos" />
           <div style={{ display: 'flex', gap: 10 }}>
             <div style={{ flex: 1 }}>
               <label style={labelSt}>Tempo (min)</label>
               <Input
+                aria-label="Tempo (min)"
                 type="number"
                 value={tempoMin}
                 min={1}
@@ -280,6 +281,7 @@ function CreateLessonDialog({
             <div style={{ flex: 2 }}>
               <label style={labelSt}>Dificuldade</label>
               <Select
+                aria-label="Dificuldade"
                 value={dificuldade}
                 onChange={(e) => setDificuldade(e.target.value as Dificuldade)}
               >
@@ -454,6 +456,7 @@ export function ContentTree() {
               <Button
                 variant="outline"
                 size="sm"
+                aria-label={`Mover curso "${course.title}" para cima`}
                 disabled={ci === 0}
                 onClick={() =>
                   courses.reorder(swapAndBuild(courseList, ci, 'up'))
@@ -464,6 +467,7 @@ export function ContentTree() {
               <Button
                 variant="outline"
                 size="sm"
+                aria-label={`Mover curso "${course.title}" para baixo`}
                 disabled={ci === courseList.length - 1}
                 onClick={() =>
                   courses.reorder(swapAndBuild(courseList, ci, 'down'))
@@ -526,6 +530,7 @@ export function ContentTree() {
                     <Button
                       variant="outline"
                       size="sm"
+                      aria-label={`Mover módulo "${mod.title}" para cima`}
                       disabled={mi === 0}
                       onClick={() =>
                         modules.reorder(
@@ -539,6 +544,7 @@ export function ContentTree() {
                     <Button
                       variant="outline"
                       size="sm"
+                      aria-label={`Mover módulo "${mod.title}" para baixo`}
                       disabled={mi === course.modules.length - 1}
                       onClick={() =>
                         modules.reorder(
@@ -683,6 +689,7 @@ function LessonRow({
       <Button
         variant="outline"
         size="sm"
+        aria-label={`Mover lição "${lesson.title}" para cima`}
         disabled={index === 0}
         onClick={() =>
           lessons.reorder(mod.id, swapAndBuild(mod.lessons, index, 'up'))
@@ -693,6 +700,7 @@ function LessonRow({
       <Button
         variant="outline"
         size="sm"
+        aria-label={`Mover lição "${lesson.title}" para baixo`}
         disabled={index === total - 1}
         onClick={() =>
           lessons.reorder(mod.id, swapAndBuild(mod.lessons, index, 'down'))

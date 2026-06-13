@@ -113,5 +113,5 @@
 .uni-table th,.uni-table td{ text-align:left; padding:11px 14px; font-size:.85rem; border-bottom:1px solid var(--line); }
 .uni-table th{ background:#f7f6fd; color:#6b6890; font-size:.72rem; letter-spacing:.5px; text-transform:uppercase; }
 .uni-badge{ font-size:.68rem; font-weight:700; padding:2px 9px; border-radius:20px; }
-.uni-badge.on{ background:#e7f7ec; color:#0B861D; }
+.uni-badge.on{ background:#e7f7ec; color:#006616; } /* >=4.5:1 sobre #e7f7ec (WCAG AA, 7.2) */
 .uni-badge.off{ background:#fdecec; color:#cc0f10; }
