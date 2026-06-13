@@ -2,7 +2,7 @@
 date: 2026-06-03
 spec: 2026-06-03-universinid-fase2a-design.md
 adr: 0001-universinid-editor-blocos-hibrido.md
-status: em-execucao — Fases 0-6 + riders A3/A8 + C1 + extensoes E1/E2/E3 CONCLUIDAS (2026-06-11); falta Fase 7
+status: implementado — Fases 0-7 + riders A2/A3/A5/A8 + C1 + extensoes E1/E2/E3 CONCLUIDAS (2026-06-13); pendente apenas verificacao do upload em preview (7.4, dono do quadro)
 gate_aprovado_em: 2026-06-03
 tipo: web
 ---
@@ -48,7 +48,29 @@ tipo: web
 
 **Sobras de teste no banco (limpar na Fase 7):** lições `licao-de-teste-fase-5` (PUBLISHED) e `licao-vitrine-6-1` (DRAFT) + usuário `aluno.teste.fase5@delp.com.br`.
 
-**▶ PRÓXIMO (outra sessão): Fase 7** — CSP completa (B4) + revisão final + smoke (fechamento da Fase 2a) — `especificacoes/2-fila/FASE-07`.
+**Fase 7: CONCLUÍDA (2026-06-13)** — SPEC executada em `especificacoes/` (FASE-07), fechamento da Fase 2a. Commits:
+- **7.1** CSP completa (B4) em `src/middleware.ts` `9af0136` — 4 diretivas, só no matcher `/universinid`, landing/kiosk fora. Evidências (a)–(e) no navegador, 0 violações. **Decisão do dono do quadro:** `style-src` ganhou `https://fonts.googleapis.com` (sem o host, a CSP bloqueava o Google Fonts e derrubava a Barlow no UniversiNID).
+- **7.2** revisão final (a11y + perf) `22e9001` — revisão multi-dimensional (security+a11y+correctness) com verificação adversarial: 23 achados brutos → 14 confirmados (0 blocker/high). **A5 verificado: 16/16 handlers admin com `withAuth(['ADMIN'])` como 1ª ação + `/api/reseed`.** Corrigidos no escopo (WCAG A/AA + perf): contrastes (`.uni-badge.on`, CommandPalette), `aria-label` em inputs de dialog e botões de reordenar, focus-trap+restauração no CommandPalette, `aria-live` no "Salvando…", `getPublishedTree` em `cache()`.
+- **7.3** smoke e2e da Fase 2a `c5ed0ee` — passos 9-14 (criar/autorar/publicar/ver-como-aluno-nativo/concluir/despublicar) + `exitCode`. **Rodado contra build de produção: 14/14 OK, 0 console/page errors, exit 0.**
+- **7.5** este registro de fechamento.
+
+**Achados da 7.2 fora do escopo CSP/A5 → follow-ups rastreados (chips), respeitam decisões do dono do quadro:** (1) JWT válido 8h pós-desativação (re-checar `isActive` no servidor); (2) endurecer CSP base (`object-src 'none'`/`base-uri 'self'`/`connect-src 'self'` — impacto zero, mas o dono do quadro decidira manter só o B4 → confirmar); (3) alvos de toque <44px (WCAG AA de 24px já atendido; 44px é padrão org, contexto desktop-admin).
+
+**Descoberta importante (não é bug de código):** o editor BlockNote não monta para um doc que contenha um bloco `type:'embed'` (custom) no `initialContent` — o schema padrão do BlockNote não tem 'embed' (tem 'video'). Isso só ocorria numa lição-fixture (`licao-de-teste-fase-5`) onde um bloco 'embed' fora inserido via API (fora do editor); saneada. Lições normais montam (full-load e SPA). **Round-trip de vídeo/embed editor↔RenderBlocks fica como follow-up** (chip) — toca o critério #1. Também: a SDD teve o `contentDraft` esvaziado durante o diagnóstico intensivo do editor e foi **restaurada** ao marcador legado `s0-1` (hipótese de "abrir editor apaga draft legado" testada e REFUTADA — abrir sem digitar não dispara autosave).
+
+### Critérios de sucesso da Fase 2a (spec de design `2026-06-03-universinid-fase2a-design.md`)
+
+| # | Critério | Status | Evidência |
+|---|---|---|---|
+| 1 | Autoria no-code: ADMIN cria curso+módulo+lição com os 3 tipos de bloco, publica, vê no portal — 0 código/HTML | 🟡 **Parcial** | **Texto:** ✅ smoke 7.3 (passos 9-12, autoria via dialogs + editor + publish + render nativo). **Imagem:** ⏳ pendente 7.4 (upload do Blob só em deploy de preview). **Vídeo embed:** ⚠️ round-trip editor↔RenderBlocks não verificado (editor gera 'video', RenderBlocks espera 'embed') → follow-up |
+| 2 | Progresso preservado: 39 slugs resolvem `LessonProgress`, 0 órfão | ✅ | teste `seed-plan`/`catalogo` verde + smoke passo 4 (concluir legada) + passo 13 (progresso em lição nova); `lesson_progress` inalterado no A8 |
+| 3 | Scroll: lição decomposta rola nativamente, 0 bug | ✅ | FASE-05 (5.3) + smoke passo 12 (`.uni-content`, sem `iframe.uni-frame`) |
+| 4 | Segurança: 0 `dangerouslySetInnerHTML`; embed sanitizado write-time; bloco desconhecido degrada | ✅ | grep: única ocorrência é comentário JSDoc no RenderBlocks; testes `sanitize-content`/`RenderBlocks` verdes; revisão de segurança 7.2 sem blocker |
+| 5 | Qualidade: `npm run build` passa; testes Vitest (CRUD+migração+render) verdes (TDD) | ✅ | gate de saída: `npm run test` 103/103, `tsc` 0, `npm run build` ok |
+
+**Sobras de teste no banco (dono do quadro, requer acesso DB — DELETE responde 409 por A3 quando há progresso):** lições `licao-de-teste-fase-5` (saneada), `licao-vitrine-6-1` (DRAFT) e as `smoke-fase2a-<ts>` (DRAFT, despublicadas) + cursos/módulos de smoke (DRAFT) + usuário `aluno.teste.fase5@delp.com.br` (fixture do smoke — usado por `SMOKE_STUDENT_*` no `.env`, MANTER se o smoke for rodar de novo).
+
+**▶ RESTA p/ fechar 100% (dono do quadro):** (7.4) deploy de preview na Vercel → verificar upload de imagem (feliz + 413), render publicada e `img-src` da CSP em ambiente real; depois o ritual de conclusão (§6 da SPEC: mover FASE-07 p/ `3-concluidas/`, decidir o que promover — FASE-08 é pré-spec, requer `/nid:specify` — e atualizar README + ARQUITETURA §6/§7).
 
 ---
 
