@@ -4,10 +4,15 @@ import { NextResponse } from 'next/server';
 
 const { auth } = NextAuth(authConfig);
 
-// CSP completa (rider B4) — última camada da defesa em profundidade do conteúdo
-// no-code (write-time → read-time → CSP). Aplicada SOMENTE aqui; o matcher
-// `/universinid/:path*` garante que a landing `/` e o `/sistema-solar` ficam fora.
-// Conjunto COMPLETO: remover/afrouxar uma diretiva derruba a app.
+// CSP completa (rider B4) + baseline de defesa em profundidade — última camada da
+// proteção do conteúdo no-code (write-time → read-time → CSP). Aplicada SOMENTE aqui;
+// o matcher `/universinid/:path*` garante que a landing `/` e o `/sistema-solar` ficam fora.
+//
+// As 4 diretivas FUNCIONAIS (frame/img/script/style) são o conjunto B4: remover ou
+// afrouxar uma derruba a app. As 4 de BASELINE (object/base-uri/connect/frame-ancestors)
+// são defense-in-depth de impacto funcional zero — sem default-src, o que não está
+// escrito fica IRRESTRITO, não bloqueado; logo cada uma precisa ser explícita.
+// (Adicionadas pós-FASE-07, revertendo o adiamento da SPEC §8 #2 com aprovação do dono.)
 const CSP = [
   // 'self' é obrigatório p/ o iframe legado /universinid.html durante a migração.
   "frame-src 'self' https://*.youtube.com https://www.youtube.com https://player.vimeo.com https://*.videodelivery.net",
@@ -19,6 +24,16 @@ const CSP = [
   // Barlow (link no root layout) — sem o host, a fonte mandatória cai no fallback.
   // Os .woff2 do gstatic não precisam de font-src (não há default-src restringindo).
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  // — baseline (sem default-src para herdar, cada uma é explícita) —
+  // Sem isto, <object>/<embed>/<applet> ficariam irrestritos; o app não usa nenhum.
+  "object-src 'none'",
+  // Impede que um <base href> injetado reescreva o destino de URLs relativas.
+  "base-uri 'self'",
+  // fetch/XHR/WebSocket só same-origin — o app só chama /api/universinid/** (upload é
+  // server-side); 'self' cobre o WebSocket de HMR do dev (mesmo host).
+  "connect-src 'self'",
+  // Anti-clickjacking: só o próprio site pode enquadrar /universinid em <iframe>.
+  "frame-ancestors 'self'",
 ].join('; ');
 
 function withCsp(res: NextResponse): NextResponse {
