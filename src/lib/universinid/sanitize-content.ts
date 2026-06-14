@@ -28,7 +28,15 @@ export function validateContentDoc(doc: unknown): ContentCheck {
       const incompleta = url === undefined || url === null || url === '';
       if (!incompleta && !isSafeHttpUrl(url)) return { ok: false, error: 'imagem: URL deve ser http(s)' };
     }
-    if (b?.type === 'embed' && !isAllowedEmbed(b.props?.url)) return { ok: false, error: 'embed: só YouTube/Vimeo/Stream' };
+    if (b?.type === 'embed') {
+      // URL vazia/ausente = embed recém-inserido (autor ainda não colou o link) → permite,
+      // senão o autosave debounced rejeita (422) entre inserir o bloco e colar a URL — mesma
+      // leniência do bloco de imagem acima. URL PRESENTE deve ser embed de host na allowlist;
+      // o whitelist de leitura (RenderBlocks/isAllowedEmbed) é a defesa final.
+      const url = b.props?.url;
+      const incompleta = url === undefined || url === null || url === '';
+      if (!incompleta && !isAllowedEmbed(url)) return { ok: false, error: 'embed: só YouTube/Vimeo/Stream' };
+    }
   }
   return { ok: true };
 }
