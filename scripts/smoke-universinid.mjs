@@ -168,6 +168,22 @@ await step('10-autorar-no-editor', async () => {
   await page.keyboard.type('Conteúdo autorado pelo smoke da Fase 2a — bloco de texto nativo.');
   await savePromise;
   await shot(page, '10-editor.png');
+
+  // ── inserir um bloco de VÍDEO (embed) via slash-menu (FASE-07.1) ──
+  await page.keyboard.press('Enter');
+  await page.keyboard.type('/video');
+  await page.getByText('Vídeo (embed)', { exact: false }).first().click();
+  // O save deve conter a URL NORMALIZADA (watch?v= -> /embed/) — prova a normalização end-to-end.
+  const embedSave = page.waitForResponse(
+    (r) => /\/api\/universinid\/admin\/lessons\/[^/]+$/.test(r.url())
+      && r.request().method() === 'PATCH' && r.status() === 200
+      && (r.request().postData() ?? '').includes('youtube.com/embed/smoke12345'),
+    { timeout: 20000 },
+  );
+  await page.getByLabel(/Link do vídeo/i).fill('https://www.youtube.com/watch?v=smoke12345');
+  await page.getByRole('button', { name: /Inserir vídeo/i }).click();
+  await embedSave;
+  await shot(page, '10b-editor-embed.png');
 });
 
 await step('11-publicar', async () => {
@@ -201,6 +217,12 @@ await step('12-ver-como-aluno-nativo', async () => {
   if (legacy !== 0) throw new Error('esperava render nativo, mas há iframe.uni-frame');
   const txt = await sp.locator('.uni-content').innerText();
   if (!txt.includes('autorado pelo smoke')) throw new Error('conteúdo nativo não renderizou');
+  // Vídeo embed renderiza como <iframe> normalizado (round-trip editor↔RenderBlocks — critério #1).
+  await sp.waitForSelector('.uni-embed iframe', { timeout: 15000 });
+  const embedSrc = await sp.locator('.uni-embed iframe').first().getAttribute('src');
+  if (!embedSrc || !embedSrc.includes('youtube.com/embed/smoke12345')) {
+    throw new Error(`embed não renderizou como iframe normalizado (src=${embedSrc})`);
+  }
   await shot(sp, '12-aluno-nativo.png');
   studentCtx.__page = sp;
 });
