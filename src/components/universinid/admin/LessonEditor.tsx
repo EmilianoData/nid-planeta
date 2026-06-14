@@ -4,11 +4,12 @@
 // Os imports do BlockNote (e seus CSS) tocam o DOM, então nunca devem rodar no servidor.
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
-import { useCreateBlockNote } from '@blocknote/react';
+import { useCreateBlockNote, getDefaultReactSlashMenuItems, SuggestionMenuController } from '@blocknote/react';
 import { BlockNoteView } from '@blocknote/mantine';
 import { useCallback, useRef } from 'react';
-import type { PartialBlock } from '@blocknote/core';
-import { isLegacyEmbed, stripIncompleteImages } from '@/lib/universinid/content-types';
+import { filterSuggestionItems, insertOrUpdateBlockForSlashMenu, type PartialBlock } from '@blocknote/core';
+import { isLegacyEmbed, stripIncompleteImages, keepEditableBlocks } from '@/lib/universinid/content-types';
+import { editorSchema, KNOWN_BLOCK_TYPES } from './editor-schema';
 
 async function uploadImage(file: File): Promise<string> {
   const res = await fetch(
@@ -29,10 +30,12 @@ export function LessonEditor({ initial, onSave }: LessonEditorProps) {
   // GUARD: legacy-embed NÃO é um bloco do schema do BlockNote — passá-lo como
   // initialContent faz o editor lançar/descartar. Lição ainda-legada → editor vazio + aviso.
   const legacy = isLegacyEmbed(initial);
-  // Descarta imagens sem URL (incompletas) antes de hidratar — senão o BlockNote quebra
-  // (RangeError "Index 0 out of range") ao recarregar um doc com bloco de imagem vazio.
-  const cleaned = legacy ? [] : stripIncompleteImages(initial);
+  // Guard de load: descarta imagens sem URL (incompletas — RangeError "Index 0 out of range")
+  // E qualquer bloco fora do schema (ex.: `video`/`audio`/`file` antigos, removidos no embed-only)
+  // — senão o useCreateBlockNote quebra ao hidratar um tipo desconhecido.
+  const cleaned = legacy ? [] : keepEditableBlocks(stripIncompleteImages(initial), KNOWN_BLOCK_TYPES);
   const editor = useCreateBlockNote({
+    schema: editorSchema,
     initialContent: cleaned.length ? (cleaned as PartialBlock[]) : undefined,
     uploadFile: uploadImage,
   });
@@ -54,7 +57,30 @@ export function LessonEditor({ initial, onSave }: LessonEditorProps) {
           salvar, o conteúdo nativo substitui o embed legado.
         </p>
       )}
-      <BlockNoteView editor={editor} onChange={handleChange} />
+      <BlockNoteView editor={editor} slashMenu={false} onChange={handleChange}>
+        <SuggestionMenuController
+          triggerCharacter="/"
+          getItems={async (query) =>
+            filterSuggestionItems(
+              [
+                ...getDefaultReactSlashMenuItems(editor),
+                {
+                  title: 'Vídeo (embed)',
+                  subtext: 'YouTube, Vimeo ou Cloudflare Stream',
+                  group: 'Mídia',
+                  aliases: ['video', 'vídeo', 'youtube', 'vimeo', 'embed'],
+                  // Consome a query "/video" do bloco atual (mesmo comportamento dos itens padrão);
+                  // NÃO usar insertBlocks 'after' (deixaria o texto "/video" no editor).
+                  onItemClick: () => {
+                    insertOrUpdateBlockForSlashMenu(editor, { type: 'embed' });
+                  },
+                },
+              ],
+              query,
+            )
+          }
+        />
+      </BlockNoteView>
     </div>
   );
 }

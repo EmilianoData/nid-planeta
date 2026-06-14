@@ -157,6 +157,15 @@ describe('lessons route', () => {
     expect(lessonUpdate).not.toHaveBeenCalled();
   });
 
+  it('PATCH salva embed normalizado (YouTube /embed) -> 200', async () => {
+    lessonFindUnique.mockResolvedValue({ id: 'l1' });
+    lessonUpdate.mockResolvedValue({ id: 'l1' });
+    const doc = [{ type: 'embed', id: 'b1', props: { url: 'https://www.youtube.com/embed/abc', provider: 'youtube' } }];
+    const res = await PATCH(patchReq({ contentDraft: doc }), ctx('l1'));
+    expect(res.status).toBe(200);
+    expect(lessonUpdate).toHaveBeenCalled();
+  });
+
   it('PATCH 404 quando lição inexistente', async () => {
     lessonFindUnique.mockResolvedValue(null);
     const res = await PATCH(patchReq({ title: 'X' }), ctx('nope'));

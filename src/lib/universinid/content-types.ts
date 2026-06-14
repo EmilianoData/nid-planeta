@@ -38,3 +38,21 @@ export function stripIncompleteImages(doc: unknown): unknown[] {
     return true;
   });
 }
+
+// Mantém só blocos cujo `type` o editor consegue montar. Removendo `video`/`audio`/`file` do
+// schema (embed-only), um doc antigo que os contenha QUEBRARIA o useCreateBlockNote no hydrate —
+// este guard os filtra ANTES de hidratar (mesmo princípio de stripIncompleteImages e do guard de
+// legacy-embed). O 1º save grava o doc filtrado. RECURSA em `children` — um bloco não-suportado
+// ANINHADO também derruba o hydrate.
+export function keepEditableBlocks(doc: unknown, known: string[]): unknown[] {
+  if (!Array.isArray(doc)) return [];
+  const set = new Set(known);
+  const walk = (blocks: unknown[]): unknown[] =>
+    blocks
+      .filter((b) => set.has((b as { type?: string })?.type ?? ''))
+      .map((b) => {
+        const block = b as { children?: unknown[] };
+        return Array.isArray(block.children) ? { ...block, children: walk(block.children) } : block;
+      });
+  return walk(doc);
+}

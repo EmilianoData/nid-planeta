@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isLegacyEmbed, legacyEmbedDoc, stripIncompleteImages, type UniBlockDoc } from './content-types';
+import { isLegacyEmbed, keepEditableBlocks, legacyEmbedDoc, stripIncompleteImages, type UniBlockDoc } from './content-types';
 
 describe('content-types', () => {
   it('legacyEmbedDoc cria doc de 1 bloco com o screenId', () => {
@@ -22,5 +22,32 @@ describe('content-types', () => {
     expect(out).toHaveLength(2);
     expect(out.map((b) => (b as { type?: string }).type)).toEqual(['paragraph', 'image']);
     expect(stripIncompleteImages(undefined)).toEqual([]);
+  });
+});
+
+describe('keepEditableBlocks (guard de load do editor)', () => {
+  const KNOWN = ['paragraph', 'heading', 'bulletListItem', 'numberedListItem', 'image', 'embed'];
+  it('mantém blocos conhecidos e descarta os fora do schema (ex.: video)', () => {
+    const doc = [
+      { id: 'p', type: 'paragraph', props: {}, content: [] },
+      { id: 'v', type: 'video', props: { url: 'https://x/y.mp4' } },
+      { id: 'e', type: 'embed', props: { url: 'https://www.youtube.com/embed/x' } },
+    ];
+    const out = keepEditableBlocks(doc, KNOWN);
+    expect(out.map((b) => (b as { type: string }).type)).toEqual(['paragraph', 'embed']);
+  });
+  it('recursa em children: descarta video ANINHADO (senão o hydrate crasha — Regra #4)', () => {
+    const doc = [
+      { id: 'p', type: 'paragraph', props: {}, content: [], children: [
+        { id: 'v', type: 'video', props: { url: 'https://x/y.mp4' } },
+        { id: 'h', type: 'heading', props: { level: 2 }, content: [], children: [] },
+      ] },
+    ];
+    const out = keepEditableBlocks(doc, KNOWN) as Array<{ children: Array<{ type: string }> }>;
+    expect(out[0].children.map((c) => c.type)).toEqual(['heading']);
+  });
+  it('array vazio/não-array → []', () => {
+    expect(keepEditableBlocks(undefined, KNOWN)).toEqual([]);
+    expect(keepEditableBlocks([], KNOWN)).toEqual([]);
   });
 });
