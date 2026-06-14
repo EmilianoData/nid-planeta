@@ -1,13 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
-const { authMock, putMock } = vi.hoisted(() => ({
+const { authMock, putMock, userFindUnique } = vi.hoisted(() => ({
   authMock: vi.fn(),
   putMock: vi.fn(),
+  userFindUnique: vi.fn(),
 }));
 
 vi.mock('@/lib/auth', () => ({ auth: authMock }));
 vi.mock('@vercel/blob', () => ({ put: putMock }));
+vi.mock('@/lib/prisma', () => ({ prisma: { user: { findUnique: userFindUnique } } }));
 
 import { POST } from './route';
 
@@ -36,6 +38,8 @@ describe('upload route', () => {
   beforeEach(() => {
     authMock.mockReset();
     authMock.mockResolvedValue(ADMIN);
+    userFindUnique.mockReset();
+    userFindUnique.mockResolvedValue({ id: 'a' });
     putMock.mockReset();
     putMock.mockResolvedValue({ url: 'https://blob/x.png' });
   });

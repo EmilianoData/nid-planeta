@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 type Role = 'STUDENT' | 'ADMIN';
 
@@ -25,9 +26,16 @@ export async function parseBody<T>(request: Request, schema: z.ZodType<T>): Prom
 export async function withAuth(allowedRoles?: Role[]) {
   const session = await auth();
   if (!session?.user) return { error: apiError('Não autenticado', 401), session: null };
-  const role = (session.user as { role?: Role }).role;
-  if (allowedRoles && (!role || !allowedRoles.includes(role))) {
+  const usuario = session.user as { id?: string; role?: Role };
+  if (allowedRoles && (!usuario.role || !allowedRoles.includes(usuario.role))) {
     return { error: apiError('Sem permissão', 403), session: null };
   }
+  // OWASP A07: o JWT (8h) não carrega isActive. Re-checa no banco a cada request
+  // autenticada para que desativar a conta revogue o acesso imediatamente, sem
+  // esperar o token expirar. null = conta inexistente OU inativa → 401.
+  const ativo = usuario.id
+    ? await prisma.user.findUnique({ where: { id: usuario.id, isActive: true }, select: { id: true } })
+    : null;
+  if (!ativo) return { error: apiError('Conta inativa', 401), session: null };
   return { error: null, session: session as { user: { id: string; role: Role } } };
 }

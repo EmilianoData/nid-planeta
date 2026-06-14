@@ -1,18 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { authMock, execMock } = vi.hoisted(() => ({
+const { authMock, execMock, userFindUnique } = vi.hoisted(() => ({
   authMock: vi.fn(),
   execMock: vi.fn(),
+  userFindUnique: vi.fn(),
 }));
 
 vi.mock('@/lib/auth', () => ({ auth: authMock }));
 vi.mock('node:child_process', () => ({ exec: execMock }));
+vi.mock('@/lib/prisma', () => ({ prisma: { user: { findUnique: userFindUnique } } }));
 
 import { POST } from './route';
 
 describe('reseed route — exige ADMIN (C1)', () => {
   beforeEach(() => {
     authMock.mockReset();
+    userFindUnique.mockReset();
+    userFindUnique.mockResolvedValue({ id: 'a' });
     execMock.mockReset();
     // exec estilo callback (promisify embrulha): sucesso sem rodar o seed de verdade
     execMock.mockImplementation(

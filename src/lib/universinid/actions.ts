@@ -17,6 +17,14 @@ const buscarLinhasProgresso = cache((userId: string) =>
 async function exigirSessao() {
   const session = await auth();
   if (!session?.user?.id) throw new Error('Não autenticado');
+  // OWASP A07: o JWT (8h) não carrega isActive. Re-checa no banco a cada server
+  // action sensível para que desativar a conta revogue o acesso imediatamente,
+  // sem esperar o token expirar. null = conta inexistente OU inativa.
+  const ativo = await prisma.user.findUnique({
+    where: { id: session.user.id, isActive: true },
+    select: { id: true },
+  });
+  if (!ativo) throw new Error('Conta inativa');
   return session.user;
 }
 

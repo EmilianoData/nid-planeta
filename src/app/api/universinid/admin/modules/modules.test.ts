@@ -12,6 +12,7 @@ const {
   lessonFindMany,
   lessonProgressCount,
   transactionMock,
+  userFindUnique,
 } = vi.hoisted(() => ({
   authMock: vi.fn(),
   moduleFindMany: vi.fn(),
@@ -24,6 +25,7 @@ const {
   lessonFindMany: vi.fn(),
   lessonProgressCount: vi.fn(),
   transactionMock: vi.fn(),
+  userFindUnique: vi.fn(),
 }));
 vi.mock('@/lib/auth', () => ({ auth: authMock }));
 vi.mock('@/lib/prisma', () => ({
@@ -31,6 +33,7 @@ vi.mock('@/lib/prisma', () => ({
     module: { findMany: moduleFindMany, create: moduleCreate, aggregate: moduleAggregate, updateMany: moduleUpdateMany, findUnique: moduleFindUnique, update: moduleUpdate, delete: moduleDelete },
     lesson: { findMany: lessonFindMany },
     lessonProgress: { count: lessonProgressCount },
+    user: { findUnique: userFindUnique },
     $transaction: transactionMock,
   },
 }));
@@ -55,6 +58,7 @@ function postReq(body: unknown, path = 'http://t/api/universinid/admin/modules')
 describe('modules route', () => {
   beforeEach(() => {
     authMock.mockReset(); authMock.mockResolvedValue(ADMIN);
+    userFindUnique.mockReset(); userFindUnique.mockResolvedValue({ id: 'a' });
     moduleFindMany.mockReset(); moduleCreate.mockReset(); moduleAggregate.mockReset();
     moduleUpdateMany.mockReset(); transactionMock.mockReset();
     moduleFindUnique.mockReset(); moduleUpdate.mockReset(); moduleDelete.mockReset();

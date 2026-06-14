@@ -10,6 +10,7 @@ const {
   courseDelete,
   lessonFindMany,
   lessonProgressCount,
+  userFindUnique,
 } = vi.hoisted(() => ({
   authMock: vi.fn(),
   courseFindMany: vi.fn(),
@@ -20,6 +21,7 @@ const {
   courseDelete: vi.fn(),
   lessonFindMany: vi.fn(),
   lessonProgressCount: vi.fn(),
+  userFindUnique: vi.fn(),
 }));
 vi.mock('@/lib/auth', () => ({ auth: authMock }));
 vi.mock('@/lib/prisma', () => ({
@@ -27,6 +29,7 @@ vi.mock('@/lib/prisma', () => ({
     course: { findMany: courseFindMany, create: courseCreate, aggregate: courseAggregate, findUnique: courseFindUnique, update: courseUpdate, delete: courseDelete },
     lesson: { findMany: lessonFindMany },
     lessonProgress: { count: lessonProgressCount },
+    user: { findUnique: userFindUnique },
   },
 }));
 import { GET, POST } from './route';
@@ -42,6 +45,7 @@ function req(body?: unknown) {
 describe('courses route', () => {
   beforeEach(() => {
     authMock.mockReset(); authMock.mockResolvedValue(ADMIN);
+    userFindUnique.mockReset(); userFindUnique.mockResolvedValue({ id: 'a' });
     courseFindMany.mockReset(); courseCreate.mockReset(); courseAggregate.mockReset();
     courseFindUnique.mockReset(); courseUpdate.mockReset(); courseDelete.mockReset();
     lessonFindMany.mockReset(); lessonFindMany.mockResolvedValue([]);

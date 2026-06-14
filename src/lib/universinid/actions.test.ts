@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { authMock, lessonFindUnique, aliasFindUnique, progressUpsert } = vi.hoisted(() => ({
+const { authMock, lessonFindUnique, aliasFindUnique, progressUpsert, userFindUnique } = vi.hoisted(() => ({
   authMock: vi.fn(),
   lessonFindUnique: vi.fn(),
   aliasFindUnique: vi.fn(),
   progressUpsert: vi.fn(),
+  userFindUnique: vi.fn(),
 }));
 
 vi.mock('@/lib/auth', () => ({ auth: authMock }));
@@ -13,6 +14,7 @@ vi.mock('@/lib/prisma', () => ({ prisma: {
   lesson: { findUnique: lessonFindUnique },
   lessonSlugAlias: { findUnique: aliasFindUnique },
   lessonProgress: { upsert: progressUpsert },
+  user: { findUnique: userFindUnique },
 } }));
 
 import { markLessonProgress } from './actions';
@@ -27,6 +29,8 @@ describe('markLessonProgress — guarda no banco (extensão E3)', () => {
     aliasFindUnique.mockReset();
     progressUpsert.mockReset();
     progressUpsert.mockResolvedValue({});
+    userFindUnique.mockReset();
+    userFindUnique.mockResolvedValue({ id: 'u1' }); // padrão: conta existe E está ativa
   });
 
   it('aceita lição que existe no BANCO mesmo fora do catálogo estático', async () => {
@@ -65,6 +69,14 @@ describe('markLessonProgress — guarda no banco (extensão E3)', () => {
     await expect(
       markLessonProgress({ slug: 'llm-o-que-e', status: 'IN_PROGRESS', pct: 10 }),
     ).rejects.toThrow('Não autenticado');
+    expect(progressUpsert).not.toHaveBeenCalled();
+  });
+
+  it('conta desativada (token válido, isActive=false): rejeita; upsert NÃO roda — OWASP A07', async () => {
+    userFindUnique.mockResolvedValue(null); // findUnique({ id, isActive: true }) não acha → conta inativa
+    await expect(
+      markLessonProgress({ slug: 'llm-o-que-e', status: 'IN_PROGRESS', pct: 10 }),
+    ).rejects.toThrow('Conta inativa');
     expect(progressUpsert).not.toHaveBeenCalled();
   });
 });

@@ -12,6 +12,7 @@ const {
   lessonUpdateMany,
   transactionMock,
   lessonProgressCount,
+  userFindUnique,
 } = vi.hoisted(() => ({
   authMock: vi.fn(),
   lessonFindMany: vi.fn(),
@@ -23,6 +24,7 @@ const {
   lessonUpdateMany: vi.fn(),
   transactionMock: vi.fn(),
   lessonProgressCount: vi.fn(),
+  userFindUnique: vi.fn(),
 }));
 
 vi.mock('@/lib/auth', () => ({ auth: authMock }));
@@ -38,6 +40,7 @@ vi.mock('@/lib/prisma', () => ({
       updateMany: lessonUpdateMany,
     },
     lessonProgress: { count: lessonProgressCount },
+    user: { findUnique: userFindUnique },
     $transaction: transactionMock,
   },
 }));
@@ -69,6 +72,8 @@ describe('lessons route', () => {
   beforeEach(() => {
     authMock.mockReset();
     authMock.mockResolvedValue(ADMIN);
+    userFindUnique.mockReset();
+    userFindUnique.mockResolvedValue({ id: 'a' });
     lessonFindMany.mockReset();
     lessonCreate.mockReset();
     lessonFindUnique.mockReset();
@@ -85,6 +90,13 @@ describe('lessons route', () => {
     authMock.mockResolvedValue({ user: { id: 's', role: 'STUDENT' } });
     const res = await POST(postReq({ moduleId: 'm1', slug: 'aula-1', title: 'Aula 1' }));
     expect(res.status).toBe(403);
+  });
+
+  it('POST 401 quando a conta foi desativada (token ADMIN válido, isActive=false) — OWASP A07', async () => {
+    userFindUnique.mockResolvedValue(null); // sessão ADMIN ok, mas a conta já foi desativada no banco
+    const res = await POST(postReq({ moduleId: 'm1', slug: 'aula-x', title: 'Aula X' }));
+    expect(res.status).toBe(401);
+    expect(lessonCreate).not.toHaveBeenCalled();
   });
 
   it('POST 422 quando slug inválido', async () => {
