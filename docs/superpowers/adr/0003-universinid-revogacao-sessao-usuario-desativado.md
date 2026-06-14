@@ -1,4 +1,9 @@
-# ADR-0002 — UniversiNID: revogação de sessão de usuário desativado via re-check no banco (não maxAge)
+# ADR-0003 — UniversiNID: revogação de sessão de usuário desativado via re-check no banco (não maxAge)
+
+> **Nota de numeração:** originalmente commitado como ADR-0002 (commit `c96266c`); renumerado para
+> 0003 por colisão com `0002-universinid-csp-baseline-hardening.md`, criado em paralelo (`66646f0`).
+> A mensagem de `c96266c` ainda referencia "ADR-0002" por anterioridade — não reescrita para não
+> mexer em histórico já com descendentes.
 
 - **Status:** ✅ Aceito (2026-06-14)
 - **Projeto:** nid-planeta · UniversiNID (segurança)
