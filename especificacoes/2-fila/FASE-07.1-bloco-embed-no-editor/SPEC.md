@@ -303,10 +303,12 @@ render do editor é React+DOM/BlockNote → **não** unit-testável no env `node
   // Embed-only (design spec §"Vídeo": embed-only, nunca upload/hospedagem): removemos os blocos
   // de mídia POR ARQUIVO do schema padrão (video/audio/file) — RenderBlocks não os renderiza
   // (cairiam no default → somem no read). Adicionamos o bloco custom `embed`.
-  const { video: _v, audio: _a, file: _f, ...keep } = defaultBlockSpecs;
+  const { video, audio, file, ...keep } = defaultBlockSpecs;
+  void video, void audio, void file; // descartados de propósito (embed-only) — sem unused-var
 
   export const editorSchema = BlockNoteSchema.create({
-    blockSpecs: { ...keep, embed: embedBlock },
+    // CONFIRMADO em 0.51.4: createReactBlockSpec retorna factory `(options?) => BlockSpec` → chamar embedBlock().
+    blockSpecs: { ...keep, embed: embedBlock() },
   });
 
   // Tipos que o editor CONSEGUE montar — usado pelo guard de load (tarefa 07.1.3).

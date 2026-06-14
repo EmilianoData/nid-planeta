@@ -85,6 +85,15 @@
 .uni-content .uni-embed{ position:relative; max-width:760px; aspect-ratio:16/9; margin:18px 0; }
 .uni-content .uni-embed iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; border-radius:10px; }
 .uni-content .uni-nested{ margin-left:18px; }
+
+/* Bloco custom `embed` DENTRO do editor (FASE-07.1) — preview + form de colar link.
+   Classes próprias (não `.uni-content .uni-embed`) p/ não regredir a leitura. */
+.uni-embed-editor{ position:relative; max-width:560px; aspect-ratio:16/9; margin:8px 0; }
+.uni-embed-editor iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; border-radius:8px; }
+.uni-embed-form{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:12px; border:1px dashed #B0B0B0; border-radius:10px; margin:8px 0; }
+.uni-embed-form input{ flex:1 1 280px; min-height:44px; padding:0 10px; border:1px solid #B0B0B0; border-radius:8px; font-size:1rem; }
+.uni-embed-form button{ min-height:44px; padding:0 16px; border:none; border-radius:8px; background:#CC0F10; color:#fff; font-weight:700; cursor:pointer; }
+.uni-embed-err{ flex-basis:100%; color:#CC0F10; font-size:.85rem; margin:4px 0 0; }
 .uni-btn{ background:var(--p); color:#fff; border:none; border-radius:10px; padding:9px 16px; font-weight:700; font-size:.82rem; cursor:pointer; }
 .uni-btn.ok{ background:#0B861D; }
 .uni-btn:disabled{ opacity:.6; cursor:default; }
