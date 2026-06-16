@@ -29,8 +29,11 @@ export function useScrollProgress() {
 
     const apply = () => {
       pending = false;
-      const max = track.scrollHeight - track.clientHeight;
-      const p = max > 0 ? Math.min(1, Math.max(0, track.scrollTop / max)) : 0;
+      // The 3-act choreography plays out over a fixed scroll window
+      // (`.landing-spacer` ≈ 220vh). Anything beyond that is post-act content,
+      // so we cap `--p` at 1 even when the track has grown taller.
+      const choreoMax = track.clientHeight * 2.2;
+      const p = choreoMax > 0 ? clamp01(track.scrollTop / choreoMax) : 0;
       const p2 = clamp01((p - 0.3) / 0.35);
       const p3 = clamp01((p - 0.7) / 0.25);
       html.style.setProperty('--p', p.toFixed(4));
