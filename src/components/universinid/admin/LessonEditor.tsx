@@ -31,9 +31,13 @@ export function LessonEditor({ initial, onSave }: LessonEditorProps) {
   // initialContent faz o editor lançar/descartar. Lição ainda-legada → editor vazio + aviso.
   const legacy = isLegacyEmbed(initial);
   // Guard de load: descarta imagens sem URL (incompletas — RangeError "Index 0 out of range")
-  // E qualquer bloco fora do schema (ex.: `video`/`audio`/`file` antigos, removidos no embed-only)
-  // — senão o useCreateBlockNote quebra ao hidratar um tipo desconhecido.
-  const cleaned = legacy ? [] : keepEditableBlocks(stripIncompleteImages(initial), KNOWN_BLOCK_TYPES);
+  // E qualquer bloco fora do schema (ex.: `video`/`audio`/`file`/`codeBlock` antigos, fora do
+  // conjunto suportado) — senão o useCreateBlockNote quebra ao hidratar um tipo desconhecido.
+  const pre = legacy ? [] : stripIncompleteImages(initial);
+  const cleaned = legacy ? [] : keepEditableBlocks(pre, KNOWN_BLOCK_TYPES);
+  // Avisa quando o guard removeu blocos não-suportados (de versões anteriores do editor): o
+  // conteúdo suportado foi mantido e o 1º save grava a versão filtrada.
+  const removeuNaoSuportado = !legacy && JSON.stringify(pre) !== JSON.stringify(cleaned);
   const editor = useCreateBlockNote({
     schema: editorSchema,
     initialContent: cleaned.length ? (cleaned as PartialBlock[]) : undefined,
@@ -55,6 +59,15 @@ export function LessonEditor({ initial, onSave }: LessonEditorProps) {
         >
           Esta lição ainda usa o conteúdo legado (HTML embutido). Comece a autorar abaixo — ao
           salvar, o conteúdo nativo substitui o embed legado.
+        </p>
+      )}
+      {removeuNaoSuportado && (
+        <p
+          role="status"
+          className="mb-3 rounded-[10px] border border-[#f0d9a8] bg-[#fff7e6] px-3 py-2 text-[.82rem] text-[#8a5a00]"
+        >
+          Alguns blocos não suportados (de versões anteriores do editor) foram ocultados. O
+          conteúdo suportado foi mantido — salve para consolidar.
         </p>
       )}
       <BlockNoteView editor={editor} slashMenu={false} onChange={handleChange}>
