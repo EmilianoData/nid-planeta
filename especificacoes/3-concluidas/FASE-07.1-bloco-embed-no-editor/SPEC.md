@@ -2,8 +2,9 @@
 fase: FASE-07.1
 nome: Bloco custom `embed` no editor (fecha o round-trip de vídeo — critério #1)
 origem: docs/superpowers/plans/2026-06-03-universinid-fase2a.md (follow-up registrado da FASE-07 — §"Descoberta importante" + critério #1 🟡 Parcial) — SPEC corretiva da Fase 2a
-status: especificada
+status: concluida
 gate: GO ✅ (2026-06-14) — red-team 6 dimensões, 0 bloqueante; ajustes 🟡 1–4 dobrados nos snippets
+executada: 2026-06-14 — commits 07.1.1…07.1.6; tsc 0, test 120/120, build ok, smoke e2e 14/14 (next start). Ver §9 Registro de execução.
 modelo_executor: sonnet-4.6 (siga esta SPEC literalmente; em caso de divergência, PARE e reporte)
 atualizado: 2026-06-14
 ---
@@ -576,18 +577,44 @@ Você vai executar a FASE-07.1 do projeto nid-planeta. Trabalhe em C:\dev\nid-pl
 8. Ao final, rode o gate de saída (seção 5) e cole as saídas reais.
 ```
 
-## 8. Decisões em aberto (perguntar ao dono do quadro)
+## 8. Decisões em aberto — RESOLVIDAS (execução autônoma autorizada pelo dono, 2026-06-14)
 
-1. **Outros blocos do schema padrão que TAMBÉM somem no read.** Esta SPEC remove `video`/`audio`/
-   `file` (mídia por arquivo). Mas `RenderBlocks` também **não** trata `codeBlock`, `quote`,
-   `table`, `checkListItem`, `divider`, `toggleListItem` — se o autor inserir, somem no read
-   (mesmo bug, classe maior). Opções: **(a)** removê-los também do schema (embed-only estrito,
-   editor = paragraph/heading/listas/image/embed) — mais seguro, menos capacidade; **(b)** estender
-   `RenderBlocks` para suportá-los — mais trabalho, fora do escopo desta corretiva. Default desta
-   SPEC: **não** mexer neles agora (escopo = vídeo/embed); rastrear como follow-up. Confirmar.
-2. **Strip silencioso de `video` antigo no load.** O guard (`keepEditableBlocks`) descarta blocos
-   `video`/`audio`/`file` ao abrir; no 1º save o doc filtrado sobrescreve. Mostrar um banner
-   ("blocos de mídia não suportados foram removidos") como no guard de legacy-embed, ou strip
-   silencioso (eles nunca renderizaram mesmo)? Default: strip + banner curto.
-3. **Promoção na fila.** Esta corretiva entra à frente da FASE-08 (quizzes, pré-spec)? Naming
-   `07.1` sugere que sim (sub-fase do fechamento da 2a). Confirmar a ordem de promoção.
+1. **Outros blocos do schema padrão que TAMBÉM somem no read** → **RESOLVIDO (07.1.6, opção a):**
+   o schema do editor foi restrito a `paragraph/heading/bulletListItem/numberedListItem/image/embed`
+   (exatamente o que o `RenderBlocks` renderiza). `codeBlock`/`quote`/`table`/`checkListItem`/
+   `divider`/`toggleListItem` ficam FORA — habilitá-los é feature futura **deliberada** (render no
+   `RenderBlocks` + sanitize + teste, em conjunto). Elimina toda a classe "bloco autorado some no read".
+2. **Strip silencioso no load** → **RESOLVIDO (07.1.6, banner):** `LessonEditor` mostra um banner
+   `role="status"` quando o guard de load remove blocos não-suportados de docs antigos; o conteúdo
+   suportado é mantido e o 1º save consolida.
+3. **Promoção na fila** → arquivo movido para `3-concluidas/` (concluída). **Pendente do dono:**
+   atualizar a tabela de status em `especificacoes/README.md` (a maior parte de `especificacoes/`
+   está untracked no working tree — consolidação cross-sessão é do dono). FASE-08 segue pré-spec.
+
+## 9. Registro de execução (2026-06-14)
+
+Executada nesta sessão com autonomia (ordem 07.1.1 → 07.1.6). Commits em `feature/nid-planeta`
+— **NÃO pushados**: o dono consolida e pusha junto com as alterações de outras sessões.
+
+| Tarefa | Commit | Resumo |
+|---|---|---|
+| SPEC+gate | `c0202f7` | SPEC corretiva (TEMPLATE A) + gate GO (red-team 6 dimensões) |
+| 07.1.1 | `19363d6` | `normalizeEmbedUrl` (TDD, 8 testes); casa allowlist + CSP `frame-src` |
+| 07.1.2 | `954f204` | bloco custom `embed` (`createReactBlockSpec` factory) + schema |
+| 07.1.3 | `c9412e7` | editor usa schema + slash-menu "Vídeo (embed)" + guard recursivo + testes (guard/lessons) |
+| 07.1.3b | `a1405f6` | `validateContentDoc` tolera embed incompleto (paridade com image) |
+| 07.1.4 | `5872501` | smoke e2e cobre embed (passos 10b/12) |
+| 07.1.5 | `6163281`/`f93f58e` | docs do plano (critério #1 vídeo → ✅) + registro do smoke |
+| 07.1.6 | `1fe42e5` | §8a schema restrito ao suportado + §8b banner de strip |
+
+**Gate de saída (2026-06-14):** `npx tsc --noEmit` 0 · `npm run test` **120/120** · `npm run build`
+ok · `node scripts/smoke-universinid.mjs` (build de produção, `next start` :3100) **14/14 OK · 0
+console/page errors · exit 0** (rodado 2×: após 07.1.4 e após 07.1.6) · `git diff globals.css`
+vazio · 0 `dangerouslySetInnerHTML` (só comentários). Defesa em profundidade: normaliza no input →
+`validateContentDoc` no PATCH → `isAllowedEmbed` no `RenderBlocks`.
+
+**Resíduo de smoke no Neon** (Decisão #4 do plano): cursos/lições `smoke-fase2a-<ts>` (despublicados
+no passo 14) + progresso do aluno de teste — limpeza opcional via DB (DELETE responde 409 por A3 com progresso).
+
+**Pendente (dono):** atualizar `especificacoes/README.md`; item 7.4 da FASE-07 (upload de imagem em
+deploy de preview — independente desta fase); **push da branch**.
