@@ -73,7 +73,7 @@ SPEC `especificacoes/2-fila/FASE-07.1-bloco-embed-no-editor/SPEC.md` (gate GO, r
 
 | # | Critério | Status | Evidência |
 |---|---|---|---|
-| 1 | Autoria no-code: ADMIN cria curso+módulo+lição com os 3 tipos de bloco, publica, vê no portal — 0 código/HTML | 🟡 **Parcial** | **Texto:** ✅ smoke 7.3 (passos 9-12). **Vídeo embed:** ✅ **FASE-07.1** — bloco custom `embed` no editor; round-trip editor↔RenderBlocks fechado; provado por `embed-url`/`keepEditableBlocks`/`lessons`(PATCH 200 embed)/`sanitize`(embed incompleto) + `tsc` 0 + `build` ok + **smoke e2e 14/14 (build de produção, 2026-06-14)**. **Imagem:** ⏳ pendente 7.4 (upload do Blob só em deploy de preview). |
+| 1 | Autoria no-code: ADMIN cria curso+módulo+lição com os 3 tipos de bloco, publica, vê no portal — 0 código/HTML | ✅ **Fechado end-to-end em produção (2026-06-16)** | **Texto:** ✅ smoke 7.3. **Vídeo embed:** ✅ **FASE-07.1** (bloco custom `embed`; `embed-url`/`keepEditableBlocks`/`lessons`/`sanitize` + smoke e2e 14/14) + **validado em produção 2026-06-16**. **Imagem:** ✅ **upload validado em PRODUÇÃO 2026-06-16** (fecha a 7.4). Login OK após cadastrar `AUTH_SECRET`/`DATABASE_URL`/`BLOB_READ_WRITE_TOKEN` na Vercel (Prod+Preview). |
 | 2 | Progresso preservado: 39 slugs resolvem `LessonProgress`, 0 órfão | ✅ | teste `seed-plan`/`catalogo` verde + smoke passo 4 (concluir legada) + passo 13 (progresso em lição nova); `lesson_progress` inalterado no A8 |
 | 3 | Scroll: lição decomposta rola nativamente, 0 bug | ✅ | FASE-05 (5.3) + smoke passo 12 (`.uni-content`, sem `iframe.uni-frame`) |
 | 4 | Segurança: 0 `dangerouslySetInnerHTML`; embed sanitizado write-time; bloco desconhecido degrada | ✅ | grep: única ocorrência é comentário JSDoc no RenderBlocks; testes `sanitize-content`/`RenderBlocks` verdes; revisão de segurança 7.2 sem blocker |
@@ -81,7 +81,7 @@ SPEC `especificacoes/2-fila/FASE-07.1-bloco-embed-no-editor/SPEC.md` (gate GO, r
 
 **Sobras de teste no banco (dono do quadro, requer acesso DB — DELETE responde 409 por A3 quando há progresso):** lições `licao-de-teste-fase-5` (saneada), `licao-vitrine-6-1` (DRAFT) e as `smoke-fase2a-<ts>` (DRAFT, despublicadas) + cursos/módulos de smoke (DRAFT) + usuário `aluno.teste.fase5@delp.com.br` (fixture do smoke — usado por `SMOKE_STUDENT_*` no `.env`, MANTER se o smoke for rodar de novo).
 
-**▶ RESTA p/ fechar 100% (dono do quadro):** (7.4) deploy de preview na Vercel → verificar upload de imagem (feliz + 413), render publicada e `img-src` da CSP em ambiente real; depois o ritual de conclusão (§6 da SPEC: mover FASE-07 p/ `3-concluidas/`, decidir o que promover — FASE-08 é pré-spec, requer `/nid:specify` — e atualizar README + ARQUITETURA §6/§7).
+**▶ FASE 2A FECHADA 100% (2026-06-16):** (7.4) ✅ upload de imagem validado em **PRODUÇÃO** (`nid-planeta.vercel.app`) — junto com login e render de vídeo embed; só foi possível após cadastrar `AUTH_SECRET`/`DATABASE_URL`/`BLOB_READ_WRITE_TOKEN` na Vercel (Prod+Preview) e **rebuildar** (Promote não injeta env — ver [[reference-vercel-deploy]]). Resta só o **ritual de board do dono do quadro** (não-bloqueante): mover FASE-07 p/ `3-concluidas/` (FASE-07.1 já movida), atualizar `especificacoes/README.md` + `ARQUITETURA.md` §6/§7, e decidir a promoção da FASE-08 (pré-spec, requer `/nid:specify`).
 
 ---
 
