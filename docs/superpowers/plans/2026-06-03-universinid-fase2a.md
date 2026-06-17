@@ -2,7 +2,7 @@
 date: 2026-06-03
 spec: 2026-06-03-universinid-fase2a-design.md
 adr: 0001-universinid-editor-blocos-hibrido.md
-status: implementado — Fases 0-7 + riders A2/A3/A5/A8 + C1 + extensoes E1/E2/E3 CONCLUIDAS (2026-06-13); pendente apenas verificacao do upload em preview (7.4, dono do quadro)
+status: IMPLEMENTADO 100% — Fases 0-7 + 07.1 + riders A2/A3/A5/A6/A8 + C1 + extensoes E1/E2/E3 (2026-06-17); criterio #1 e upload (7.4) VALIDADOS EM PRODUCAO. Fase 2a ENCERRADA.
 gate_aprovado_em: 2026-06-03
 tipo: web
 ---
