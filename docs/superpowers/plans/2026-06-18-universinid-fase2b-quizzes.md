@@ -218,11 +218,6 @@ Implementado via `/nid:implement`, fase a fase com TDD e gate (`build` + `tsc` +
 
 **Auditoria adversarial de saída** (workflow `wf_4ad9bffe-175`, 3 lentes — segurança/falhas-silenciosas/aderência): **nenhum STOP-SHIP**; tripé de defesa do gabarito confirmado (strip server-side + re-validação read-time estreita + resposta sem `answers`). Achados ATENÇÃO/NIT corrigidos no commit `effd985`.
 
-**PENDENTE — smoke ao vivo (6.2):** a lição-alvo está semeada no Neon (`quiz-smoke-fase08`, via `scripts/seed-quiz-smoke.ts`) e o driver focado está em `scripts/smoke-quiz-fase08.mjs`. Não executado nesta sessão: a porta :3000 tinha um dev server pré-existente em estado quebrado (500) e não é seguro subir um 2º sobre o mesmo `.next` (corrompe chunks). **Rodar em ambiente limpo:**
-```
-npx tsx scripts/seed-quiz-smoke.ts            # (já rodado; idempotente)
-npm install --no-save playwright@1.60.0 && npx playwright install chromium
-npm run dev                                    # server limpo em :3000 (sem outro dev server no mesmo .next)
-SMOKE_BASE=http://localhost:3000 node scripts/smoke-quiz-fase08.mjs
-```
-O smoke prova: aluno abre a lição, **gabarito ausente no HTML**, responde, passa, conclusão refletida, **zero violação de CSP**. Limpeza opcional depois: remover a lição `quiz-smoke-fase08` e as `QuizAttempt` dela (via DB).
+**SMOKE AO VIVO (6.2) — ✅ PASSOU (2026-06-18, contra build de PRODUÇÃO `next start`).** Lição-alvo semeada (`scripts/seed-quiz-smoke.ts` → `quiz-smoke-fase08`) + driver `scripts/smoke-quiz-fase08.mjs`. Resultado: 4/4 passos OK, **0 erros de console (zero violação de CSP)**, exit 0. Provado end-to-end: aluno abre a lição → **`corretaIdx`/explicação AUSENTES no HTML** → botão manual oculto → responde → submete → **`QuizAttempt {score:100, passed:true, notaCorte:50}`** gravada → **`LessonProgress COMPLETED/100` (auto-complete via latch)** → feedback com explicação só após submeter. Artefato de teste (lição + tentativa + progresso) removido do banco após o smoke.
+
+> **Lição de ambiente (reconfirmada):** o smoke FALHA em `next dev` por um artefato **dev-only** — o flight do RSC serializa o `lesson` (com gabarito) no HTML mesmo sem passá-lo a componente client. Em **produção** (`next start`) isso não ocorre; o teste unitário do `RenderBlocks` (`renderToStaticMarkup`) já confirmava o markup limpo. **Sempre rodar o smoke de quiz contra o build de produção.** Comando: `npm run build && npx next start -p 3000` + `SMOKE_BASE=http://localhost:3000 node scripts/smoke-quiz-fase08.mjs` (Playwright transiente: `npm install --no-save playwright@1.60.0 && npx playwright install chromium`).

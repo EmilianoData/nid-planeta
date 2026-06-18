@@ -62,12 +62,15 @@ await step('2-abre-licao-com-quiz-e-NAO-vaza-gabarito', async () => {
 await step('3-responde-correto-e-passa', async () => {
   await page.getByRole('radio', { name: '4', exact: true }).check();   // Q1: 2+2 = 4
   await page.getByRole('radio', { name: 'Azul', exact: true }).check(); // Q2: céu = Azul
-  const submit = page.waitForResponse(
-    (r) => r.url().includes('/api/universinid/quiz/attempt') && r.request().method() === 'POST' && r.status() === 200,
-    { timeout: 20000 },
-  );
-  await page.getByRole('button', { name: /Enviar respostas/i }).click();
-  await submit;
+  // Promise.all (não criar a promise antes da ação): se o submit não vier, rejeita aqui dentro
+  // do try do step() — sem promise pendente que viraria unhandled rejection.
+  await Promise.all([
+    page.waitForResponse(
+      (r) => r.url().includes('/api/universinid/quiz/attempt') && r.request().method() === 'POST' && r.status() === 200,
+      { timeout: 20000 },
+    ),
+    page.getByRole('button', { name: /Enviar respostas/i }).click(),
+  ]);
   await page.waitForSelector('text=/Aprovado/i', { timeout: 10000 });
   await shot('quiz-02-aprovado.png');
 });
