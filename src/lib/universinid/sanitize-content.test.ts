@@ -22,3 +22,46 @@ describe('validateContentDoc (XSS)', () => {
     expect(validateContentDoc([{ type: 'image', props: { url: 'javascript:alert(1)' } }]).ok).toBe(false);
   });
 });
+
+describe('validateContentDoc — quiz (FASE-08)', () => {
+  const quiz = (questoes: unknown, notaCorte: number = 70) =>
+    ({ id: 'q', type: 'quiz', props: { notaCorte, questoesJson: JSON.stringify(questoes) } });
+  const Q_OK = [{ enunciado: 'Pergunta?', alternativas: ['a', 'b', 'c'], corretaIdx: 1 }];
+
+  it('autosave: tolera quiz recém-inserido (questoesJson vazio/ausente)', () => {
+    expect(validateContentDoc([{ id: 'q', type: 'quiz', props: {} }]).ok).toBe(true);
+    expect(validateContentDoc([{ id: 'q', type: 'quiz', props: { questoesJson: '[]' } }]).ok).toBe(true);
+  });
+  it('autosave: tolera questão incompleta (sem corretaIdx marcado ainda)', () => {
+    expect(validateContentDoc([quiz([{ enunciado: 'P', alternativas: ['a', 'b'] }])]).ok).toBe(true);
+  });
+  it('rejeita questoesJson malformado em QUALQUER modo (corrupção, nunca legítimo)', () => {
+    const bad = [{ id: 'q', type: 'quiz', props: { questoesJson: '{quebrado' } }];
+    expect(validateContentDoc(bad).ok).toBe(false);
+    expect(validateContentDoc(bad, 'publish').ok).toBe(false);
+  });
+  it('rejeita mais de 1 quiz por lição — contagem GLOBAL (inclui aninhado)', () => {
+    const dois = [quiz(Q_OK), { id: 'p', type: 'paragraph', props: {}, children: [quiz(Q_OK)] }];
+    expect(validateContentDoc(dois).ok).toBe(false);
+  });
+  it('publish: rejeita quiz sem questões', () => {
+    expect(validateContentDoc([quiz([])], 'publish').ok).toBe(false);
+  });
+  it('publish: rejeita questão com menos de 2 alternativas', () => {
+    expect(validateContentDoc([quiz([{ enunciado: 'P', alternativas: ['única'], corretaIdx: 0 }])], 'publish').ok).toBe(false);
+  });
+  it('publish: rejeita corretaIdx fora do range', () => {
+    expect(validateContentDoc([quiz([{ enunciado: 'P', alternativas: ['a', 'b'], corretaIdx: 5 }])], 'publish').ok).toBe(false);
+  });
+  it('publish: rejeita nota de corte fora de 1–100', () => {
+    expect(validateContentDoc([quiz(Q_OK, 0)], 'publish').ok).toBe(false);
+    expect(validateContentDoc([quiz(Q_OK, 150)], 'publish').ok).toBe(false);
+  });
+  it('publish: aceita quiz completo e válido', () => {
+    expect(validateContentDoc([quiz(Q_OK, 70)], 'publish').ok).toBe(true);
+  });
+  it('publish: valida quiz ANINHADO em children (recursivo)', () => {
+    const nested = [{ id: 'p', type: 'paragraph', props: {}, children: [quiz([{ enunciado: 'P', alternativas: ['a', 'b'], corretaIdx: 9 }])] }];
+    expect(validateContentDoc(nested, 'publish').ok).toBe(false);
+  });
+});

@@ -228,6 +228,17 @@ describe('lessons route', () => {
     expect(lessonUpdate).not.toHaveBeenCalled();
   });
 
+  it('PUBLISH 422 quando contentDraft tem quiz incompleto (gate forte no publish)', async () => {
+    const draft = [{ type: 'quiz', id: 'q1', props: { questoesJson: '[]' } }];
+    lessonFindUnique.mockResolvedValue({ id: 'l1', contentDraft: draft });
+    const res = await PUBLISH(
+      new NextRequest('http://t/api/universinid/admin/lessons/l1/publish', { method: 'POST' }),
+      ctx('l1'),
+    );
+    expect(res.status).toBe(422);
+    expect(lessonUpdate).not.toHaveBeenCalled();
+  });
+
   it('reorder 401 sem sessão', async () => {
     authMock.mockResolvedValue(null);
     const res = await REORDER(

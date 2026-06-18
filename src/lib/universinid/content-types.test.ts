@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isLegacyEmbed, keepEditableBlocks, legacyEmbedDoc, stripIncompleteImages, type UniBlockDoc } from './content-types';
+import { isLegacyEmbed, keepEditableBlocks, legacyEmbedDoc, stripIncompleteImages, stripQuizAnswers, type UniBlockDoc } from './content-types';
 
 describe('content-types', () => {
   it('legacyEmbedDoc cria doc de 1 bloco com o screenId', () => {
@@ -50,4 +50,39 @@ describe('keepEditableBlocks (guard de load do editor)', () => {
     expect(keepEditableBlocks(undefined, KNOWN)).toEqual([]);
     expect(keepEditableBlocks([], KNOWN)).toEqual([]);
   });
+});
+
+describe('stripQuizAnswers (remove gabarito no servidor — defesa A2)', () => {
+  const QUESTOES = [
+    { enunciado: 'P1', alternativas: ['a', 'b', 'c'], corretaIdx: 1, explicacao: 'porque b' },
+    { enunciado: 'P2', alternativas: ['x', 'y'], corretaIdx: 0 },
+  ];
+  const quizDoc = (questoes: unknown): UniBlockDoc =>
+    [{ id: 'q1', type: 'quiz', props: { notaCorte: 70, questoesJson: JSON.stringify(questoes) } }];
+
+  it('remove corretaIdx/explicacao e preserva enunciado/alternativas', () => {
+    const out = stripQuizAnswers(quizDoc(QUESTOES));
+    const questoes = JSON.parse((out[0] as { props: { questoesJson: string } }).props.questoesJson);
+    expect(questoes).toEqual([
+      { enunciado: 'P1', alternativas: ['a', 'b', 'c'] },
+      { enunciado: 'P2', alternativas: ['x', 'y'] },
+    ]);
+    expect(JSON.stringify(out)).not.toContain('corretaIdx');
+    expect(JSON.stringify(out)).not.toContain('explicacao');
+  });
+  it('é idempotente (rodar 2x = rodar 1x)', () => {
+    const once = stripQuizAnswers(quizDoc(QUESTOES));
+    expect(stripQuizAnswers(once)).toEqual(once);
+  });
+  it('recursa em children — quiz aninhado também perde o gabarito', () => {
+    const nested: UniBlockDoc = [{ id: 'p', type: 'paragraph', props: {}, children: quizDoc(QUESTOES) }];
+    expect(JSON.stringify(stripQuizAnswers(nested))).not.toContain('corretaIdx');
+  });
+  it('tolera questoesJson inválido — neutraliza para [] sem lançar', () => {
+    const bad: UniBlockDoc = [{ id: 'q', type: 'quiz', props: { questoesJson: '{quebrado' } }];
+    expect(() => stripQuizAnswers(bad)).not.toThrow();
+    const out = stripQuizAnswers(bad);
+    expect(JSON.parse((out[0] as { props: { questoesJson: string } }).props.questoesJson)).toEqual([]);
+  });
+  it('não-array → []', () => { expect(stripQuizAnswers(null)).toEqual([]); });
 });

@@ -122,3 +122,25 @@ model LessonSlugAlias {
   @@index([lessonId])
   @@map("lesson_slug_aliases")
 }
+
+// Resultado de tentativa de quiz (FASE-08). Join-por-valor por userId + lessonSlug — MESMO
+// contrato do LessonProgress (sem FK; User/LessonProgress intocados — regra de ouro #2).
+// Guardamos TODAS as tentativas (sem @@unique): "vale a melhor" = max(score) por (userId, lessonSlug).
+// `notaCorte` é coluna não-sensível para o relatório admin (evita abrir `answers`).
+// `answers` é o SNAPSHOT da tentativa (inclui gabarito) — NUNCA exposto a front-end.
+model QuizAttempt {
+  id         String   @id @default(cuid())
+  userId     String
+  lessonSlug String
+  score      Int
+  passed     Boolean
+  notaCorte  Int
+  answers    Json
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([lessonSlug])
+  @@index([userId, lessonSlug])
+  @@index([lessonSlug, createdAt])
+  @@map("quiz_attempts")
+}

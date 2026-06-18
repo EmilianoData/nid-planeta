@@ -11,9 +11,15 @@ export interface NumberedListBlock extends BaseBlock { type: 'numberedListItem';
 export interface ImageBlock { type: 'image'; id: string; props: { url: string; caption?: string; previewWidth?: number } & Record<string, unknown>; }
 export interface EmbedBlock { type: 'embed'; id: string; props: { url: string; provider?: 'youtube' | 'vimeo' | 'stream' } & Record<string, unknown>; }
 
+// Quiz (FASE-08): questões vivem como JSON serializado numa prop string (propSchema do
+// BlockNote só aceita primitivos). `corretaIdx`/`explicacao` são o GABARITO — removidos no
+// servidor (stripQuizAnswers) antes de chegar ao cliente.
+export interface Questao { enunciado: string; alternativas: string[]; corretaIdx: number; explicacao?: string; }
+export interface QuizBlock { type: 'quiz'; id: string; props: { notaCorte?: number; questoesJson?: string } & Record<string, unknown>; }
+
 export type UniBlock =
   | LegacyEmbedBlock | ParagraphBlock | HeadingBlock
-  | BulletListBlock | NumberedListBlock | ImageBlock | EmbedBlock
+  | BulletListBlock | NumberedListBlock | ImageBlock | EmbedBlock | QuizBlock
   | { type: string; id?: string; props?: Record<string, unknown>; content?: InlineContent[]; children?: UniBlock[] };
 
 export type UniBlockDoc = UniBlock[];
@@ -54,5 +60,39 @@ export function keepEditableBlocks(doc: unknown, known: string[]): unknown[] {
         const block = b as { children?: unknown[] };
         return Array.isArray(block.children) ? { ...block, children: walk(block.children) } : block;
       });
+  return walk(doc);
+}
+
+// Remove o GABARITO (corretaIdx/explicacao) de TODO bloco `quiz` do doc, no SERVIDOR, ANTES de
+// o doc chegar ao RenderBlocks/QuizClient (props de client viajam no payload RSC). Reduz cada
+// questão ao contrato público `{ enunciado, alternativas }`. RECURSA em `children`. Idempotente.
+// Tolera `questoesJson` inválido (caminho de read) neutralizando para `[]` — NUNCA lança.
+// A correção é server-side (rota lê o gabarito do banco); aqui é defesa em profundidade (A2).
+function stripQuestoesJson(raw: unknown): string {
+  let parsed: unknown;
+  try { parsed = JSON.parse(typeof raw === 'string' ? raw : '[]'); } catch { return '[]'; }
+  if (!Array.isArray(parsed)) return '[]';
+  const publicas = parsed.map((q) => {
+    const qq = (q ?? {}) as { enunciado?: unknown; alternativas?: unknown };
+    return {
+      enunciado: typeof qq.enunciado === 'string' ? qq.enunciado : '',
+      alternativas: Array.isArray(qq.alternativas) ? qq.alternativas : [],
+    };
+  });
+  return JSON.stringify(publicas);
+}
+export function stripQuizAnswers(doc: unknown): UniBlockDoc {
+  if (!Array.isArray(doc)) return [];
+  const walk = (blocks: unknown[]): UniBlock[] =>
+    blocks.map((b) => {
+      let block = b as { type?: string; props?: Record<string, unknown>; children?: unknown[] };
+      if (block?.type === 'quiz') {
+        block = { ...block, props: { ...block.props, questoesJson: stripQuestoesJson(block.props?.['questoesJson']) } };
+      }
+      if (Array.isArray(block.children)) {
+        block = { ...block, children: walk(block.children) as UniBlock[] };
+      }
+      return block as UniBlock;
+    });
   return walk(doc);
 }
