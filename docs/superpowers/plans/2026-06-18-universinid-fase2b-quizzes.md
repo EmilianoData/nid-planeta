@@ -1,8 +1,9 @@
 ---
 date: 2026-06-18
 spec: docs/superpowers/specs/2026-06-18-universinid-fase2b-quizzes.md
-status: gate-aprovado
+status: implementado
 gate_aprovado_em: 2026-06-18 (GO após 4 rodadas de red-team; aprovação humana do dono do quadro)
+implementado_em: 2026-06-18 (Fases 1-5 + endurecimento da auditoria; smoke ao vivo pendente — ver §Registro)
 tipo: web
 fase_quadro: FASE-08
 revisao: 5 (pós 4º red-team — 422-vs-500 em extractQuizBlock, JSDoc do latch concorrente, ordem 1.3→3.1)
@@ -199,3 +200,29 @@ Props complexas → `questoesJson` (3.1) · gabarito no RSC → strip antes do b
 ## Gate obrigatório
 
 Submetido ao `/nid:gate` (**4 rodadas de red-team**). **GO + aprovação humana concedida em 2026-06-18** → `/nid:implement` liberado. Ordem de implementação: respeitar dependências (**1.3 antes de 3.1**; **2.1 antes da Fase 4**; 4.1→4.2→4.3→4.4).
+
+## Registro de execução (2026-06-18)
+
+Implementado via `/nid:implement`, fase a fase com TDD e gate (`build` + `tsc` + `test`) verde a cada fase. Commits:
+
+| Fase | Entrega | Commit |
+|---|---|---|
+| 1 | Fundação: `QuizAttempt`, `stripQuizAnswers`, `validateContentDoc` recursivo + gate no publish | `55dad6f` |
+| 2 | Backend: `upsertLessonProgress` (latch), `correctQuiz`/`extractQuizBlock`, rota `POST /quiz/attempt` | `9e01fb2` |
+| 3 | Autoria: `QuizBlock.tsx` + registro no editor + guards | `15c596a` |
+| 4 | Render aluno: strip em `page.tsx`, `case 'quiz'`, `QuizClient`, ocultar `MarkComplete` | `7f76aee` |
+| 5 | Admin: `getQuizResults` + rota GET + UI por aluno | `47a4d0d` |
+| 6 | Endurecimento pós-auditoria adversarial (A07 na page, `select` sem gabarito, validação de `corretaIdx`, timeout, rate-cap, logs) | `effd985` |
+
+**Gate técnico de saída:** `npm run build` ok · `npx tsc --noEmit` = 0 · `npm run test` = **180/180** (40 testes novos, TDD red-first). `db:push` aplicou `quiz_attempts` no Neon.
+
+**Auditoria adversarial de saída** (workflow `wf_4ad9bffe-175`, 3 lentes — segurança/falhas-silenciosas/aderência): **nenhum STOP-SHIP**; tripé de defesa do gabarito confirmado (strip server-side + re-validação read-time estreita + resposta sem `answers`). Achados ATENÇÃO/NIT corrigidos no commit `effd985`.
+
+**PENDENTE — smoke ao vivo (6.2):** a lição-alvo está semeada no Neon (`quiz-smoke-fase08`, via `scripts/seed-quiz-smoke.ts`) e o driver focado está em `scripts/smoke-quiz-fase08.mjs`. Não executado nesta sessão: a porta :3000 tinha um dev server pré-existente em estado quebrado (500) e não é seguro subir um 2º sobre o mesmo `.next` (corrompe chunks). **Rodar em ambiente limpo:**
+```
+npx tsx scripts/seed-quiz-smoke.ts            # (já rodado; idempotente)
+npm install --no-save playwright@1.60.0 && npx playwright install chromium
+npm run dev                                    # server limpo em :3000 (sem outro dev server no mesmo .next)
+SMOKE_BASE=http://localhost:3000 node scripts/smoke-quiz-fase08.mjs
+```
+O smoke prova: aluno abre a lição, **gabarito ausente no HTML**, responde, passa, conclusão refletida, **zero violação de CSP**. Limpeza opcional depois: remover a lição `quiz-smoke-fase08` e as `QuizAttempt` dela (via DB).
