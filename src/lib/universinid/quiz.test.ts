@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { correctQuiz, extractQuizBlock, QuizDataError } from './quiz';
+import { correctQuiz, extractQuizBlock, parseQuestoesForEditor, emptyQuestao, QuizDataError } from './quiz';
 import type { Questao } from './content-types';
 
 const QUESTOES: Questao[] = [
@@ -58,5 +58,23 @@ describe('extractQuizBlock', () => {
   it('LANÇA QuizDataError em questoesJson corrompido (nunca engole → rota responde 422)', () => {
     const doc = [{ id: 'q', type: 'quiz', props: { questoesJson: '{quebrado' } }];
     expect(() => extractQuizBlock(doc)).toThrow(QuizDataError);
+  });
+});
+
+describe('parseQuestoesForEditor (round-trip da autoria)', () => {
+  it('round-trip: Questao[] → JSON → parse preserva o shape', () => {
+    const out = parseQuestoesForEditor(JSON.stringify(QUESTOES));
+    expect(out).toEqual(QUESTOES);
+  });
+  it('tolera JSON inválido (não lança) → []', () => {
+    expect(parseQuestoesForEditor('{quebrado')).toEqual([]);
+    expect(parseQuestoesForEditor(undefined)).toEqual([]);
+  });
+  it('preenche defaults p/ questão incompleta (≥2 alternativas, corretaIdx 0)', () => {
+    const out = parseQuestoesForEditor(JSON.stringify([{ enunciado: 'só isso' }]));
+    expect(out[0]).toEqual({ enunciado: 'só isso', alternativas: ['', ''], corretaIdx: 0 });
+  });
+  it('emptyQuestao cria questão em branco com 2 alternativas', () => {
+    expect(emptyQuestao()).toEqual({ enunciado: '', alternativas: ['', ''], corretaIdx: 0 });
   });
 });

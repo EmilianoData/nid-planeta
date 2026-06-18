@@ -1,5 +1,6 @@
 import { BlockNoteSchema, defaultBlockSpecs } from '@blocknote/core';
 import { embedBlock } from './EmbedBlock';
+import { quizBlock } from './QuizBlock';
 
 // Schema do editor restrito EXATAMENTE ao conjunto que o RenderBlocks (leitura) renderiza.
 // Qualquer bloco fora disto cairia no `default` do RenderBlocks e sumiria silenciosamente no
@@ -20,8 +21,10 @@ export const editorSchema = BlockNoteSchema.create({
     image: defaultBlockSpecs.image,
     // embedBlock é uma factory (createReactBlockSpec retorna `(options?) => BlockSpec` em 0.51.4) → chamar.
     embed: embedBlock(),
+    // quiz (FASE-08): bloco custom de avaliação. Questões em props (questoesJson string).
+    quiz: quizBlock(),
   },
 });
 
 // Tipos que o editor CONSEGUE montar — usado pelo guard de load (keepEditableBlocks).
-export const KNOWN_BLOCK_TYPES: string[] = ['paragraph', 'heading', 'bulletListItem', 'numberedListItem', 'image', 'embed'];
+export const KNOWN_BLOCK_TYPES: string[] = ['paragraph', 'heading', 'bulletListItem', 'numberedListItem', 'image', 'embed', 'quiz'];

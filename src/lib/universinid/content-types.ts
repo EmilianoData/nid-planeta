@@ -81,6 +81,26 @@ function stripQuestoesJson(raw: unknown): string {
   });
   return JSON.stringify(publicas);
 }
+// Conta blocos `quiz` em todo o doc (recursivo em children).
+function countQuizBlocks(doc: unknown): number {
+  if (!Array.isArray(doc)) return 0;
+  let n = 0;
+  for (const b of doc) {
+    const block = b as { type?: string; children?: unknown[] };
+    if (block?.type === 'quiz') n += 1;
+    if (Array.isArray(block.children)) n += countQuizBlocks(block.children);
+  }
+  return n;
+}
+
+// Guard anti-perda (deploy parcial): se o guard de load (keepEditableBlocks) descartou um bloco
+// `quiz` que ESTE build do editor não conhece, o autosave NÃO deve persistir o doc reduzido —
+// senão o quiz some silenciosamente. Só bloqueia quando um quiz sumiu (drops intencionais de
+// blocos legados como video/audio/file seguem normalmente).
+export function shouldBlockSave(originalDoc: unknown, cleanedDoc: unknown): boolean {
+  return countQuizBlocks(cleanedDoc) < countQuizBlocks(originalDoc);
+}
+
 export function stripQuizAnswers(doc: unknown): UniBlockDoc {
   if (!Array.isArray(doc)) return [];
   const walk = (blocks: unknown[]): UniBlock[] =>

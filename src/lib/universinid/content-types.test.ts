@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isLegacyEmbed, keepEditableBlocks, legacyEmbedDoc, stripIncompleteImages, stripQuizAnswers, type UniBlockDoc } from './content-types';
+import { isLegacyEmbed, keepEditableBlocks, legacyEmbedDoc, shouldBlockSave, stripIncompleteImages, stripQuizAnswers, type UniBlockDoc } from './content-types';
 
 describe('content-types', () => {
   it('legacyEmbedDoc cria doc de 1 bloco com o screenId', () => {
@@ -85,4 +85,17 @@ describe('stripQuizAnswers (remove gabarito no servidor — defesa A2)', () => {
     expect(JSON.parse((out[0] as { props: { questoesJson: string } }).props.questoesJson)).toEqual([]);
   });
   it('não-array → []', () => { expect(stripQuizAnswers(null)).toEqual([]); });
+});
+
+describe('shouldBlockSave (guard anti-perda de quiz no deploy parcial)', () => {
+  const quiz = { id: 'q', type: 'quiz', props: { questoesJson: '[]' } };
+  it('bloqueia quando um quiz sumiu no load (cleaned tem menos quiz que o original)', () => {
+    expect(shouldBlockSave([quiz], [])).toBe(true);
+  });
+  it('NÃO bloqueia quando o quiz foi preservado', () => {
+    expect(shouldBlockSave([quiz], [quiz])).toBe(false);
+  });
+  it('NÃO bloqueia drops intencionais de blocos legados (sem quiz envolvido)', () => {
+    expect(shouldBlockSave([{ type: 'video', props: {} }], [])).toBe(false);
+  });
 });

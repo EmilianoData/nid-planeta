@@ -8,7 +8,7 @@ import { useCreateBlockNote, getDefaultReactSlashMenuItems, SuggestionMenuContro
 import { BlockNoteView } from '@blocknote/mantine';
 import { useCallback, useRef } from 'react';
 import { filterSuggestionItems, insertOrUpdateBlockForSlashMenu, type PartialBlock } from '@blocknote/core';
-import { isLegacyEmbed, stripIncompleteImages, keepEditableBlocks } from '@/lib/universinid/content-types';
+import { isLegacyEmbed, stripIncompleteImages, keepEditableBlocks, shouldBlockSave } from '@/lib/universinid/content-types';
 import { editorSchema, KNOWN_BLOCK_TYPES } from './editor-schema';
 
 async function uploadImage(file: File): Promise<string> {
@@ -38,6 +38,10 @@ export function LessonEditor({ initial, onSave }: LessonEditorProps) {
   // Avisa quando o guard removeu blocos não-suportados (de versões anteriores do editor): o
   // conteúdo suportado foi mantido e o 1º save grava a versão filtrada.
   const removeuNaoSuportado = !legacy && JSON.stringify(pre) !== JSON.stringify(cleaned);
+  // Guard anti-perda (deploy parcial): se o load descartou um bloco `quiz` que este build não
+  // conhece, NÃO autosalvar o doc reduzido — senão o quiz some silenciosamente. Em build com o
+  // tipo `quiz` registrado isto é sempre falso (o quiz é preservado).
+  const bloqueiaPerda = !legacy && shouldBlockSave(pre, cleaned);
   const editor = useCreateBlockNote({
     schema: editorSchema,
     initialContent: cleaned.length ? (cleaned as PartialBlock[]) : undefined,
@@ -46,9 +50,10 @@ export function LessonEditor({ initial, onSave }: LessonEditorProps) {
 
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const handleChange = useCallback(() => {
+    if (bloqueiaPerda) return; // não persistir um doc que perdeu um quiz no load (deploy parcial)
     clearTimeout(timer.current);
     timer.current = setTimeout(() => onSave(editor.document), 800); // debounce de autosave
-  }, [editor, onSave]);
+  }, [editor, onSave, bloqueiaPerda]);
 
   return (
     <div>
@@ -70,11 +75,24 @@ export function LessonEditor({ initial, onSave }: LessonEditorProps) {
           conteúdo suportado foi mantido — salve para consolidar.
         </p>
       )}
+      {bloqueiaPerda && (
+        <p
+          role="alert"
+          className="mb-3 rounded-[10px] border border-[#f0b4b4] bg-[#fdeaea] px-3 py-2 text-[.82rem] text-[#a11]"
+        >
+          Não foi possível carregar o quiz desta lição com segurança (versão do editor
+          desatualizada). A edição automática está pausada para não apagar o quiz — recarregue a
+          página. Se persistir, avise a TI.
+        </p>
+      )}
       <BlockNoteView editor={editor} slashMenu={false} onChange={handleChange}>
         <SuggestionMenuController
           triggerCharacter="/"
-          getItems={async (query) =>
-            filterSuggestionItems(
+          getItems={async (query) => {
+            // Guard de unicidade: 1 quiz por lição. Se já houver um quiz no doc, não oferece o
+            // item no menu (evita o 2º quiz na origem e o loop de toast do 422 no autosave).
+            const temQuiz = editor.document.some((b) => b.type === 'quiz');
+            return filterSuggestionItems(
               [
                 ...getDefaultReactSlashMenuItems(editor),
                 {
@@ -88,10 +106,21 @@ export function LessonEditor({ initial, onSave }: LessonEditorProps) {
                     insertOrUpdateBlockForSlashMenu(editor, { type: 'embed' });
                   },
                 },
+                ...(temQuiz
+                  ? []
+                  : [{
+                      title: 'Quiz',
+                      subtext: 'Avaliação de múltipla escolha (1 por lição)',
+                      group: 'Avaliação',
+                      aliases: ['quiz', 'avaliação', 'avaliacao', 'pergunta', 'questão', 'questao'],
+                      onItemClick: () => {
+                        insertOrUpdateBlockForSlashMenu(editor, { type: 'quiz' });
+                      },
+                    }]),
               ],
               query,
-            )
-          }
+            );
+          }}
         />
       </BlockNoteView>
     </div>

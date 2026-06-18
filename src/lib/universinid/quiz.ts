@@ -43,6 +43,31 @@ export function correctQuiz(respostas: number[], questoes: Questao[], notaCorte:
   return { score, passed, snapshot: { notaCorte, itens }, feedback: { score, passed, itens: feedbackItens } };
 }
 
+export function emptyQuestao(): Questao {
+  return { enunciado: '', alternativas: ['', ''], corretaIdx: 0 };
+}
+
+/**
+ * Parse LENIENTE do `questoesJson` para o EDITOR (autoria) — tolera questões incompletas e
+ * preenche defaults, nunca lança. (A validação forte é write-time no publish; a correção é a
+ * server-side.) Usado pelo QuizBlock para hidratar o formulário a partir das props do bloco.
+ */
+export function parseQuestoesForEditor(raw: unknown): Questao[] {
+  let parsed: unknown;
+  try { parsed = JSON.parse(typeof raw === 'string' ? raw : '[]'); } catch { return []; }
+  if (!Array.isArray(parsed)) return [];
+  return parsed.map((q) => {
+    const qq = (q ?? {}) as Partial<Questao>;
+    const alternativas = Array.isArray(qq.alternativas) ? qq.alternativas.map((a) => String(a)) : ['', ''];
+    const base: Questao = {
+      enunciado: typeof qq.enunciado === 'string' ? qq.enunciado : '',
+      alternativas: alternativas.length >= 2 ? alternativas : [...alternativas, '', ''].slice(0, 2),
+      corretaIdx: typeof qq.corretaIdx === 'number' ? qq.corretaIdx : 0,
+    };
+    return typeof qq.explicacao === 'string' ? { ...base, explicacao: qq.explicacao } : base;
+  });
+}
+
 function findQuizBlock(blocks: unknown[]): { props?: Record<string, unknown> } | null {
   for (const b of blocks) {
     const block = b as { type?: string; props?: Record<string, unknown>; children?: unknown[] };
