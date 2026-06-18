@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma';
 import { hashPassword } from '@/lib/password';
 import { Prisma } from '@/generated/prisma';
 import { getPublishedTree, resolveLessonBySlug } from './content-queries';
+import { upsertLessonProgress } from './progress-utils';
 import { buildDashboard, type ProgressRow, type DashboardData, type DashModulo, type Dificuldade } from './dashboard';
 
 const buscarLinhasProgresso = cache((userId: string) =>
@@ -47,11 +48,9 @@ export async function markLessonProgress(input: z.infer<typeof progressSchema>) 
   // progresso. Resolve por slug direto e por alias (risco #1 — slug renomeado).
   if (!(await resolveLessonBySlug(slug))) throw new Error(`Lição inexistente: ${slug}`);
 
-  await prisma.lessonProgress.upsert({
-    where: { userId_lessonSlug: { userId: user.id, lessonSlug: slug } },
-    update: { status, pct },
-    create: { userId: user.id, lessonSlug: slug, status, pct },
-  });
+  // Latch de conclusão compartilhado (FASE-08): COMPLETED nunca regride. Chaveia pelo slug
+  // RECEBIDO (contrato vivo). Mesma função usada pela rota de submissão de quiz.
+  await upsertLessonProgress(user.id, slug, status, pct);
 
   revalidatePath('/universinid');
   revalidatePath(`/universinid/licao/${slug}`);

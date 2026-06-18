@@ -48,3 +48,10 @@ export const uploadQuerySchema = z.object({
   filename: z.string().min(1),
   contentType: z.string().regex(/^image\//, 'Apenas imagens'),
 });
+
+// Submissão de tentativa de quiz pelo aluno (FASE-08). `respostas[i]` = índice da alternativa
+// escolhida na questão i (-1 / ausente = não respondeu). NUNCA recebe gabarito do cliente.
+export const submitQuizSchema = z.object({
+  lessonSlug: z.string().min(1),
+  respostas: z.array(z.number().int()),
+});

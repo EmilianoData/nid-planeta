@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { authMock, lessonFindUnique, aliasFindUnique, progressUpsert, userFindUnique } = vi.hoisted(() => ({
+const { authMock, lessonFindUnique, aliasFindUnique, progressUpsert, progressUpdateMany, userFindUnique } = vi.hoisted(() => ({
   authMock: vi.fn(),
   lessonFindUnique: vi.fn(),
   aliasFindUnique: vi.fn(),
   progressUpsert: vi.fn(),
+  progressUpdateMany: vi.fn(),
   userFindUnique: vi.fn(),
 }));
 
@@ -13,7 +14,7 @@ vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
 vi.mock('@/lib/prisma', () => ({ prisma: {
   lesson: { findUnique: lessonFindUnique },
   lessonSlugAlias: { findUnique: aliasFindUnique },
-  lessonProgress: { upsert: progressUpsert },
+  lessonProgress: { upsert: progressUpsert, updateMany: progressUpdateMany },
   user: { findUnique: userFindUnique },
 } }));
 
@@ -29,6 +30,8 @@ describe('markLessonProgress — guarda no banco (extensão E3)', () => {
     aliasFindUnique.mockReset();
     progressUpsert.mockReset();
     progressUpsert.mockResolvedValue({});
+    progressUpdateMany.mockReset();
+    progressUpdateMany.mockResolvedValue({ count: 0 }); // força o caminho de create → mantém as asserções de upsert
     userFindUnique.mockReset();
     userFindUnique.mockResolvedValue({ id: 'u1' }); // padrão: conta existe E está ativa
   });
