@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 const TABS = [
   { label: 'Usuários', href: '/universinid/admin' },
   { label: 'Conteúdo', href: '/universinid/admin/conteudo' },
+  { label: 'Quizzes', href: '/universinid/admin/quizzes' },
 ] as const;
 
 export function AdminTabs() {
