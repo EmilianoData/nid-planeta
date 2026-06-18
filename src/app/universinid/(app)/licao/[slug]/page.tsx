@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { resolveLessonBySlug } from '@/lib/universinid/content-queries';
 import { getProgressMap } from '@/lib/universinid/actions';
-import { isLegacyEmbed, type UniBlockDoc } from '@/lib/universinid/content-types';
+import { isLegacyEmbed, stripQuizAnswers, hasQuizBlock, type UniBlockDoc } from '@/lib/universinid/content-types';
 import { MarkComplete, TrackOpen } from '@/components/universinid/MarkComplete';
 import { RenderBlocks } from '@/components/universinid/RenderBlocks';
 
@@ -28,7 +28,12 @@ export default async function LicaoPage({ params }: { params: Promise<{ slug: st
   const st = progress[lesson.slug]?.status ?? 'NOT_STARTED';
 
   // Admin vê o rascunho (preview); aluno vê o publicado. `?? []` cobre lições sem conteúdo.
-  const doc = ((isAdmin ? lesson.contentDraft : lesson.contentPublished) ?? []) as UniBlockDoc;
+  // stripQuizAnswers remove o gabarito NO SERVIDOR, ANTES do RenderBlocks (o quiz é client e suas
+  // props viajam no payload RSC). Vale para os dois ramos (admin preview e aluno).
+  const rawDoc = ((isAdmin ? lesson.contentDraft : lesson.contentPublished) ?? []) as UniBlockDoc;
+  const doc = stripQuizAnswers(rawDoc);
+  // Lição com quiz: a conclusão vem de passar no quiz → oculta o botão manual.
+  const temQuiz = hasQuizBlock(doc);
 
   return (
     <div className="uni-lesson">
@@ -39,7 +44,7 @@ export default async function LicaoPage({ params }: { params: Promise<{ slug: st
           <span className="chip">{lesson.tempoMin} min</span>
           <span className="chip">{DIFICULDADE_LABEL[lesson.dificuldade] ?? lesson.dificuldade}</span>
         </span>
-        <MarkComplete slug={lesson.slug} concluida={st === 'COMPLETED'} />
+        {temQuiz ? null : <MarkComplete slug={lesson.slug} concluida={st === 'COMPLETED'} />}
       </div>
       <TrackOpen slug={lesson.slug} jaIniciada={st !== 'NOT_STARTED'} />
       {isLegacyEmbed(doc) ? (
@@ -50,7 +55,7 @@ export default async function LicaoPage({ params }: { params: Promise<{ slug: st
         />
       ) : (
         <div className="uni-content">
-          <RenderBlocks doc={doc} />
+          <RenderBlocks doc={doc} isAdmin={isAdmin} lessonSlug={lesson.slug} />
         </div>
       )}
     </div>

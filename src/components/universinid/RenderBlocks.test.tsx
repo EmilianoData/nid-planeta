@@ -2,6 +2,9 @@ import { describe, it, expect, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { RenderBlocks } from './RenderBlocks';
 
+// QuizClient usa useRouter — mock mínimo para o render server-side do case 'quiz'.
+vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh: () => {} }) }));
+
 describe('RenderBlocks (whitelist)', () => {
   it('renderiza parágrafo como <p> com o texto', () => {
     const html = renderToStaticMarkup(<RenderBlocks doc={[{ id: 'b', type: 'paragraph', props: {}, content: [{ type: 'text', text: 'olá', styles: {} }], children: [] }]} />);
@@ -66,6 +69,26 @@ describe('RenderBlocks (whitelist)', () => {
     expect(html).toContain('a.png');
     expect(html).toContain('legenda');
   });
+  // FASE-08 — case 'quiz': render-time NÃO pode emitir o gabarito (defesa em profundidade)
+  it('quiz: renderiza enunciado/alternativas mas NUNCA o gabarito (corretaIdx/explicacao)', () => {
+    const questoes = [{ enunciado: 'Quanto é 2+2?', alternativas: ['3', '4'], corretaIdx: 1, explicacao: 'é 4' }];
+    const html = renderToStaticMarkup(
+      <RenderBlocks doc={[{ id: 'q', type: 'quiz', props: { notaCorte: 70, questoesJson: JSON.stringify(questoes) } }]} lessonSlug="aula" />,
+    );
+    expect(html).toContain('Quanto é 2+2?');
+    expect(html).toContain('4');
+    expect(html).not.toContain('corretaIdx');
+    expect(html).not.toContain('explicacao');
+    expect(html).not.toContain('é 4'); // a explicação só aparece como feedback PÓS-submissão (server)
+  });
+  it('quiz: questoesJson malformado degrada (warn + nada renderizado, não lança)', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    expect(() => renderToStaticMarkup(
+      <RenderBlocks doc={[{ id: 'q', type: 'quiz', props: { questoesJson: '{quebrado' } }]} lessonSlug="aula" />,
+    )).not.toThrow();
+    warn.mockRestore();
+  });
+
   it('legacy-embed não renderiza nada aqui (a página monta o iframe)', () => {
     const html = renderToStaticMarkup(<RenderBlocks doc={[{ type: 'legacy-embed', props: { screenId: 's0-1' } }]} />);
     expect(html).not.toContain('iframe');

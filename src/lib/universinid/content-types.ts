@@ -101,6 +101,12 @@ export function shouldBlockSave(originalDoc: unknown, cleanedDoc: unknown): bool
   return countQuizBlocks(cleanedDoc) < countQuizBlocks(originalDoc);
 }
 
+// True se o doc contém um bloco `quiz` (recursivo). Usado para ocultar o botão manual de
+// conclusão: em lição com quiz, concluir vem de passar no quiz, não do botão.
+export function hasQuizBlock(doc: unknown): boolean {
+  return countQuizBlocks(doc) > 0;
+}
+
 export function stripQuizAnswers(doc: unknown): UniBlockDoc {
   if (!Array.isArray(doc)) return [];
   const walk = (blocks: unknown[]): UniBlock[] =>
