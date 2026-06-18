@@ -98,6 +98,15 @@ export function extractQuizBlock(contentPublished: unknown): { questoes: Questao
     throw new QuizDataError('questoesJson inválido no conteúdo publicado');
   }
   if (!Array.isArray(questoes)) throw new QuizDataError('questoesJson não é um array');
+  // Valida o shape do GABARITO antes de corrigir — corretaIdx ausente/inválido (conteúdo escrito
+  // direto no banco, seed ou import que burlou o gate de publish) produziria score 0 silencioso.
+  // Converte essa corrupção em QuizDataError → 422 explícito (nunca avalia errado em silêncio).
+  for (const q of questoes) {
+    const qq = (q ?? {}) as { corretaIdx?: unknown; alternativas?: unknown };
+    if (typeof qq.corretaIdx !== 'number' || !Number.isInteger(qq.corretaIdx) || !Array.isArray(qq.alternativas)) {
+      throw new QuizDataError('questoesJson: questão sem gabarito válido');
+    }
+  }
   const notaCorte = typeof props['notaCorte'] === 'number' ? (props['notaCorte'] as number) : 70;
   return { questoes: questoes as Questao[], notaCorte };
 }

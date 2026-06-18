@@ -16,9 +16,11 @@ export async function POST(_request: NextRequest, ctx: Ctx) {
   // Sem isso, um quiz incompleto chegaria ao aluno em contentPublished.
   const check = validateContentDoc(lesson.contentDraft ?? [], 'publish');
   if (!check.ok) return apiError(check.error ?? 'Conteúdo inválido para publicação', 422);
+  // select de summary: NÃO retorna contentPublished (gabarito do quiz) no wire.
   const updated = await prisma.lesson.update({
     where: { id },
     data: { status: 'PUBLISHED', contentPublished: lesson.contentDraft ?? [] },
+    select: { id: true, slug: true, title: true, status: true, position: true, tempoMin: true, dificuldade: true, updatedAt: true },
   });
   return apiResponse(updated);
 }

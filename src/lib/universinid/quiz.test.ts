@@ -59,6 +59,11 @@ describe('extractQuizBlock', () => {
     const doc = [{ id: 'q', type: 'quiz', props: { questoesJson: '{quebrado' } }];
     expect(() => extractQuizBlock(doc)).toThrow(QuizDataError);
   });
+  it('LANÇA QuizDataError se uma questão não tem corretaIdx válido (gabarito corrompido → 422, não score 0 silencioso)', () => {
+    const semGabarito = [{ enunciado: 'P', alternativas: ['a', 'b'] }]; // sem corretaIdx
+    const doc = [{ id: 'q', type: 'quiz', props: { questoesJson: JSON.stringify(semGabarito) } }];
+    expect(() => extractQuizBlock(doc)).toThrow(QuizDataError);
+  });
 });
 
 describe('parseQuestoesForEditor (round-trip da autoria)', () => {

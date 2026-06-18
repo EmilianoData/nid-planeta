@@ -54,6 +54,8 @@ export async function POST(request: NextRequest) {
     return apiResponse({ id: attempt.id, score, passed, itens: feedback.itens });
   } catch (e) {
     if (e instanceof QuizDataError) return apiError('Conteúdo do quiz corrompido', 422);
+    // Log estruturado (sem expor stack ao aluno) — debugabilidade em produção.
+    console.error('[quiz:attempt] erro interno', { err: e instanceof Error ? e.message : String(e), userId, lessonSlug });
     return apiError('Erro interno', 500);
   }
 }

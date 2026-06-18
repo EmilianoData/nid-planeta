@@ -50,6 +50,10 @@ describe('keepEditableBlocks (guard de load do editor)', () => {
     expect(keepEditableBlocks(undefined, KNOWN)).toEqual([]);
     expect(keepEditableBlocks([], KNOWN)).toEqual([]);
   });
+  it('preserva bloco quiz quando no conjunto conhecido (FASE-08) — não é dropado no load', () => {
+    const doc = [{ id: 'q', type: 'quiz', props: { questoesJson: '[]' } }];
+    expect(keepEditableBlocks(doc, [...KNOWN, 'quiz'])).toHaveLength(1);
+  });
 });
 
 describe('stripQuizAnswers (remove gabarito no servidor — defesa A2)', () => {

@@ -33,6 +33,9 @@ export function QuizClient({
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ lessonSlug, respostas: arr }),
+          // Fail-fast: cold start / Neon lento não pode travar a UI em "Enviando…" sem retorno.
+          // O catch já trata o AbortError como erro amigável.
+          signal: AbortSignal.timeout(15_000),
         });
         const json = (await res.json()) as { success: boolean; data?: Resultado; error?: string };
         if (!res.ok || !json.success || !json.data) throw new Error(json.error ?? 'Falha ao enviar o quiz.');

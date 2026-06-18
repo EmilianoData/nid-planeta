@@ -25,7 +25,12 @@ export async function PATCH(request: NextRequest, ctx: Ctx) {
     ...rest,
     ...(contentDraft !== undefined ? { contentDraft: contentDraft as PrismaJson.BlockDoc } : {}),
   };
-  const updated = await prisma.lesson.update({ where: { id }, data });
+  // select de summary: NÃO retorna contentDraft/contentPublished (gabarito do quiz) no wire —
+  // o hook trata a resposta como LessonSummary e só invalida a árvore (não lê o conteúdo).
+  const updated = await prisma.lesson.update({
+    where: { id }, data,
+    select: { id: true, slug: true, title: true, status: true, position: true, tempoMin: true, dificuldade: true, updatedAt: true },
+  });
   return apiResponse(updated);
 }
 

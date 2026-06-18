@@ -70,7 +70,8 @@ export function keepEditableBlocks(doc: unknown, known: string[]): unknown[] {
 // A correção é server-side (rota lê o gabarito do banco); aqui é defesa em profundidade (A2).
 function stripQuestoesJson(raw: unknown): string {
   let parsed: unknown;
-  try { parsed = JSON.parse(typeof raw === 'string' ? raw : '[]'); } catch { return '[]'; }
+  try { parsed = JSON.parse(typeof raw === 'string' ? raw : '[]'); }
+  catch { console.warn('stripQuizAnswers: questoesJson inválido neutralizado no read'); return '[]'; }
   if (!Array.isArray(parsed)) return '[]';
   const publicas = parsed.map((q) => {
     const qq = (q ?? {}) as { enunciado?: unknown; alternativas?: unknown };
