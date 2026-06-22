@@ -7,8 +7,8 @@ import type { PublishedTree } from '@/lib/universinid/content-queries';
 type StatusMap = Record<string, { status: string; pct: number }>;
 
 function anel(pct: number, concluido: boolean): string {
-  const cor = concluido ? '#0B861D' : '#3C3489';
-  return `conic-gradient(${cor} 0 ${pct}%, #e2e0f0 ${pct}% 100%)`;
+  const cor = concluido ? 'var(--green)' : 'var(--navy)';
+  return `conic-gradient(${cor} 0 ${pct}%, var(--line) ${pct}% 100%)`;
 }
 
 export function Sidebar({ progress, tree }: { progress: StatusMap; tree: PublishedTree }) {
@@ -24,9 +24,11 @@ export function Sidebar({ progress, tree }: { progress: StatusMap; tree: Publish
               {m.lessons.map((l) => {
                 const st = progress[l.slug]?.status ?? 'NOT_STARTED';
                 const p = st === 'COMPLETED' ? 100 : (progress[l.slug]?.pct ?? 0);
+                const ativo = pathname === `/universinid/licao/${l.slug}`;
                 return (
                   <Link key={l.slug} href={`/universinid/licao/${l.slug}`}
-                    className={`uni-nav ${pathname === `/universinid/licao/${l.slug}` ? 'on' : ''}`}>
+                    aria-current={ativo ? 'page' : undefined}
+                    className={`uni-nav ${ativo ? 'on' : ''}`}>
                     <span className="uni-rg" role="img"
                       aria-label={st === 'COMPLETED' ? 'Concluída' : `${p}% concluído`}
                       style={{ background: anel(p, st === 'COMPLETED') }} />

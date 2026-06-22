@@ -76,30 +76,19 @@ export function CommandPalette({ open, onClose, isAdmin, lessons }:
   }
 
   return (
-    <div onClick={onClose}
-      style={{ position: 'fixed', inset: 0, background: 'rgba(20,15,46,.45)', zIndex: 100,
-        display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '12vh' }}>
+    <div className="uni-cmd-overlay" onClick={onClose}>
       <div ref={dialogRef} onClick={(e) => e.stopPropagation()} onKeyDown={trapTab}
-        role="dialog" aria-modal="true" aria-label="Buscar lições e páginas"
-        style={{ width: 'min(560px,92vw)', background: '#fff', borderRadius: 14, overflow: 'hidden',
-          boxShadow: '0 24px 60px rgba(20,15,46,.4)' }}>
+        role="dialog" aria-modal="true" aria-label="Buscar lições e páginas" className="uni-cmd-dialog">
         <input autoFocus value={q} onChange={(e) => setQ(e.target.value)}
           aria-label="Buscar lições e páginas"
           placeholder="Buscar lições, páginas…"
-          style={{ width: '100%', padding: '16px 18px', border: 'none', borderBottom: '1px solid #ececf6',
-            fontSize: '1rem', outline: 'none' }} />
-        <div style={{ maxHeight: 360, overflowY: 'auto' }}>
-          {filtrados.length === 0 && <div style={{ padding: 18, color: '#5e5b7a' }}>Nada encontrado.</div>}
+          className="uni-cmd-input" />
+        <div className="uni-cmd-list">
+          {filtrados.length === 0 && <div className="uni-cmd-empty">Nada encontrado.</div>}
           {filtrados.map((i) => (
-            <button key={i.href + i.label} onClick={() => go(i.href)}
-              style={{ display: 'flex', width: '100%', textAlign: 'left', gap: 10, padding: '12px 18px',
-                border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '.9rem', alignItems: 'center' }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = '#f5f4ff')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-              onFocus={(e) => (e.currentTarget.style.background = '#f5f4ff')}
-              onBlur={(e) => (e.currentTarget.style.background = 'transparent')}>
-              <span style={{ flex: 1 }}>{i.label}</span>
-              <span style={{ fontSize: '.66rem', color: '#5e5b7a' }}>{i.hint}</span>
+            <button key={i.href + i.label} onClick={() => go(i.href)} className="uni-cmd-item">
+              <span className="label">{i.label}</span>
+              <span className="hint">{i.hint}</span>
             </button>
           ))}
         </div>
