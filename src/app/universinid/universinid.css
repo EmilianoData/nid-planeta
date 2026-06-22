@@ -182,3 +182,42 @@
 .uni-cmd-item:focus-visible{ background:var(--soft); outline:var(--focus-ring); outline-offset:-2px; }
 .uni-cmd-item .label{ flex:1; }
 .uni-cmd-item .hint{ font-size:.66rem; color:var(--muted); }
+
+/* Trilha / jornada do módulo (esqueleto da FASE-09). Estados visuais: concluida/atual/proxima. */
+.uni-trilha-head{ display:flex; align-items:center; gap:12px; margin:6px 0 18px; }
+.uni-trilha-head h2{ font-size:1.05rem; font-weight:800; margin:0; }
+.uni-ring{ width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-left:auto; flex-shrink:0; }
+.uni-ring span{ width:30px; height:30px; border-radius:50%; background:var(--card); display:flex; align-items:center; justify-content:center; font-size:.66rem; font-weight:800; color:var(--navy); }
+.uni-path{ position:relative; padding-left:46px; list-style:none; margin:0; }
+.uni-path::before{ content:""; position:absolute; left:17px; top:8px; bottom:8px; width:3px; background:var(--line); border-radius:2px; }
+.uni-node{ position:relative; margin-bottom:14px; }
+.uni-node .dot{ position:absolute; left:-46px; top:2px; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--card); border:3px solid var(--line); color:var(--muted); z-index:1; }
+.uni-node.done .dot{ background:var(--green); border-color:var(--green); color:#fff; }
+.uni-node.atual .dot{ background:var(--navy); border-color:var(--navy); color:#fff; box-shadow:0 0 0 5px var(--navy-l); }
+.uni-ncard{ background:var(--card); border:1px solid var(--line); border-radius:13px; padding:13px 16px; display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit; }
+.uni-ncard:hover{ border-color:var(--navy-2); }
+.uni-ncard:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+.uni-node.atual .uni-ncard{ border-color:var(--navy); box-shadow:var(--shadow-hover); }
+.uni-ncard h4{ margin:0 0 2px; font-size:.93rem; font-weight:700; }
+.uni-ncard .m{ font-size:.74rem; color:var(--muted); }
+.uni-ncard .st2{ margin-left:auto; font-size:.7rem; font-weight:700; padding:5px 11px; border-radius:20px; white-space:nowrap; }
+.uni-ncard .st2.done{ background:var(--card); color:var(--green-text); border:1px solid var(--green); }
+.uni-ncard .st2.go{ background:var(--red); color:#fff; }
+.uni-ncard .st2.lock{ background:var(--soft); color:var(--muted); border:1px solid var(--line); }
+.uni-empty{ background:var(--card); border:1px solid var(--line); border-radius:13px; padding:24px; text-align:center; color:var(--muted); }
+.uni-empty .ic{ width:44px; height:44px; border-radius:50%; background:var(--navy-l); color:var(--navy); display:inline-flex; align-items:center; justify-content:center; margin-bottom:8px; }
+.uni-empty p{ margin:0; max-width:none; }
+
+/* Skeleton de carregamento (home). Neutros da paleta + shimmer. */
+@keyframes uni-shimmer{ 0%{ background-position:-200px 0; } 100%{ background-position:200px 0; } }
+.uni-skel{ background-color:var(--soft); border-radius:8px;
+  background-image:linear-gradient(90deg,var(--soft) 0,var(--line) 40px,var(--soft) 80px);
+  background-size:600px 100%; animation:uni-shimmer 1.2s infinite linear; }
+@media (prefers-reduced-motion:reduce){ .uni-skel{ animation:none; } }
+.uni-skel-hi{ width:220px; height:28px; margin-bottom:8px; }
+.uni-skel-sub{ width:320px; max-width:80%; height:16px; margin-bottom:20px; }
+.uni-skel-hero{ height:120px; border-radius:16px; margin-bottom:20px; }
+.uni-skel-n{ width:60px; height:24px; margin-bottom:6px; }
+.uni-skel-t{ width:90px; height:12px; }
+.uni-skel-sec{ width:200px; height:18px; margin:6px 0 14px; }
+.uni-skel-node{ height:64px; border-radius:13px; margin-bottom:14px; }
