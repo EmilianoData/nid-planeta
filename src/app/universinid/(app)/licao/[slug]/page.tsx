@@ -6,6 +6,7 @@ import { getProgressMap } from '@/lib/universinid/actions';
 import { isLegacyEmbed, stripQuizAnswers, hasQuizBlock, type UniBlockDoc } from '@/lib/universinid/content-types';
 import { MarkComplete, TrackOpen } from '@/components/universinid/MarkComplete';
 import { RenderBlocks } from '@/components/universinid/RenderBlocks';
+import { Icon } from '@/components/universinid/ui/Icon';
 
 const DIFICULDADE_LABEL: Record<string, string> = {
   INICIANTE: 'Iniciante',
@@ -38,7 +39,7 @@ export default async function LicaoPage({ params }: { params: Promise<{ slug: st
   return (
     <div className="uni-lesson">
       <div className="uni-lesson-bar">
-        <Link href="/universinid" className="uni-wm" style={{ fontSize: '.85rem' }}>← Voltar</Link>
+        <Link href="/universinid" className="uni-back"><Icon name="chevron-left" size={16} /> Voltar</Link>
         <h1>{lesson.title}</h1>
         <span className="met">
           <span className="chip">{lesson.tempoMin} min</span>

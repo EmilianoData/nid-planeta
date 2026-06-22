@@ -221,3 +221,34 @@
 .uni-skel-t{ width:90px; height:12px; }
 .uni-skel-sec{ width:200px; height:18px; margin:6px 0 14px; }
 .uni-skel-node{ height:64px; border-radius:13px; margin-bottom:14px; }
+
+/* Barra da lição — link de voltar + chips próprios (antes herdavam de .uni-ls por acaso). */
+.uni-back{ display:inline-flex; align-items:center; gap:4px; font-size:.85rem; font-weight:600; color:var(--navy); text-decoration:none; }
+.uni-back:hover{ color:var(--navy-2); }
+.uni-back:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); border-radius:6px; }
+.uni-lesson-bar .met{ display:flex; gap:8px; }
+.uni-lesson-bar .chip{ background:var(--soft); border:1px solid var(--line); border-radius:20px; padding:3px 10px; font-size:.7rem; color:var(--muted); font-weight:600; white-space:nowrap; }
+
+/* Quiz do aluno (QuizClient). Feedback/Aprovado usam --green-text sobre branco (AA). */
+.uni-quiz{ margin:18px 0; border:1px solid var(--line); background:var(--card); border-radius:14px; padding:20px; }
+.uni-quiz > h3{ margin:0 0 12px; font-size:1.05rem; font-weight:700; color:var(--ink); }
+.uni-quiz-q{ margin:0 0 14px; border:1px solid var(--line); background:var(--soft); border-radius:10px; padding:12px; }
+.uni-quiz-q > legend{ padding:0 4px; font-size:.85rem; font-weight:600; color:var(--navy); }
+.uni-quiz-q .enun{ margin:0 0 10px; font-size:.95rem; color:var(--ink); }
+.uni-quiz-opts{ display:flex; flex-direction:column; gap:6px; }
+.uni-quiz-opt{ display:flex; align-items:center; gap:10px; min-height:44px; padding:0 12px; font-size:.9rem;
+  color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:8px; cursor:pointer; }
+.uni-quiz-opt input{ accent-color:var(--navy); width:18px; height:18px; flex-shrink:0; }
+.uni-quiz-opt:hover{ border-color:var(--navy-2); }
+.uni-quiz-opt:has(input:checked){ border-color:var(--navy); background:var(--navy-l); font-weight:600; }
+.uni-quiz-opt:focus-within{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+.uni-quiz-opt input:disabled{ cursor:default; }
+/* Feedback por questão fica num cartão branco (green-text/branco = 6.28:1). */
+.uni-quiz-fb{ margin:10px 0 0; padding:8px 10px; border-radius:8px; background:var(--card); border:1px solid var(--line); font-size:.85rem; }
+.uni-quiz-fb.ok{ color:var(--green-text); border-color:var(--green); }
+.uni-quiz-fb.no{ color:var(--red); border-color:var(--red); }
+.uni-quiz-res{ font-size:.95rem; font-weight:700; margin:0 0 8px; }
+.uni-quiz-res.ok{ color:var(--green-text); }
+.uni-quiz-res.no{ color:var(--red); }
+.uni-quiz-note{ font-size:.85rem; color:var(--muted); margin:0; }
+.uni-quiz-err{ margin:10px 0 0; font-size:.85rem; color:var(--red); }

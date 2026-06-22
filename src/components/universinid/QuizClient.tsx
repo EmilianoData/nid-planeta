@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from './ui/button';
 
 export interface QuestaoPublica { enunciado: string; alternativas: string[] }
 interface FeedbackItem { acertou: boolean; explicacao?: string }
@@ -49,18 +50,18 @@ export function QuizClient({
   function refazer() { setResultado(null); setRespostas({}); setErro(null); }
 
   return (
-    <section className="my-4 rounded-[14px] border border-[#d9d3ee] bg-[#faf9ff] p-5" aria-label="Quiz da lição">
-      <h3 className="mb-3 text-[1.05rem] font-semibold text-[#1d1840]">📝 Quiz da lição</h3>
+    <section className="uni-quiz" aria-label="Quiz da lição">
+      <h3>Quiz da lição</h3>
 
       {questoes.map((q, qi) => {
         const fb = resultado?.itens[qi];
         return (
-          <fieldset key={qi} className="mb-4 rounded-[10px] border border-[#e3def4] bg-white p-3">
-            <legend className="px-1 text-[.85rem] font-medium text-[#5b51a8]">Questão {qi + 1}</legend>
-            <p className="mb-2 text-[.95rem] text-[#1d1840]">{q.enunciado}</p>
-            <div className="flex flex-col gap-1.5">
+          <fieldset key={qi} className="uni-quiz-q" aria-describedby={fb ? `uni-fb-${qi}` : undefined}>
+            <legend>Questão {qi + 1}</legend>
+            <p className="enun">{q.enunciado}</p>
+            <div className="uni-quiz-opts">
               {q.alternativas.map((alt, ai) => (
-                <label key={ai} className="flex items-center gap-2 text-[.9rem] text-[#2a2550]">
+                <label key={ai} className="uni-quiz-opt">
                   <input
                     type="radio" name={`q-${qi}`} checked={respostas[qi] === ai}
                     disabled={!!resultado || pending}
@@ -71,10 +72,7 @@ export function QuizClient({
               ))}
             </div>
             {fb && (
-              <p
-                role="status"
-                className={`mt-2 text-[.85rem] ${fb.acertou ? 'text-[#0B861D]' : 'text-[#cc0f10]'}`}
-              >
+              <p id={`uni-fb-${qi}`} role="status" className={`uni-quiz-fb ${fb.acertou ? 'ok' : 'no'}`}>
                 {fb.acertou ? '✓ Você acertou.' : '✗ Você errou.'}
                 {fb.explicacao ? ` ${fb.explicacao}` : ''}
               </p>
@@ -85,24 +83,19 @@ export function QuizClient({
 
       {resultado ? (
         <div aria-live="polite">
-          <p className={`text-[.95rem] font-semibold ${resultado.passed ? 'text-[#0B861D]' : 'text-[#cc0f10]'}`}>
+          <p className={`uni-quiz-res ${resultado.passed ? 'ok' : 'no'}`}>
             {resultado.passed ? `Aprovado! ${resultado.score}% de acerto.` : `Você fez ${resultado.score}%. Tente novamente.`}
           </p>
-          <button type="button" onClick={refazer} className="mt-2 rounded-[8px] border border-[#cfc8ea] px-3 py-1.5 text-[.85rem] text-[#3C3489]">
-            Refazer quiz
-          </button>
+          <Button type="button" variant="outline" onClick={refazer} className="mt-1">Refazer quiz</Button>
         </div>
       ) : modoPreview ? (
-        <p role="status" className="text-[.85rem] text-[#8a5a00]">Pré-visualização: envio desabilitado.</p>
+        <p role="status" className="uni-quiz-note">Pré-visualização: envio desabilitado.</p>
       ) : (
-        <button
-          type="button" onClick={enviar} disabled={pending || !todasRespondidas}
-          className="rounded-[8px] bg-[#3C3489] px-4 py-2 text-[.9rem] font-medium text-white disabled:opacity-40"
-        >
+        <Button type="button" variant="default" onClick={enviar} disabled={pending || !todasRespondidas}>
           {pending ? 'Enviando…' : 'Enviar respostas'}
-        </button>
+        </Button>
       )}
-      {erro && <p role="alert" className="mt-2 text-[.85rem] text-[#cc0f10]">{erro}</p>}
+      {erro && <p role="alert" className="uni-quiz-err">{erro}</p>}
     </section>
   );
 }
