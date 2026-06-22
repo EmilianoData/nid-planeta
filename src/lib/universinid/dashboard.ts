@@ -36,6 +36,25 @@ function statusDe(slug: string, bySlug: Map<string, ProgressRow>): Status {
   return bySlug.get(slug)?.status ?? 'NOT_STARTED';
 }
 
+// Estado VISUAL de cada nó da trilha (esqueleto da FASE-09). Derivado do status
+// existente, função pura — não toca buildDashboard. "atual" = 1ª lição não-concluída
+// do módulo (POSICIONAL, distinto de IN_PROGRESS: uma lição NOT_STARTED pode ser a
+// atual). Módulo 100% concluído → atualSlug null. As não-concluídas após a atual são
+// "proxima" (nada é bloqueado de fato — navegação é livre; o "lock" é só visual).
+export type TrilhaEstado = 'concluida' | 'atual' | 'proxima';
+
+export function estadoTrilha(
+  licoes: { slug: string; status: Status }[],
+): { atualSlug: string | null; estados: Record<string, TrilhaEstado> } {
+  const atualSlug = licoes.find((l) => l.status !== 'COMPLETED')?.slug ?? null;
+  const estados: Record<string, TrilhaEstado> = {};
+  for (const l of licoes) {
+    estados[l.slug] =
+      l.status === 'COMPLETED' ? 'concluida' : l.slug === atualSlug ? 'atual' : 'proxima';
+  }
+  return { atualSlug, estados };
+}
+
 function diaUTC(date: Date): string {
   return date.toISOString().slice(0, 10);
 }

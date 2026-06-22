@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildDashboard, type ProgressRow, type DashModulo } from './dashboard';
+import { buildDashboard, estadoTrilha, type ProgressRow, type DashModulo, type Status } from './dashboard';
 
 const d = (s: string) => new Date(s + 'T12:00:00Z');
 
@@ -115,5 +115,49 @@ describe('buildDashboard', () => {
     const r = buildDashboard(rows, d('2026-05-29'), MODULOS);
     expect(r.proxima).toBeNull();
     expect(r.trilha.moduloTitulo).toBe('Referência Rápida');
+  });
+});
+
+describe('estadoTrilha', () => {
+  const t = (slug: string, status: Status) => ({ slug, status });
+
+  it('atual = 1ª não-concluída; pula as concluídas', () => {
+    const { atualSlug, estados } = estadoTrilha([
+      t('a', 'COMPLETED'), t('b', 'NOT_STARTED'), t('c', 'NOT_STARTED'),
+    ]);
+    expect(atualSlug).toBe('b');
+    expect(estados).toEqual({ a: 'concluida', b: 'atual', c: 'proxima' });
+  });
+
+  it('módulo 100% concluído: sem atual', () => {
+    const { atualSlug, estados } = estadoTrilha([t('a', 'COMPLETED'), t('b', 'COMPLETED')]);
+    expect(atualSlug).toBeNull();
+    expect(estados).toEqual({ a: 'concluida', b: 'concluida' });
+  });
+
+  it('sem progresso: a 1ª lição é a atual', () => {
+    const { atualSlug, estados } = estadoTrilha([t('a', 'NOT_STARTED'), t('b', 'NOT_STARTED')]);
+    expect(atualSlug).toBe('a');
+    expect(estados).toEqual({ a: 'atual', b: 'proxima' });
+  });
+
+  it('atual é POSICIONAL (1ª não-concluída), não o IN_PROGRESS posterior', () => {
+    const { atualSlug, estados } = estadoTrilha([t('a', 'NOT_STARTED'), t('b', 'IN_PROGRESS')]);
+    expect(atualSlug).toBe('a');
+    expect(estados).toEqual({ a: 'atual', b: 'proxima' });
+  });
+
+  it('IN_PROGRESS após concluída é a atual', () => {
+    const { atualSlug, estados } = estadoTrilha([
+      t('a', 'COMPLETED'), t('b', 'IN_PROGRESS'), t('c', 'NOT_STARTED'),
+    ]);
+    expect(atualSlug).toBe('b');
+    expect(estados).toEqual({ a: 'concluida', b: 'atual', c: 'proxima' });
+  });
+
+  it('lista vazia: sem atual, estados vazio', () => {
+    const { atualSlug, estados } = estadoTrilha([]);
+    expect(atualSlug).toBeNull();
+    expect(estados).toEqual({});
   });
 });
