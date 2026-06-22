@@ -3,21 +3,26 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 export const buttonVariants = cva(
-  // Base styles — hardcoded hex, no var() references
+  // Cor SEMPRE via token (var(--...)). Foco = anel marinho (--navy) em :focus-visible.
   [
     'inline-flex items-center justify-center font-bold rounded-[10px] transition-colors',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#534AB7]',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)]',
     'disabled:opacity-60 disabled:cursor-default',
   ],
   {
     variants: {
       variant: {
-        default: 'bg-[#3C3489] text-white hover:bg-[#534AB7]',
-        success: 'bg-[#0B861D] text-white hover:bg-[#096e18]',
-        danger: 'bg-[#cc0f10] text-white hover:bg-[#a80d0e]',
-        ghost: 'bg-transparent text-[#3C3489] hover:bg-[#f0eeff]',
+        // primary = Delp Red (CTA)
+        default: 'bg-[var(--red)] text-white hover:opacity-90',
+        // sucesso / conclusão = verde
+        success: 'bg-[var(--green)] text-white hover:opacity-90',
+        // destrutivo = Delp Red
+        danger: 'bg-[var(--red)] text-white hover:opacity-90',
+        // ghost = tint marinho
+        ghost: 'bg-transparent text-[var(--navy)] hover:bg-[var(--navy-l)]',
+        // secondary = outline-navy
         outline:
-          'border border-[#ececf6] bg-transparent text-[#1d1840] hover:bg-[#faf9ff]',
+          'border border-[var(--navy)] bg-transparent text-[var(--navy)] hover:bg-[var(--navy-l)]',
       },
       size: {
         md: 'px-4 py-[9px] text-[.82rem]',

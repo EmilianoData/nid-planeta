@@ -16,7 +16,8 @@ const DialogOverlay = React.forwardRef<
   <RadixDialog.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px]',
+      // scrim marinho translúcido (rgb 33,61,117 = #213D75)
+      'fixed inset-0 z-40 bg-[rgba(33,61,117,0.4)] backdrop-blur-[2px]',
       'data-[state=open]:animate-in data-[state=closed]:animate-out',
       'data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0',
       className
@@ -38,9 +39,9 @@ const DialogContent = React.forwardRef<
       className={cn(
         // Centering
         'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
-        // Card style — all hex, no var()
-        'w-full max-w-[480px] rounded-[12px] bg-white border border-[#ececf6]',
-        'p-[22px] shadow-[0_12px_32px_rgba(29,24,64,0.14)]',
+        // Card — cor via token; sombra navy-tinted (--shadow-hero)
+        'w-full max-w-[480px] rounded-[12px] bg-[var(--card)] border border-[var(--line)]',
+        'p-[22px] shadow-[var(--shadow-hero)]',
         // Animation
         'data-[state=open]:animate-in data-[state=closed]:animate-out',
         'data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
@@ -54,9 +55,9 @@ const DialogContent = React.forwardRef<
       <RadixDialog.Close
         aria-label="Fechar"
         className={cn(
-          'absolute right-4 top-4 rounded-[6px] text-[#5e5b7a] text-lg leading-none',
-          'hover:text-[#1d1840] hover:bg-[#f0eeff]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#534AB7]',
+          'absolute right-4 top-4 rounded-[6px] text-[var(--muted)] text-lg leading-none',
+          'hover:text-[var(--ink)] hover:bg-[var(--navy-l)]',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)]',
           'h-7 w-7 flex items-center justify-center transition-colors'
         )}
       >
@@ -75,7 +76,7 @@ const DialogTitle = React.forwardRef<
   <RadixDialog.Title
     ref={ref}
     className={cn(
-      'text-[1rem] font-bold text-[#1d1840] mb-1 pr-8',
+      'text-[1rem] font-bold text-[var(--ink)] mb-1 pr-8',
       className
     )}
     {...props}
@@ -90,7 +91,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <RadixDialog.Description
     ref={ref}
-    className={cn('text-[.85rem] text-[#5e5b7a] mb-4', className)}
+    className={cn('text-[.85rem] text-[var(--muted)] mb-4', className)}
     {...props}
   />
 ));
