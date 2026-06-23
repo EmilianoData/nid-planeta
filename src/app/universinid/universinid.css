@@ -23,8 +23,12 @@
   --shadow-hero:0 12px 34px rgba(33,61,117,.20);
   --shadow-cta:0 6px 16px rgba(204,15,16,.30);
 }
+/* height:100vh + overflow:hidden confina a casca à viewport; o scroll vertical vive
+   no .uni-main (home/admin) e no .uni-side — necessário porque o globals.css tem
+   body{overflow:hidden} (kiosk) e NÃO pode ser tocado. A lição (.uni-lesson) já tem
+   sua própria altura/scroll e não é afetada. */
 .uni-shell { font-family: "Barlow","Open Sans",system-ui,sans-serif; color:var(--ink);
-  background:var(--bg); min-height:100vh; display:flex; flex-direction:column; }
+  background:var(--bg); height:100vh; overflow:hidden; display:flex; flex-direction:column; }
 .uni-shell *{ box-sizing:border-box; }
 .uni-top{ height:56px; background:var(--card); border-bottom:1px solid var(--line);
   display:flex; align-items:center; gap:16px; padding:0 18px; position:sticky; top:0; z-index:20; }
@@ -45,7 +49,7 @@
   display:inline-flex; align-items:center; justify-content:center; }
 .uni-av:hover > span{ background:var(--navy-2); }
 .uni-av:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
-.uni-body{ display:flex; flex:1; }
+.uni-body{ display:flex; flex:1; min-height:0; }
 .uni-side{ width:230px; background:var(--card); border-right:1px solid var(--line); padding:16px 12px;
   flex-shrink:0; overflow-y:auto; }
 .uni-lbl{ font-size:.62rem; letter-spacing:1.2px; color:var(--muted); font-weight:700; margin:8px 8px 8px; }
@@ -58,7 +62,7 @@
 .uni-nav.on{ background:var(--navy-l); color:var(--navy); font-weight:650; }
 .uni-nav:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
 .uni-rg{ width:18px; height:18px; border-radius:50%; flex-shrink:0; }
-.uni-main{ flex:1; padding:26px 30px; max-width:1100px; }
+.uni-main{ flex:1; min-height:0; overflow-y:auto; padding:26px 30px; max-width:1100px; }
 .uni-hi{ font-size:1.5rem; font-weight:800; margin:0 0 2px; }
 .uni-hi span{ color:var(--red); }
 .uni-sub{ color:var(--muted); font-size:.9rem; margin:0 0 20px; }
