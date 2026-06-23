@@ -1,7 +1,9 @@
 ---
 date: 2026-06-23
 spec: docs/superpowers/specs/2026-06-23-universinid-navegacao-perfil.md
-status: pendente-gate
+status: implementado
+gate: DISPENSADO pelo dono em 2026-06-23 (decisão explícita "ir direto para implement"; frente pequena/baixo risco — sem schema/dados/CSP/landing). Rigor mantido no gate de SAÍDA.
+implementado_em: 2026-06-23 (commit e52f6c2; build+tsc+test 186/186; denylist limpa; isolamento íntegro; rota /universinid/perfil no build; a11y revisada no código. Smoke interativo → preview Vercel, pois o dev local não renderiza a casca autenticada (Neon frio).)
 tipo: web
 fase_quadro: Frente A (navegação + perfil) — pós Fase de Design, antes da FASE-09
 ---
