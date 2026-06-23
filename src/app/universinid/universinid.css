@@ -285,3 +285,23 @@
 .uni-rtable .muted{ color:var(--muted); }
 .uni-rtable .ok{ color:var(--green-text); font-weight:600; }
 .uni-rtable .no{ color:var(--red); font-weight:600; }
+
+/* Menu da conta (avatar → dropdown à direita). */
+.uni-acct{ position:relative; }
+.uni-acct-menu{ position:absolute; right:0; top:calc(100% + 8px); min-width:208px; background:var(--card);
+  border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow-hover); padding:6px; z-index:60; }
+.uni-acct-head{ padding:8px 10px; border-bottom:1px solid var(--line); margin-bottom:4px; }
+.uni-acct-head .nome{ font-size:.85rem; font-weight:700; color:var(--ink); }
+.uni-acct-item{ display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:9px 10px;
+  border:none; background:transparent; border-radius:8px; font-size:.85rem; color:var(--ink); cursor:pointer;
+  text-decoration:none; font-family:inherit; }
+.uni-acct-item:hover{ background:var(--soft); }
+.uni-acct-item:focus-visible{ outline:var(--focus-ring); outline-offset:-2px; }
+
+/* Página de perfil. */
+.uni-profile{ max-width:760px; }
+.uni-profile-id{ display:flex; align-items:center; gap:16px; margin:8px 0 24px; }
+.uni-profile-id .ava{ width:64px; height:64px; border-radius:50%; background:var(--navy); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.3rem; flex-shrink:0; }
+.uni-profile-id h1{ font-size:1.4rem; font-weight:800; margin:0 0 2px; }
+.uni-profile-id .email{ color:var(--muted); font-size:.88rem; margin:0 0 6px; }

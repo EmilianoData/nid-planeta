@@ -20,7 +20,7 @@ export default async function UniversinidLayout({ children }: { children: ReactN
   return (
     <div className="uni-shell">
       <QueryProvider>
-        <ShellChrome progress={progress} streak={dash.streakDias}
+        <ShellChrome progress={progress} streak={dash.streakDias} nome={dash.nome}
           isAdmin={session.user.role === 'ADMIN'} tree={tree}>
           {children}
         </ShellChrome>

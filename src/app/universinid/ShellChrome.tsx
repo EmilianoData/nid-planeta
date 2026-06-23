@@ -8,8 +8,8 @@ import type { PublishedTree } from '@/lib/universinid/content-queries';
 
 type StatusMap = Record<string, { status: string; pct: number }>;
 
-export function ShellChrome({ progress, streak, isAdmin, tree, children }:
-  { progress: StatusMap; streak: number; isAdmin: boolean; tree: PublishedTree; children: ReactNode }) {
+export function ShellChrome({ progress, streak, nome, isAdmin, tree, children }:
+  { progress: StatusMap; streak: number; nome: string; isAdmin: boolean; tree: PublishedTree; children: ReactNode }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
     const openPalette = () => setOpen(true);
@@ -23,7 +23,7 @@ export function ShellChrome({ progress, streak, isAdmin, tree, children }:
   );
   return (
     <>
-      <Topbar streak={streak} onOpenPalette={() => setOpen(true)} />
+      <Topbar streak={streak} onOpenPalette={() => setOpen(true)} nome={nome} isAdmin={isAdmin} />
       <div className="uni-body">
         <Sidebar progress={progress} tree={tree} />
         {children}

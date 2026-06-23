@@ -88,6 +88,31 @@ export async function getDashboardData(): Promise<DashboardData & { nome: string
   return { ...buildDashboard(progress, new Date(), modulos), nome: user.nome };
 }
 
+// Página de perfil (somente leitura): identidade autoritativa (e-mail/papel por PK)
+// + os mesmos números do dashboard. Progresso reusa getDashboardData (sem query nova
+// de progresso); identidade é um único findUnique por PK.
+export async function getPerfil(): Promise<{
+  nome: string; email: string; role: string;
+  pctGeral: number; licoesConcluidas: number; totalLicoes: number;
+  modulosAtivos: number; streakDias: number;
+}> {
+  const user = await exigirSessao();
+  const [conta, dash] = await Promise.all([
+    prisma.user.findUnique({ where: { id: user.id }, select: { email: true, role: true } }),
+    getDashboardData(),
+  ]);
+  return {
+    nome: dash.nome,
+    email: conta?.email ?? '',
+    role: conta?.role ?? 'STUDENT',
+    pctGeral: dash.pctGeral,
+    licoesConcluidas: dash.licoesConcluidas,
+    totalLicoes: dash.totalLicoes,
+    modulosAtivos: dash.modulosAtivos,
+    streakDias: dash.streakDias,
+  };
+}
+
 export async function getProgressMap(): Promise<Record<string, { status: string; pct: number }>> {
   const user = await exigirSessao();
   const rows = await buscarLinhasProgresso(user.id);
