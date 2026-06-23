@@ -1,8 +1,9 @@
 ---
 date: 2026-06-18
 spec: docs/superpowers/specs/2026-06-18-universinid-design-system.md
-status: gate-aprovado
+status: implementado
 gate_aprovado_em: 2026-06-18 (GO após 2 rodadas de red-team; aprovação humana do dono do quadro)
+implementado_em: 2026-06-23 (Fases 1–6; gate de saída adversarial GO 5/5 lentes; build+tsc+test 186/186; next start CSP OK; aguardando aprovação visual do dono)
 decisao_ia: RESOLVIDA — catálogo completo na Sidebar; home foca a Trilha do módulo atual
 tipo: web
 fase_quadro: FASE-DESIGN (antes da FASE-09)
