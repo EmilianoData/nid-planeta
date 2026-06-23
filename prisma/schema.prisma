@@ -144,3 +144,40 @@ model QuizAttempt {
   @@index([lessonSlug, createdAt])
   @@map("quiz_attempts")
 }
+
+enum BadgeEscopo {
+  MODULE
+  COURSE
+}
+
+// FASE-09 — catálogo de medalhas (semeado da árvore publicada: 1 por módulo + 1 por curso).
+// `alvoId` = module.id / course.id (join-por-valor ao conteúdo; sem FK p/ não acoplar exclusão).
+model Badge {
+  id        String      @id @default(cuid())
+  slug      String      @unique
+  nome      String
+  descricao String?
+  escopo    BadgeEscopo
+  alvoId    String
+  icone     String      @default("trophy")
+  position  Int         @default(0)
+  createdAt DateTime    @default(now())
+  awards    UserBadge[]
+
+  @@map("badges")
+}
+
+// FASE-09 — concessões. `userId` JOIN-POR-VALOR (sem FK p/ User — regra de ouro #2, mesmo
+// contrato de QuizAttempt/LessonProgress; User intocado). FK só entre tabelas novas (badgeId).
+// @@unique([userId, badgeId]) torna a concessão idempotente (sem medalha duplicada).
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  awardedAt DateTime @default(now())
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@map("user_badges")
+}
