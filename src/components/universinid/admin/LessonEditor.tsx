@@ -58,28 +58,19 @@ export function LessonEditor({ initial, onSave }: LessonEditorProps) {
   return (
     <div>
       {legacy && (
-        <p
-          role="status"
-          className="mb-3 rounded-[10px] border border-[#f0d9a8] bg-[#fff7e6] px-3 py-2 text-[.82rem] text-[#8a5a00]"
-        >
+        <p role="status" className="uni-note">
           Esta lição ainda usa o conteúdo legado (HTML embutido). Comece a autorar abaixo — ao
           salvar, o conteúdo nativo substitui o embed legado.
         </p>
       )}
       {removeuNaoSuportado && (
-        <p
-          role="status"
-          className="mb-3 rounded-[10px] border border-[#f0d9a8] bg-[#fff7e6] px-3 py-2 text-[.82rem] text-[#8a5a00]"
-        >
+        <p role="status" className="uni-note">
           Alguns blocos não suportados (de versões anteriores do editor) foram ocultados. O
           conteúdo suportado foi mantido — salve para consolidar.
         </p>
       )}
       {bloqueiaPerda && (
-        <p
-          role="alert"
-          className="mb-3 rounded-[10px] border border-[#f0b4b4] bg-[#fdeaea] px-3 py-2 text-[.82rem] text-[#a11]"
-        >
+        <p role="alert" className="uni-note alert">
           Não foi possível carregar o quiz desta lição com segurança (versão do editor
           desatualizada). A edição automática está pausada para não apagar o quiz — recarregue a
           página. Se persistir, avise a TI.

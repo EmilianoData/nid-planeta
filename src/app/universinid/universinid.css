@@ -252,3 +252,32 @@
 .uni-quiz-res.no{ color:var(--red); }
 .uni-quiz-note{ font-size:.85rem; color:var(--muted); margin:0; }
 .uni-quiz-err{ margin:10px 0 0; font-size:.85rem; color:var(--red); }
+
+/* Abas do admin (Usuários/Conteúdo/Quizzes) — foco visível incluído. */
+.uni-tabs{ display:flex; gap:0; border-bottom:1.5px solid var(--line); margin-bottom:22px; }
+.uni-tab{ display:inline-block; padding:8px 18px; font-size:.88rem; font-weight:500; color:var(--muted);
+  text-decoration:none; border-bottom:2.5px solid transparent; margin-bottom:-1.5px; transition:color .15s,border-color .15s; }
+.uni-tab:hover{ color:var(--navy); }
+.uni-tab.on{ color:var(--navy); font-weight:700; border-bottom-color:var(--navy); }
+.uni-tab:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); border-radius:6px 6px 0 0; }
+
+/* Aviso/alerta do editor (admin). */
+.uni-note{ margin:0 0 12px; border:1px solid var(--navy); background:var(--navy-l); color:var(--navy); border-radius:10px; padding:8px 12px; font-size:.82rem; }
+.uni-note.alert{ border-color:var(--red); background:var(--soft); color:var(--red); }
+
+/* Seletor lateral (ex.: alunos em Resultados de quizzes). */
+.uni-pick{ display:block; width:100%; text-align:left; padding:8px 10px; border-radius:8px; border:none;
+  cursor:pointer; margin-bottom:4px; background:transparent; color:var(--ink); font-weight:500; font-size:.88rem; }
+.uni-pick:hover{ background:var(--soft); }
+.uni-pick.on{ background:var(--navy-l); color:var(--navy); font-weight:700; }
+.uni-pick.muted{ color:var(--muted); }
+.uni-pick:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+
+/* Tabela de resultados (QuizResults). */
+.uni-rtable{ width:100%; border-collapse:collapse; font-size:.88rem; }
+.uni-rtable thead tr{ text-align:left; border-bottom:1.5px solid var(--line); color:var(--muted); }
+.uni-rtable th, .uni-rtable td{ padding:8px 6px; }
+.uni-rtable tbody tr{ border-bottom:1px solid var(--line); }
+.uni-rtable .muted{ color:var(--muted); }
+.uni-rtable .ok{ color:var(--green-text); font-weight:600; }
+.uni-rtable .no{ color:var(--red); font-weight:600; }

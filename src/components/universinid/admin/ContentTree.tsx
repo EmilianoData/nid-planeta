@@ -338,7 +338,7 @@ function ConfirmDeleteDialog({
 const labelSt: React.CSSProperties = {
   fontSize: '.78rem',
   fontWeight: 650,
-  color: '#4a4770',
+  color: 'var(--ink)',
   marginBottom: 2,
 };
 
@@ -347,14 +347,14 @@ const rowSt: React.CSSProperties = {
   alignItems: 'center',
   gap: 7,
   padding: '6px 0',
-  borderBottom: '1px solid #ececf6',
+  borderBottom: '1px solid var(--line)',
   flexWrap: 'wrap',
 };
 
 const titleSt: React.CSSProperties = {
   flex: 1,
   fontSize: '.88rem',
-  color: '#1d1840',
+  color: 'var(--ink)',
   fontWeight: 600,
   minWidth: 0,
 };
@@ -423,7 +423,7 @@ export function ContentTree() {
             <div
               style={{
                 ...rowSt,
-                background: '#f7f6fd',
+                background: 'var(--soft)',
                 borderRadius: 8,
                 padding: '8px 12px',
                 borderBottom: 'none',
@@ -502,7 +502,7 @@ export function ContentTree() {
               {course.modules.map((mod, mi) => (
                 <div key={mod.id} style={{ marginBottom: 4 }}>
                   {/* Module row */}
-                  <div style={{ ...rowSt, background: '#faf9ff', borderRadius: 7, padding: '6px 10px', borderBottom: 'none', marginBottom: 2 }}>
+                  <div style={{ ...rowSt, background: 'var(--soft)', borderRadius: 7, padding: '6px 10px', borderBottom: 'none', marginBottom: 2 }}>
                     <span style={{ fontSize: '1rem' }}>{mod.emoji}</span>
                     <span style={titleSt}>{mod.title}</span>
                     <span className={`uni-badge ${mod.status === 'PUBLISHED' ? 'on' : 'off'}`}>
@@ -603,7 +603,7 @@ export function ContentTree() {
         ))}
 
         {courseList.length === 0 && (
-          <p style={{ color: '#5e5b7a', fontSize: '.88rem' }}>
+          <p style={{ color: 'var(--muted)', fontSize: '.88rem' }}>
             Nenhum curso cadastrado. Clique em "+ Novo curso" para começar.
           </p>
         )}
@@ -663,7 +663,7 @@ function LessonRow({
 
       <Link
         href={`/universinid/admin/licao/${lesson.id}`}
-        style={{ fontSize: '.78rem', color: '#3C3489', fontWeight: 600, textDecoration: 'none' }}
+        style={{ fontSize: '.78rem', color: 'var(--navy)', fontWeight: 600, textDecoration: 'none' }}
       >
         Editar conteúdo
       </Link>

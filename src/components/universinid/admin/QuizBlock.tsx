@@ -62,30 +62,31 @@ function QuizBlockEditor({ notaCorteInicial, questoesJson, onChange }: QuizBlock
     patchQuestao(qi, { alternativas, corretaIdx });
   };
 
+  const txtInput = 'rounded-[8px] border border-[var(--line)] bg-[var(--card)] text-[var(--ink)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:border-[var(--navy)]';
   return (
-    <div contentEditable={false} className="my-2 rounded-[12px] border border-[#d9d3ee] bg-[#faf9ff] p-4 text-[#1d1840]">
+    <div contentEditable={false} className="my-2 rounded-[12px] border border-[var(--line)] bg-[var(--soft)] p-4 text-[var(--ink)]">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <strong className="text-[.95rem]">📝 Quiz da lição</strong>
+        <strong className="text-[.95rem]">Quiz da lição</strong>
         <label className="flex items-center gap-2 text-[.82rem]">
           Nota de corte (%)
           <input
             type="number" min={1} max={100} value={notaCorte}
             onKeyDown={stop}
             onChange={(e) => apply(questoes, Math.max(1, Math.min(100, Number(e.target.value) || 0)))}
-            className="w-16 rounded-[8px] border border-[#cfc8ea] px-2 py-1 text-[.85rem]"
+            className={`w-16 px-2 py-1 text-[.85rem] ${txtInput}`}
           />
         </label>
       </div>
 
       {questoes.map((q, qi) => (
-        <fieldset key={qi} className="mb-3 rounded-[10px] border border-[#e3def4] bg-white p-3">
-          <legend className="px-1 text-[.8rem] font-medium text-[#5b51a8]">Questão {qi + 1}</legend>
+        <fieldset key={qi} className="mb-3 rounded-[10px] border border-[var(--line)] bg-[var(--card)] p-3">
+          <legend className="px-1 text-[.8rem] font-medium text-[var(--navy)]">Questão {qi + 1}</legend>
           <input
             type="text" value={q.enunciado} placeholder="Enunciado da pergunta"
             aria-label={`Enunciado da questão ${qi + 1}`}
             onKeyDown={stop}
             onChange={(e) => patchQuestao(qi, { enunciado: e.target.value })}
-            className="mb-2 w-full rounded-[8px] border border-[#cfc8ea] px-2 py-1.5 text-[.9rem]"
+            className={`mb-2 w-full px-2 py-1.5 text-[.9rem] ${txtInput}`}
           />
           <div className="flex flex-col gap-1.5">
             {q.alternativas.map((alt, ai) => (
@@ -94,29 +95,30 @@ function QuizBlockEditor({ notaCorteInicial, questoesJson, onChange }: QuizBlock
                   type="radio" name={`correta-${qi}`} checked={q.corretaIdx === ai}
                   aria-label={`Marcar alternativa ${ai + 1} como correta`}
                   onChange={() => patchQuestao(qi, { corretaIdx: ai })}
+                  className="accent-[var(--navy)]"
                 />
                 <input
                   type="text" value={alt} placeholder={`Alternativa ${ai + 1}`}
                   aria-label={`Texto da alternativa ${ai + 1} da questão ${qi + 1}`}
                   onKeyDown={stop}
                   onChange={(e) => setAlternativa(qi, ai, e.target.value)}
-                  className="flex-1 rounded-[8px] border border-[#cfc8ea] px-2 py-1 text-[.85rem]"
+                  className={`flex-1 px-2 py-1 text-[.85rem] ${txtInput}`}
                 />
                 <button
                   type="button" onClick={() => removeAlternativa(qi, ai)}
                   disabled={q.alternativas.length <= 2}
                   aria-label={`Remover alternativa ${ai + 1}`}
-                  className="rounded-[6px] px-2 py-1 text-[.8rem] text-[#cc0f10] disabled:opacity-30"
+                  className="rounded-[6px] px-2 py-1 text-[.8rem] text-[var(--red)] disabled:opacity-30"
                 >✕</button>
               </div>
             ))}
           </div>
           <div className="mt-2 flex items-center gap-3">
-            <button type="button" onClick={() => addAlternativa(qi)} className="text-[.8rem] text-[#3C3489]">+ alternativa</button>
+            <button type="button" onClick={() => addAlternativa(qi)} className="text-[.8rem] text-[var(--navy)]">+ alternativa</button>
             {questoes.length > 1 && (
               <button
                 type="button" onClick={() => apply(questoes.filter((_, j) => j !== qi), notaCorte)}
-                className="text-[.8rem] text-[#cc0f10]"
+                className="text-[.8rem] text-[var(--red)]"
               >remover questão</button>
             )}
           </div>
@@ -125,14 +127,14 @@ function QuizBlockEditor({ notaCorteInicial, questoesJson, onChange }: QuizBlock
             aria-label={`Explicação da questão ${qi + 1}`}
             onKeyDown={stop}
             onChange={(e) => patchQuestao(qi, { explicacao: e.target.value })}
-            className="mt-2 w-full rounded-[8px] border border-dashed border-[#cfc8ea] px-2 py-1 text-[.82rem]"
+            className={`mt-2 w-full border-dashed px-2 py-1 text-[.82rem] ${txtInput}`}
           />
         </fieldset>
       ))}
 
       <button
         type="button" onClick={() => apply([...questoes, emptyQuestao()], notaCorte)}
-        className="rounded-[8px] bg-[#3C3489] px-3 py-1.5 text-[.85rem] font-medium text-white"
+        className="rounded-[8px] bg-[var(--navy)] px-3 py-1.5 text-[.85rem] font-medium text-white"
       >+ adicionar questão</button>
     </div>
   );

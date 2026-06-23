@@ -8,7 +8,7 @@ import type { UniBlockDoc } from '@/lib/universinid/content-types';
 // ssr:false só é permitido em client component. Mantém o BlockNote fora do SSR (B5).
 const LessonEditor = dynamic(
   () => import('./LessonEditor').then((m) => m.LessonEditor),
-  { ssr: false, loading: () => <p className="p-6 text-[.9rem] text-[#5e5b7a]">Carregando editor…</p> },
+  { ssr: false, loading: () => <p className="p-6 text-[.9rem] text-[var(--muted)]">Carregando editor…</p> },
 );
 
 interface LessonEditorPanelProps {

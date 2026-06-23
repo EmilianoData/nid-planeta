@@ -4,10 +4,11 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createUser, toggleUserActive } from '@/lib/universinid/actions';
 import { AdminTabs } from '@/components/universinid/admin/AdminTabs';
+import { Button } from '@/components/universinid/ui/button';
+import { Input } from '@/components/universinid/ui/input';
+import { Select } from '@/components/universinid/ui/select';
 
 type Row = { id: string; email: string; name: string; role: string; isActive: boolean };
-
-const inp: React.CSSProperties = { padding: '9px 11px', border: '1.5px solid #e2e0f0', borderRadius: 8, fontSize: '.88rem' };
 
 export function AdminUsers({ users }: { users: Row[] }) {
   const [pending, start] = useTransition();
@@ -52,13 +53,13 @@ export function AdminUsers({ users }: { users: Row[] }) {
       {erro && <div className="err" role="alert" style={{ marginBottom: 16 }}>{erro}</div>}
 
       <form action={onCreate} style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 24, alignItems: 'flex-end' }}>
-        <div><label htmlFor="adm-name">Nome</label><br /><input id="adm-name" name="name" required style={inp} /></div>
-        <div><label htmlFor="adm-email">E-mail</label><br /><input id="adm-email" name="email" type="email" required style={inp} /></div>
-        <div><label htmlFor="adm-pass">Senha inicial</label><br /><input id="adm-pass" name="password" type="text" minLength={6} required style={inp} /></div>
+        <div><label htmlFor="adm-name">Nome</label><br /><Input id="adm-name" name="name" required /></div>
+        <div><label htmlFor="adm-email">E-mail</label><br /><Input id="adm-email" name="email" type="email" required /></div>
+        <div><label htmlFor="adm-pass">Senha inicial</label><br /><Input id="adm-pass" name="password" type="text" minLength={6} required /></div>
         <div><label htmlFor="adm-role">Papel</label><br />
-          <select id="adm-role" name="role" style={inp}><option value="STUDENT">Aluno</option><option value="ADMIN">Admin</option></select>
+          <Select id="adm-role" name="role"><option value="STUDENT">Aluno</option><option value="ADMIN">Admin</option></Select>
         </div>
-        <button className="uni-btn" type="submit" disabled={pending}>{pending ? 'Criando…' : 'Criar usuário'}</button>
+        <Button type="submit" disabled={pending}>{pending ? 'Criando…' : 'Criar usuário'}</Button>
       </form>
 
       <table className="uni-table">
@@ -69,10 +70,10 @@ export function AdminUsers({ users }: { users: Row[] }) {
               <td>{u.name}</td><td>{u.email}</td><td>{u.role === 'ADMIN' ? 'Admin' : 'Aluno'}</td>
               <td><span className={`uni-badge ${u.isActive ? 'on' : 'off'}`}>{u.isActive ? 'Ativo' : 'Inativo'}</span></td>
               <td>
-                <button className="uni-btn" style={{ padding: '5px 11px', fontSize: '.74rem', background: u.isActive ? '#cc0f10' : '#0B861D' }}
+                <Button variant={u.isActive ? 'danger' : 'success'} size="sm"
                   onClick={() => onToggle(u.id)} disabled={pending}>
                   {u.isActive ? 'Desativar' : 'Ativar'}
-                </button>
+                </Button>
               </td>
             </tr>
           ))}

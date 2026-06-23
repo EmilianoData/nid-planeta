@@ -19,7 +19,7 @@ export function QuizResults({ resultados }: { resultados: AlunoResultados[] }) {
       ) : (
         <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', flexWrap: 'wrap' }}>
           {/* Seletor de aluno */}
-          <nav aria-label="Alunos" style={{ minWidth: 200, borderRight: '1.5px solid #ececf6', paddingRight: 12 }}>
+          <nav aria-label="Alunos" style={{ minWidth: 200, borderRight: '1.5px solid var(--line)', paddingRight: 12 }}>
             {resultados.map((a) => {
               const ativo = a.userId === sel;
               return (
@@ -28,13 +28,7 @@ export function QuizResults({ resultados }: { resultados: AlunoResultados[] }) {
                   type="button"
                   onClick={() => setSel(a.userId)}
                   aria-current={ativo ? 'true' : undefined}
-                  style={{
-                    display: 'block', width: '100%', textAlign: 'left', padding: '8px 10px',
-                    borderRadius: 8, border: 'none', cursor: 'pointer', marginBottom: 4,
-                    background: ativo ? '#efedfb' : 'transparent',
-                    color: a.removido ? '#9a93b8' : '#2a2550',
-                    fontWeight: ativo ? 700 : 500, fontSize: '.88rem',
-                  }}
+                  className={`uni-pick ${ativo ? 'on' : ''} ${a.removido ? 'muted' : ''}`}
                 >
                   {a.nome}
                 </button>
@@ -48,24 +42,24 @@ export function QuizResults({ resultados }: { resultados: AlunoResultados[] }) {
               <>
                 <h2 className="uni-hi" style={{ fontSize: '1.1rem' }}>{aluno.nome}</h2>
                 {aluno.email && <p className="uni-sub" style={{ marginTop: -6 }}>{aluno.email}</p>}
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.88rem' }}>
+                <table className="uni-rtable">
                   <thead>
-                    <tr style={{ textAlign: 'left', borderBottom: '1.5px solid #ececf6', color: '#5e5b7a' }}>
-                      <th style={{ padding: '8px 6px' }}>Lição</th>
-                      <th style={{ padding: '8px 6px' }}>Melhor nota</th>
-                      <th style={{ padding: '8px 6px' }}>Situação</th>
-                      <th style={{ padding: '8px 6px' }}>Tentativas</th>
+                    <tr>
+                      <th>Lição</th>
+                      <th>Melhor nota</th>
+                      <th>Situação</th>
+                      <th>Tentativas</th>
                     </tr>
                   </thead>
                   <tbody>
                     {aluno.licoes.map((l) => (
-                      <tr key={l.slug} style={{ borderBottom: '1px solid #f3f1fa' }}>
-                        <td style={{ padding: '8px 6px', color: l.lessonId ? '#2a2550' : '#9a93b8' }}>{l.titulo}</td>
-                        <td style={{ padding: '8px 6px' }}>{l.melhorScore}% <span style={{ color: '#9a93b8' }}>(corte {l.notaCorte}%)</span></td>
-                        <td style={{ padding: '8px 6px', color: l.aprovado ? '#0B861D' : '#cc0f10', fontWeight: 600 }}>
+                      <tr key={l.slug}>
+                        <td className={l.lessonId ? undefined : 'muted'}>{l.titulo}</td>
+                        <td>{l.melhorScore}% <span className="muted">(corte {l.notaCorte}%)</span></td>
+                        <td className={l.aprovado ? 'ok' : 'no'}>
                           {l.aprovado ? 'Aprovado' : 'Não aprovado'}
                         </td>
-                        <td style={{ padding: '8px 6px' }}>{l.totalTentativas}</td>
+                        <td>{l.totalTentativas}</td>
                       </tr>
                     ))}
                   </tbody>
