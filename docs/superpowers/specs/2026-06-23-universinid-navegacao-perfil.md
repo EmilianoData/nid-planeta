@@ -1,6 +1,6 @@
 ---
 date: 2026-06-23
-status: pendente-aprovacao
+status: aprovada
 tipo: web
 autor: henrique.emiliano
 origem: review do dono pós Fase de Design (observações de navegação) → /nid:specify (brainstorm 2026-06-23)
