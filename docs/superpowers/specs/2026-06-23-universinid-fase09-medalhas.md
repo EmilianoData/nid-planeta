@@ -1,6 +1,6 @@
 ---
 date: 2026-06-23
-status: pendente-aprovacao
+status: aprovada
 tipo: web
 autor: henrique.emiliano
 origem: pré-spec especificacoes/2-fila/FASE-09-gamificacao-e-noticias-fase-3/SPEC.md (D1–D9) + /nid:specify (brainstorm 2026-06-23)
