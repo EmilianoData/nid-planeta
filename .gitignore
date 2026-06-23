@@ -1,9 +1,12 @@
 node_modules
 .next
 out
+.env
 .env*.local
 *.log
+.smoke/
 .DS_Store
 *.tsbuildinfo
 .superpowers/
 .claude/
+src/generated/

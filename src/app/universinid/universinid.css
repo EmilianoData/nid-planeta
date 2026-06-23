@@ -1,0 +1,307 @@
+/* ============================================================================
+   UniversiNID — Design System (tokens + classes .uni-*)
+   Escopado a /universinid (esta folha só é importada em (app)/layout.tsx e
+   (auth)/login/page.tsx). Identidade: marinho Mooring #213D75 + Barlow + neutros
+   + Delp Red (CTA) + verde (sucesso). NUNCA tocar globals.css / landing / kiosk.
+
+   Tokens em :root (e não só em .uni-shell) de propósito: o dialog primitivo usa
+   Radix Portal, que renderiza no <body> FORA de .uni-shell — em :root os var()
+   resolvem para o conteúdo portalizado, para o login (sem ancestral .uni-shell)
+   e para a casca. A folha é route-scoped, então não vaza para a landing/kiosk.
+   ============================================================================ */
+:root{
+  /* Acento de marca — azul-marinho Mooring */
+  --navy:#213D75; --navy-2:#2A4C8C; --navy-l:#EAEEF6;
+  /* CTA / estados */
+  --red:#CC0F10; --green:#0B861D; --green-text:#0A701A;
+  /* Neutros institucionais */
+  --bg:#F4F2EE; --card:#FFFFFF; --line:#E7E2DA; --ink:#1E1E22; --muted:#6E6A66; --soft:#F7F5F1;
+  /* Foco visível (WCAG 2.4.11 / 2.4.13) */
+  --focus-ring:2px solid #213D75; --focus-offset:2px;
+  /* Elevação navy-tinted — rgb(33,61,117) = #213D75 ; cta rgb(204,15,16) = #CC0F10 */
+  --shadow-hover:0 8px 22px rgba(33,61,117,.10);
+  --shadow-hero:0 12px 34px rgba(33,61,117,.20);
+  --shadow-cta:0 6px 16px rgba(204,15,16,.30);
+}
+/* height:100vh + overflow:hidden confina a casca à viewport; o scroll vertical vive
+   no .uni-main (home/admin) e no .uni-side — necessário porque o globals.css tem
+   body{overflow:hidden} (kiosk) e NÃO pode ser tocado. A lição (.uni-lesson) já tem
+   sua própria altura/scroll e não é afetada. */
+.uni-shell { font-family: "Barlow","Open Sans",system-ui,sans-serif; color:var(--ink);
+  background:var(--bg); height:100vh; overflow:hidden; display:flex; flex-direction:column; }
+.uni-shell *{ box-sizing:border-box; }
+.uni-top{ height:56px; background:var(--card); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:16px; padding:0 18px; position:sticky; top:0; z-index:20; }
+.uni-wm{ font-weight:800; letter-spacing:.4px; color:var(--ink); font-size:1.05rem; text-decoration:none; }
+.uni-wm b{ color:var(--red); }
+.uni-k{ margin-left:8px; flex:1; max-width:360px; display:flex; align-items:center; gap:8px;
+  background:var(--soft); border:1px solid var(--line); border-radius:10px; padding:8px 12px;
+  color:var(--muted); font-size:.85rem; cursor:pointer; }
+.uni-k:hover{ border-color:var(--navy-l); }
+.uni-k:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+.uni-k .cmd{ margin-left:auto; font-size:.68rem; background:var(--card); border:1px solid var(--line);
+  border-radius:5px; padding:1px 6px; color:var(--muted); font-family:ui-monospace,monospace; }
+.uni-streak{ display:flex; align-items:center; gap:6px; font-size:.85rem; font-weight:700; color:var(--navy); }
+/* Avatar/sair: alvo de toque 44x44 (WCAG 2.5.8), disco visual 34 via padding+filho. */
+.uni-av{ width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center;
+  background:transparent; border:none; cursor:pointer; padding:5px; border-radius:50%; }
+.uni-av > span{ width:34px; height:34px; border-radius:50%; background:var(--navy); color:#fff;
+  display:inline-flex; align-items:center; justify-content:center; }
+.uni-av:hover > span{ background:var(--navy-2); }
+.uni-av:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+.uni-body{ display:flex; flex:1; min-height:0; }
+.uni-side{ width:230px; background:var(--card); border-right:1px solid var(--line); padding:16px 12px;
+  flex-shrink:0; overflow-y:auto; }
+.uni-lbl{ font-size:.62rem; letter-spacing:1.2px; color:var(--muted); font-weight:700; margin:8px 8px 8px; }
+/* Nível 1 da sidebar (Course) — acima dos módulos (.uni-lbl). */
+.uni-course{ padding:14px 8px 4px; font-size:.72rem; font-weight:800; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--navy); }
+.uni-nav{ display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:9px;
+  margin-bottom:2px; font-size:.85rem; color:var(--ink); text-decoration:none; }
+.uni-nav:hover{ background:var(--soft); }
+.uni-nav.on{ background:var(--navy-l); color:var(--navy); font-weight:650; }
+.uni-nav:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+.uni-rg{ width:18px; height:18px; border-radius:50%; flex-shrink:0; }
+.uni-main{ flex:1; min-height:0; overflow-y:auto; padding:26px 30px; max-width:1100px; }
+.uni-hi{ font-size:1.5rem; font-weight:800; margin:0 0 2px; }
+.uni-hi span{ color:var(--red); }
+.uni-sub{ color:var(--muted); font-size:.9rem; margin:0 0 20px; }
+.uni-cont{ position:relative; overflow:hidden; border-radius:16px; padding:22px 24px;
+  background:linear-gradient(115deg,var(--navy),var(--navy-2) 70%); color:#fff; margin-bottom:20px;
+  box-shadow:var(--shadow-hero); }
+.uni-cont::after{ content:""; position:absolute; right:-30px; top:-30px; width:140px; height:140px;
+  border-radius:50%; background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.18),transparent 72%); opacity:.6; }
+.uni-cont .tg{ font-size:.64rem; letter-spacing:1.5px; opacity:.85; font-weight:700; }
+.uni-cont .ti{ font-size:1.15rem; font-weight:700; margin:5px 0 4px; max-width:70%; }
+.uni-cont .mod{ font-size:.78rem; opacity:.78; margin-bottom:14px; }
+.uni-cont .bar{ height:7px; border-radius:4px; background:rgba(255,255,255,.22); overflow:hidden; max-width:62%; margin-bottom:7px; }
+.uni-cont .bar i{ display:block; height:100%; background:#fff; }
+.uni-cont .pct{ font-size:.72rem; opacity:.85; }
+.uni-cont .go{ position:absolute; right:24px; bottom:22px; background:var(--red); color:#fff;
+  font-weight:750; font-size:.82rem; padding:9px 18px; border-radius:10px; text-decoration:none;
+  display:inline-flex; align-items:center; gap:7px; box-shadow:var(--shadow-cta); }
+.uni-cont .go:focus-visible{ outline:2px solid #fff; outline-offset:var(--focus-offset); }
+.uni-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+.uni-stat{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+.uni-stat .n{ font-size:1.5rem; font-weight:800; }
+.uni-stat .n small{ font-size:.78rem; color:var(--muted); font-weight:600; }
+.uni-stat.acc .n{ color:var(--navy); }
+.uni-stat .t{ font-size:.72rem; color:var(--muted); margin-top:2px; }
+.uni-sec{ font-size:.82rem; font-weight:750; color:var(--ink); margin:0 0 12px; }
+.uni-sec b{ color:var(--muted); font-weight:600; }
+.uni-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.uni-ls{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; text-decoration:none; color:inherit; display:block; }
+.uni-ls:hover{ border-color:var(--navy-2); box-shadow:var(--shadow-hover); }
+.uni-ls.cur{ border-color:var(--navy); box-shadow:0 0 0 1.5px var(--navy); }
+.uni-ls:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+.uni-ls .top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:9px; }
+.uni-ls .ico{ width:32px; height:32px; border-radius:8px; background:var(--navy-l); display:flex; align-items:center; justify-content:center; }
+.uni-ls .done{ width:20px; height:20px; border-radius:50%; background:var(--green); color:#fff; display:flex; align-items:center; justify-content:center; font-size:.66rem; }
+.uni-ls h4{ font-size:.85rem; margin:0 0 8px; font-weight:650; line-height:1.25; }
+.uni-ls .met{ display:flex; gap:8px; font-size:.66rem; color:var(--muted); }
+.uni-ls .chip{ background:var(--soft); border-radius:20px; padding:2px 8px; }
+/* Lição: altura definida (viewport menos a topbar de 56px) para que o conteúdo
+   nativo role DENTRO da casca (.uni-content), com topbar/sidebar fixos. overflow:hidden
+   contém também o iframe legado, que continua rolando internamente (sem regressão).
+   NÃO alterar height/overflow destas regras — o iframe legado depende delas. */
+.uni-lesson{ flex:1; display:flex; flex-direction:column; min-height:0; height:calc(100vh - 56px); overflow:hidden; }
+.uni-lesson-bar{ display:flex; align-items:center; gap:14px; padding:14px 30px; border-bottom:1px solid var(--line); background:var(--card); flex-shrink:0; }
+.uni-lesson-bar h1{ font-size:1rem; margin:0; flex:1; }
+.uni-frame{ flex:1; border:none; width:100%; background:var(--card); min-height:70vh; }
+
+/* Conteúdo nativo decomposto (RenderBlocks). NÃO confundir com .uni-cont (hero do dashboard). */
+.uni-content{ flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:28px clamp(16px,4vw,48px); }
+.uni-content p,.uni-content ul,.uni-content ol{ max-width:760px; line-height:1.65; margin:0 0 14px; color:var(--ink); }
+.uni-content h1,.uni-content h2,.uni-content h3{ max-width:760px; line-height:1.3; margin:24px 0 10px; color:var(--ink); }
+.uni-content h1{ font-size:1.5rem; } .uni-content h2{ font-size:1.2rem; } .uni-content h3{ font-size:1.02rem; }
+.uni-content ul,.uni-content ol{ padding-left:24px; }
+.uni-content li{ margin:4px 0; }
+.uni-content a{ color:var(--navy); }
+.uni-content .uni-fig{ max-width:760px; margin:18px 0; }
+.uni-content .uni-fig img{ display:block; max-width:100%; height:auto; border-radius:10px; }
+.uni-content .uni-fig figcaption{ font-size:.8rem; color:var(--muted); margin-top:6px; }
+.uni-content .uni-embed{ position:relative; max-width:760px; aspect-ratio:16/9; margin:18px 0; }
+.uni-content .uni-embed iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; border-radius:10px; }
+.uni-content .uni-nested{ margin-left:18px; }
+
+/* Bloco custom `embed` DENTRO do editor (FASE-07.1) — preview + form de colar link.
+   Classes próprias (não `.uni-content .uni-embed`) p/ não regredir a leitura. */
+.uni-embed-editor{ position:relative; max-width:560px; aspect-ratio:16/9; margin:8px 0; }
+.uni-embed-editor iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; border-radius:8px; }
+.uni-embed-form{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:12px; border:1px dashed var(--muted); border-radius:10px; margin:8px 0; }
+.uni-embed-form input{ flex:1 1 280px; min-height:44px; padding:0 10px; border:1px solid var(--line); border-radius:8px; font-size:1rem; }
+.uni-embed-form input:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); border-color:var(--navy); }
+.uni-embed-form button{ min-height:44px; padding:0 16px; border:none; border-radius:8px; background:var(--red); color:#fff; font-weight:700; cursor:pointer; }
+.uni-embed-form button:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+.uni-embed-err{ flex-basis:100%; color:var(--red); font-size:.85rem; margin:4px 0 0; }
+.uni-btn{ background:var(--navy); color:#fff; border:none; border-radius:10px; padding:9px 16px; font-weight:700; font-size:.82rem; cursor:pointer; }
+.uni-btn:hover{ background:var(--navy-2); }
+.uni-btn:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+.uni-btn.ok{ background:var(--green); }
+.uni-btn.ok:hover{ background:var(--green); }
+.uni-btn:disabled{ opacity:.6; cursor:default; }
+.uni-login{ min-height:100vh; display:flex; font-family:"Barlow",system-ui,sans-serif; }
+.uni-login .brand{ width:52%; position:relative; overflow:hidden; padding:48px 44px;
+  background:linear-gradient(150deg,var(--navy) 0%,var(--navy-2) 70%,var(--navy) 135%);
+  display:flex; flex-direction:column; justify-content:space-between; color:#fff; }
+.uni-login .brand img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.28; }
+.uni-login .brand .wm{ font-size:1.4rem; font-weight:800; position:relative; z-index:1; }
+.uni-login .brand .wm span{ color:#fff; }
+.uni-login .brand .tag{ font-size:1.6rem; font-weight:700; line-height:1.25; position:relative; z-index:1; max-width:340px; }
+.uni-login .brand::after{ content:""; position:absolute; width:260px; height:260px; border-radius:50%;
+  right:-90px; bottom:-90px; background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.22),transparent 72%); opacity:.6; }
+.uni-login .form{ width:48%; background:var(--card); color:var(--ink); display:flex; flex-direction:column; justify-content:center; padding:0 9%; }
+.uni-login .form h1{ font-size:1.5rem; margin:0 0 4px; color:var(--ink); }
+.uni-login .form p{ color:var(--muted); margin:0 0 24px; font-size:.9rem; }
+.uni-login label{ display:block; font-size:.78rem; font-weight:650; margin:0 0 6px; color:var(--ink); }
+.uni-login input{ width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:10px;
+  font-size:.92rem; margin-bottom:16px; }
+.uni-login input:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); border-color:var(--navy); }
+.uni-login .submit{ width:100%; background:var(--red); color:#fff; border:none; border-radius:10px;
+  padding:13px; font-size:.95rem; font-weight:700; cursor:pointer; }
+.uni-login .submit:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+.err{ background:var(--soft); color:var(--red); border-left:3px solid var(--red); border-radius:8px; padding:10px 12px; font-size:.82rem; margin-bottom:16px; }
+@media (max-width:820px){ .uni-login .brand{ display:none; } .uni-login .form{ width:100%; } }
+.uni-table{ width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+.uni-table th,.uni-table td{ text-align:left; padding:11px 14px; font-size:.85rem; border-bottom:1px solid var(--line); }
+.uni-table th{ background:var(--soft); color:var(--muted); font-size:.72rem; letter-spacing:.5px; text-transform:uppercase; }
+.uni-badge{ font-size:.68rem; font-weight:700; padding:2px 9px; border-radius:20px; }
+/* Ativo: verde-texto AA (#0A701A ≈5.6:1) sobre branco + borda verde. Inativo: neutro. */
+.uni-badge.on{ background:var(--card); color:var(--green-text); border:1px solid var(--green); }
+.uni-badge.off{ background:var(--soft); color:var(--muted); border:1px solid var(--line); }
+
+/* CommandPalette (⌘K) — overlay marinho translúcido (rgb 33,61,117 = #213D75). */
+.uni-cmd-overlay{ position:fixed; inset:0; background:rgba(33,61,117,.35); z-index:100;
+  display:flex; align-items:flex-start; justify-content:center; padding-top:12vh; }
+.uni-cmd-dialog{ width:min(560px,92vw); background:var(--card); border:1px solid var(--line);
+  border-radius:14px; overflow:hidden; box-shadow:var(--shadow-hero); }
+.uni-cmd-input{ width:100%; padding:16px 18px; border:none; border-bottom:1px solid var(--line);
+  font-size:1rem; color:var(--ink); background:var(--card); }
+.uni-cmd-input:focus-visible{ outline:var(--focus-ring); outline-offset:-2px; }
+.uni-cmd-list{ max-height:360px; overflow-y:auto; }
+.uni-cmd-empty{ padding:18px; color:var(--muted); }
+.uni-cmd-item{ display:flex; width:100%; text-align:left; gap:10px; padding:12px 18px; border:none;
+  background:transparent; cursor:pointer; font-size:.9rem; align-items:center; color:var(--ink); }
+.uni-cmd-item:hover{ background:var(--soft); }
+.uni-cmd-item:focus-visible{ background:var(--soft); outline:var(--focus-ring); outline-offset:-2px; }
+.uni-cmd-item .label{ flex:1; }
+.uni-cmd-item .hint{ font-size:.66rem; color:var(--muted); }
+
+/* Trilha / jornada do módulo (esqueleto da FASE-09). Estados visuais: concluida/atual/proxima. */
+.uni-trilha-head{ display:flex; align-items:center; gap:12px; margin:6px 0 18px; }
+.uni-trilha-head h2{ font-size:1.05rem; font-weight:800; margin:0; }
+.uni-ring{ width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-left:auto; flex-shrink:0; }
+.uni-ring span{ width:30px; height:30px; border-radius:50%; background:var(--card); display:flex; align-items:center; justify-content:center; font-size:.66rem; font-weight:800; color:var(--navy); }
+.uni-path{ position:relative; padding-left:46px; list-style:none; margin:0; }
+.uni-path::before{ content:""; position:absolute; left:17px; top:8px; bottom:8px; width:3px; background:var(--line); border-radius:2px; }
+.uni-node{ position:relative; margin-bottom:14px; }
+.uni-node .dot{ position:absolute; left:-46px; top:2px; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--card); border:3px solid var(--line); color:var(--muted); z-index:1; }
+.uni-node.done .dot{ background:var(--green); border-color:var(--green); color:#fff; }
+.uni-node.atual .dot{ background:var(--navy); border-color:var(--navy); color:#fff; box-shadow:0 0 0 5px var(--navy-l); }
+.uni-ncard{ background:var(--card); border:1px solid var(--line); border-radius:13px; padding:13px 16px; display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit; }
+.uni-ncard:hover{ border-color:var(--navy-2); }
+.uni-ncard:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+.uni-node.atual .uni-ncard{ border-color:var(--navy); box-shadow:var(--shadow-hover); }
+.uni-ncard h4{ margin:0 0 2px; font-size:.93rem; font-weight:700; }
+.uni-ncard .m{ font-size:.74rem; color:var(--muted); }
+.uni-ncard .st2{ margin-left:auto; font-size:.7rem; font-weight:700; padding:5px 11px; border-radius:20px; white-space:nowrap; }
+.uni-ncard .st2.done{ background:var(--card); color:var(--green-text); border:1px solid var(--green); }
+.uni-ncard .st2.go{ background:var(--red); color:#fff; }
+.uni-ncard .st2.lock{ background:var(--soft); color:var(--muted); border:1px solid var(--line); }
+.uni-empty{ background:var(--card); border:1px solid var(--line); border-radius:13px; padding:24px; text-align:center; color:var(--muted); }
+.uni-empty .ic{ width:44px; height:44px; border-radius:50%; background:var(--navy-l); color:var(--navy); display:inline-flex; align-items:center; justify-content:center; margin-bottom:8px; }
+.uni-empty p{ margin:0; max-width:none; }
+
+/* Skeleton de carregamento (home). Neutros da paleta + shimmer. */
+@keyframes uni-shimmer{ 0%{ background-position:-200px 0; } 100%{ background-position:200px 0; } }
+.uni-skel{ background-color:var(--soft); border-radius:8px;
+  background-image:linear-gradient(90deg,var(--soft) 0,var(--line) 40px,var(--soft) 80px);
+  background-size:600px 100%; animation:uni-shimmer 1.2s infinite linear; }
+@media (prefers-reduced-motion:reduce){ .uni-skel{ animation:none; } }
+.uni-skel-hi{ width:220px; height:28px; margin-bottom:8px; }
+.uni-skel-sub{ width:320px; max-width:80%; height:16px; margin-bottom:20px; }
+.uni-skel-hero{ height:120px; border-radius:16px; margin-bottom:20px; }
+.uni-skel-n{ width:60px; height:24px; margin-bottom:6px; }
+.uni-skel-t{ width:90px; height:12px; }
+.uni-skel-sec{ width:200px; height:18px; margin:6px 0 14px; }
+.uni-skel-node{ height:64px; border-radius:13px; margin-bottom:14px; }
+
+/* Barra da lição — link de voltar + chips próprios (antes herdavam de .uni-ls por acaso). */
+.uni-back{ display:inline-flex; align-items:center; gap:4px; font-size:.85rem; font-weight:600; color:var(--navy); text-decoration:none; }
+.uni-back:hover{ color:var(--navy-2); }
+.uni-back:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); border-radius:6px; }
+.uni-lesson-bar .met{ display:flex; gap:8px; }
+.uni-lesson-bar .chip{ background:var(--soft); border:1px solid var(--line); border-radius:20px; padding:3px 10px; font-size:.7rem; color:var(--muted); font-weight:600; white-space:nowrap; }
+
+/* Quiz do aluno (QuizClient). Feedback/Aprovado usam --green-text sobre branco (AA). */
+.uni-quiz{ margin:18px 0; border:1px solid var(--line); background:var(--card); border-radius:14px; padding:20px; }
+.uni-quiz > h3{ margin:0 0 12px; font-size:1.05rem; font-weight:700; color:var(--ink); }
+.uni-quiz-q{ margin:0 0 14px; border:1px solid var(--line); background:var(--soft); border-radius:10px; padding:12px; }
+.uni-quiz-q > legend{ padding:0 4px; font-size:.85rem; font-weight:600; color:var(--navy); }
+.uni-quiz-q .enun{ margin:0 0 10px; font-size:.95rem; color:var(--ink); }
+.uni-quiz-opts{ display:flex; flex-direction:column; gap:6px; }
+.uni-quiz-opt{ display:flex; align-items:center; gap:10px; min-height:44px; padding:0 12px; font-size:.9rem;
+  color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:8px; cursor:pointer; }
+.uni-quiz-opt input{ accent-color:var(--navy); width:18px; height:18px; flex-shrink:0; }
+.uni-quiz-opt:hover{ border-color:var(--navy-2); }
+.uni-quiz-opt:has(input:checked){ border-color:var(--navy); background:var(--navy-l); font-weight:600; }
+.uni-quiz-opt:focus-within{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+.uni-quiz-opt input:disabled{ cursor:default; }
+/* Feedback por questão fica num cartão branco (green-text/branco = 6.28:1). */
+.uni-quiz-fb{ margin:10px 0 0; padding:8px 10px; border-radius:8px; background:var(--card); border:1px solid var(--line); font-size:.85rem; }
+.uni-quiz-fb.ok{ color:var(--green-text); border-color:var(--green); }
+.uni-quiz-fb.no{ color:var(--red); border-color:var(--red); }
+.uni-quiz-res{ font-size:.95rem; font-weight:700; margin:0 0 8px; }
+.uni-quiz-res.ok{ color:var(--green-text); }
+.uni-quiz-res.no{ color:var(--red); }
+.uni-quiz-note{ font-size:.85rem; color:var(--muted); margin:0; }
+.uni-quiz-err{ margin:10px 0 0; font-size:.85rem; color:var(--red); }
+
+/* Abas do admin (Usuários/Conteúdo/Quizzes) — foco visível incluído. */
+.uni-tabs{ display:flex; gap:0; border-bottom:1.5px solid var(--line); margin-bottom:22px; }
+.uni-tab{ display:inline-block; padding:8px 18px; font-size:.88rem; font-weight:500; color:var(--muted);
+  text-decoration:none; border-bottom:2.5px solid transparent; margin-bottom:-1.5px; transition:color .15s,border-color .15s; }
+.uni-tab:hover{ color:var(--navy); }
+.uni-tab.on{ color:var(--navy); font-weight:700; border-bottom-color:var(--navy); }
+.uni-tab:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); border-radius:6px 6px 0 0; }
+
+/* Aviso/alerta do editor (admin). */
+.uni-note{ margin:0 0 12px; border:1px solid var(--navy); background:var(--navy-l); color:var(--navy); border-radius:10px; padding:8px 12px; font-size:.82rem; }
+.uni-note.alert{ border-color:var(--red); background:var(--soft); color:var(--red); }
+
+/* Seletor lateral (ex.: alunos em Resultados de quizzes). */
+.uni-pick{ display:block; width:100%; text-align:left; padding:8px 10px; border-radius:8px; border:none;
+  cursor:pointer; margin-bottom:4px; background:transparent; color:var(--ink); font-weight:500; font-size:.88rem; }
+.uni-pick:hover{ background:var(--soft); }
+.uni-pick.on{ background:var(--navy-l); color:var(--navy); font-weight:700; }
+.uni-pick.muted{ color:var(--muted); }
+.uni-pick:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
+
+/* Tabela de resultados (QuizResults). */
+.uni-rtable{ width:100%; border-collapse:collapse; font-size:.88rem; }
+.uni-rtable thead tr{ text-align:left; border-bottom:1.5px solid var(--line); color:var(--muted); }
+.uni-rtable th, .uni-rtable td{ padding:8px 6px; }
+.uni-rtable tbody tr{ border-bottom:1px solid var(--line); }
+.uni-rtable .muted{ color:var(--muted); }
+.uni-rtable .ok{ color:var(--green-text); font-weight:600; }
+.uni-rtable .no{ color:var(--red); font-weight:600; }
+
+/* Menu da conta (avatar → dropdown à direita). */
+.uni-acct{ position:relative; }
+.uni-acct-menu{ position:absolute; right:0; top:calc(100% + 8px); min-width:208px; background:var(--card);
+  border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow-hover); padding:6px; z-index:60; }
+.uni-acct-head{ padding:8px 10px; border-bottom:1px solid var(--line); margin-bottom:4px; }
+.uni-acct-head .nome{ font-size:.85rem; font-weight:700; color:var(--ink); }
+.uni-acct-item{ display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:9px 10px;
+  border:none; background:transparent; border-radius:8px; font-size:.85rem; color:var(--ink); cursor:pointer;
+  text-decoration:none; font-family:inherit; }
+.uni-acct-item:hover{ background:var(--soft); }
+.uni-acct-item:focus-visible{ outline:var(--focus-ring); outline-offset:-2px; }
+
+/* Página de perfil. */
+.uni-profile{ max-width:760px; }
+.uni-profile-id{ display:flex; align-items:center; gap:16px; margin:8px 0 24px; }
+.uni-profile-id .ava{ width:64px; height:64px; border-radius:50%; background:var(--navy); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.3rem; flex-shrink:0; }
+.uni-profile-id h1{ font-size:1.4rem; font-weight:800; margin:0 0 2px; }
+.uni-profile-id .email{ color:var(--muted); font-size:.88rem; margin:0 0 6px; }

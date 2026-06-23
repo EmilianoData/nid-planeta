@@ -31,6 +31,11 @@ body {
   overflow: hidden;
 }
 
+/* ── Modo embed (dentro da plataforma React) ── */
+body.embed #topbar, body.embed #sidebar { display: none !important; }
+body.embed #layout { height: 100vh; }
+body.embed #content-area { padding-top: 16px; }
+
 /* ── Topbar ── */
 #topbar {
   height: var(--topbar-h);
@@ -6413,6 +6418,9 @@ function toggleModule(num) {
 
 // Load from hash on startup; fallback to first screen
 window.addEventListener('load', () => {
+  if (new URLSearchParams(location.search).has('embed')) {
+    document.body.classList.add('embed');
+  }
   const hash = location.hash.replace('#', '');
   showScreen(hash || 's0-1');
 });

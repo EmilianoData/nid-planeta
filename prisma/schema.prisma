@@ -1,0 +1,146 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../src/generated/prisma"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String           @id @default(cuid())
+  email        String           @unique
+  name         String
+  passwordHash String
+  role         Role             @default(STUDENT)
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  progress     LessonProgress[]
+
+  @@map("users")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+model LessonProgress {
+  id         String         @id @default(cuid())
+  userId     String
+  lessonSlug String
+  status     ProgressStatus @default(NOT_STARTED)
+  pct        Int            @default(0)
+  updatedAt  DateTime       @updatedAt
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonSlug])
+  @@index([userId])
+  @@map("lesson_progress")
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum Dificuldade {
+  INICIANTE
+  INTERMEDIARIO
+  AVANCADO
+}
+
+model Course {
+  id        String        @id @default(cuid())
+  slug      String        @unique
+  title     String
+  subtitle  String?
+  position  Int           @default(0)
+  status    ContentStatus @default(DRAFT)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  modules   Module[]
+
+  @@map("courses")
+}
+
+model Module {
+  id        String        @id @default(cuid())
+  courseId  String
+  title     String
+  emoji     String        @default("📘")
+  position  Int           @default(0)
+  status    ContentStatus @default(DRAFT)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  course    Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+
+  @@index([courseId])
+  @@map("modules")
+}
+
+model Lesson {
+  id               String            @id @default(cuid())
+  moduleId         String
+  slug             String            @unique
+  title            String
+  tempoMin         Int               @default(5)
+  dificuldade      Dificuldade       @default(INICIANTE)
+  position         Int               @default(0)
+  status           ContentStatus     @default(DRAFT)
+  /// [BlockDoc]
+  contentDraft     Json?
+  /// [BlockDoc]
+  contentPublished Json?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  module           Module            @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  aliases          LessonSlugAlias[]
+
+  @@index([moduleId])
+  @@map("lessons")
+}
+
+model LessonSlugAlias {
+  oldSlug   String   @id
+  lessonId  String
+  createdAt DateTime @default(now())
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+  @@map("lesson_slug_aliases")
+}
+
+// Resultado de tentativa de quiz (FASE-08). Join-por-valor por userId + lessonSlug — MESMO
+// contrato do LessonProgress (sem FK; User/LessonProgress intocados — regra de ouro #2).
+// Guardamos TODAS as tentativas (sem @@unique): "vale a melhor" = max(score) por (userId, lessonSlug).
+// `notaCorte` é coluna não-sensível para o relatório admin (evita abrir `answers`).
+// `answers` é o SNAPSHOT da tentativa (inclui gabarito) — NUNCA exposto a front-end.
+model QuizAttempt {
+  id         String   @id @default(cuid())
+  userId     String
+  lessonSlug String
+  score      Int
+  passed     Boolean
+  notaCorte  Int
+  answers    Json
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([lessonSlug])
+  @@index([userId, lessonSlug])
+  @@index([lessonSlug, createdAt])
+  @@map("quiz_attempts")
+}
