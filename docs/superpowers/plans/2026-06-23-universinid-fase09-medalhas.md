@@ -1,7 +1,8 @@
 ---
 date: 2026-06-23
 spec: docs/superpowers/specs/2026-06-23-universinid-fase09-medalhas.md
-status: pendente-gate
+status: gate-aprovado
+gate_aprovado_em: 2026-06-23 (GO no /nid:gate, 0 bloqueantes; aprovação do dono). 5 atenções a incorporar: (1) db:push prod + backfill = passos manuais pós-deploy; (2) grantBadges nos 2 callers + LOGAR falha (não silenciar); (3) `conquistas` como augmentação em getDashboardData (NÃO em buildDashboard — preserva a fn pura + 2 testes); (4) self-heal via re-run do backfill; (5) re-seed se módulos mudarem (id sem slug). GOTCHA: db:push escreve no Neon compartilhado/prod → exige aval explícito do dono antes de rodar.
 tipo: web
 fase_quadro: FASE-09 (MVP medalhas/conquistas) — Frente B
 ---
