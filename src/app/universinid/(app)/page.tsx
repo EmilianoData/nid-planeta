@@ -34,6 +34,7 @@ export default async function DashboardPage() {
         <div className="uni-stat"><div className="n">{d.licoesConcluidas}<small>/{d.totalLicoes}</small></div><div className="t">Lições concluídas</div></div>
         <div className="uni-stat acc"><div className="n">{d.modulosAtivos}</div><div className="t">Módulos ativos</div></div>
         <div className="uni-stat"><div className="n">{d.streakDias}<small> dias</small></div><div className="t">Sequência (streak)</div></div>
+        <Link className="uni-stat acc" href="/universinid/conquistas"><div className="n">{d.conquistas}</div><div className="t">Conquistas</div></Link>
       </div>
 
       {/* Trilha do módulo atual. O catálogo completo (Course→Module→Lesson) vive na Sidebar. */}
