@@ -25,3 +25,27 @@ export function badgesGanhos(alvos: BadgeAlvo[], completed: Set<string>): string
     .filter((a) => a.licaoSlugs.length > 0 && a.licaoSlugs.every((s) => completed.has(s)))
     .map((a) => a.slug);
 }
+
+// Shape MÍNIMO da árvore publicada de que a concessão precisa (estruturalmente compatível
+// com PublishedTree de content-queries, mas SEM acoplar a Prisma — mantém badges.ts puro).
+export interface AlvoModulo { id: string; lessons: { slug: string }[] }
+export interface AlvoCurso { id: string; modules: AlvoModulo[] }
+
+/**
+ * Traduz a árvore publicada em alvos de concessão: 1 Badge MODULE por módulo (suas lições)
+ * + 1 Badge COURSE por curso (união das lições de todos os seus módulos). Pura — alimenta
+ * badgesGanhos. Slugs derivados do id (join-por-valor estável, sem depender do slug da lição).
+ */
+export function montarAlvos(cursos: AlvoCurso[]): BadgeAlvo[] {
+  const alvos: BadgeAlvo[] = [];
+  for (const curso of cursos) {
+    const licoesDoCurso: string[] = [];
+    for (const modulo of curso.modules) {
+      const licaoSlugs = modulo.lessons.map((l) => l.slug);
+      alvos.push({ slug: badgeSlugModulo(modulo.id), escopo: 'MODULE', licaoSlugs });
+      licoesDoCurso.push(...licaoSlugs);
+    }
+    alvos.push({ slug: badgeSlugCurso(curso.id), escopo: 'COURSE', licaoSlugs: licoesDoCurso });
+  }
+  return alvos;
+}

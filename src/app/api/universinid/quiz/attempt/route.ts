@@ -5,6 +5,7 @@ import { submitQuizSchema } from '@/lib/universinid/validators';
 import { resolveLessonBySlug } from '@/lib/universinid/content-queries';
 import { correctQuiz, extractQuizBlock, QuizDataError } from '@/lib/universinid/quiz';
 import { upsertLessonProgress } from '@/lib/universinid/progress-utils';
+import { grantBadges } from '@/lib/universinid/badges-grant';
 
 const RATE_LIMIT = 5; // máx. submissões por janela
 const RATE_WINDOW_MS = 60_000; // 60s
@@ -49,6 +50,10 @@ export async function POST(request: NextRequest) {
       if (passed && isStudent) await upsertLessonProgress(userId, lessonSlug, 'COMPLETED', 100, tx);
       return created;
     });
+
+    // FASE-09: concede medalhas APÓS o commit da transação (best-effort — grantBadges nunca
+    // propaga erro), nunca dentro dela, para não alargar o hot path do registro de progresso.
+    if (passed && isStudent) await grantBadges(userId);
 
     // Resposta ao aluno: SEM corretaIdx/answers (defesa em profundidade).
     return apiResponse({ id: attempt.id, score, passed, itens: feedback.itens });

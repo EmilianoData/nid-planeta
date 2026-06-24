@@ -3,12 +3,12 @@ import { NextRequest } from 'next/server';
 
 const {
   authMock, userFindUnique, lessonFindUnique, aliasFindUnique,
-  quizCount, quizCreate, txUpdateMany, txUpsert, transactionMock,
+  quizCount, quizCreate, txUpdateMany, txUpsert, transactionMock, grantBadgesMock,
 } = vi.hoisted(() => ({
   authMock: vi.fn(), userFindUnique: vi.fn(),
   lessonFindUnique: vi.fn(), aliasFindUnique: vi.fn(),
   quizCount: vi.fn(), quizCreate: vi.fn(),
-  txUpdateMany: vi.fn(), txUpsert: vi.fn(), transactionMock: vi.fn(),
+  txUpdateMany: vi.fn(), txUpsert: vi.fn(), transactionMock: vi.fn(), grantBadgesMock: vi.fn(),
 }));
 
 vi.mock('@/lib/auth', () => ({ auth: authMock }));
@@ -21,6 +21,9 @@ vi.mock('@/lib/prisma', () => ({
     $transaction: transactionMock,
   },
 }));
+// FASE-09: a concessão é best-effort e testada à parte (badges-grant.test.ts). Aqui só
+// verificamos o GANCHO (disparado após o commit, só p/ aluno que passou) — sem exercer o pipeline.
+vi.mock('@/lib/universinid/badges-grant', () => ({ grantBadges: grantBadgesMock }));
 
 import { POST } from './route';
 
@@ -49,6 +52,7 @@ describe('POST /api/universinid/quiz/attempt', () => {
     transactionMock.mockImplementation(async (cb: (tx: unknown) => unknown) =>
       cb({ quizAttempt: { create: quizCreate }, lessonProgress: { updateMany: txUpdateMany, upsert: txUpsert } }),
     );
+    grantBadgesMock.mockReset(); grantBadgesMock.mockResolvedValue(undefined);
   });
 
   it('401 sem sessão', async () => {
@@ -98,6 +102,7 @@ describe('POST /api/universinid/quiz/attempt', () => {
     expect(body.data).toMatchObject({ id: 'a1', score: 100, passed: true });
     expect(quizCreate).toHaveBeenCalled();
     expect(txUpdateMany).toHaveBeenCalled(); // upsertLessonProgress(COMPLETED) rodou na tx
+    expect(grantBadgesMock).toHaveBeenCalledWith('u1'); // FASE-09: concessão após o commit
   });
 
   it('aluno reprova → grava tentativa mas NÃO marca COMPLETED', async () => {
@@ -106,6 +111,7 @@ describe('POST /api/universinid/quiz/attempt', () => {
     expect((await res.json()).data.passed).toBe(false);
     expect(quizCreate).toHaveBeenCalled();
     expect(txUpdateMany).not.toHaveBeenCalled();
+    expect(grantBadgesMock).not.toHaveBeenCalled(); // não passou → nada a conceder
   });
 
   it('ADMIN passa → grava tentativa mas NÃO marca progresso (admin não é aluno)', async () => {
@@ -114,6 +120,7 @@ describe('POST /api/universinid/quiz/attempt', () => {
     expect(res.status).toBe(200);
     expect(quizCreate).toHaveBeenCalled();
     expect(txUpdateMany).not.toHaveBeenCalled();
+    expect(grantBadgesMock).not.toHaveBeenCalled(); // admin não rastreia progresso/medalha
   });
 
   it('resposta NUNCA contém corretaIdx nem answers (gabarito não vaza)', async () => {

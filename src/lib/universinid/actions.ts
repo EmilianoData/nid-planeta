@@ -9,6 +9,7 @@ import { hashPassword } from '@/lib/password';
 import { Prisma } from '@/generated/prisma';
 import { getPublishedTree, resolveLessonBySlug } from './content-queries';
 import { upsertLessonProgress } from './progress-utils';
+import { grantBadges, getConquistasDoUsuario, contarConquistas } from './badges-grant';
 import { buildDashboard, type ProgressRow, type DashboardData, type DashModulo, type Dificuldade } from './dashboard';
 
 const buscarLinhasProgresso = cache((userId: string) =>
@@ -52,6 +53,10 @@ export async function markLessonProgress(input: z.infer<typeof progressSchema>) 
   // RECEBIDO (contrato vivo). Mesma função usada pela rota de submissão de quiz.
   await upsertLessonProgress(user.id, slug, status, pct);
 
+  // FASE-09: concede medalhas após o latch — só quando algo foi concluído (hot path enxuto).
+  // Best-effort: grantBadges nunca propaga erro, então o registro de progresso fica intacto.
+  if (status === 'COMPLETED') await grantBadges(user.id);
+
   revalidatePath('/universinid');
   revalidatePath(`/universinid/licao/${slug}`);
 }
@@ -62,9 +67,14 @@ const DIFICULDADE_LABEL: Record<string, Dificuldade> = {
   AVANCADO: 'Avançado',
 };
 
-export async function getDashboardData(): Promise<DashboardData & { nome: string }> {
+export async function getDashboardData(): Promise<DashboardData & { nome: string; conquistas: number }> {
   const user = await exigirSessao();
-  const [rows, tree] = await Promise.all([buscarLinhasProgresso(user.id), getPublishedTree()]);
+  // `conquistas` é AUGMENTAÇÃO aqui (não em buildDashboard): preserva a fn pura + seus testes.
+  const [rows, tree, conquistas] = await Promise.all([
+    buscarLinhasProgresso(user.id),
+    getPublishedTree(),
+    contarConquistas(user.id),
+  ]);
   const progress: ProgressRow[] = rows.map((r) => ({
     lessonSlug: r.lessonSlug,
     status: r.status as ProgressRow['status'],
@@ -85,7 +95,14 @@ export async function getDashboardData(): Promise<DashboardData & { nome: string
       })),
     })),
   );
-  return { ...buildDashboard(progress, new Date(), modulos), nome: user.nome };
+  return { ...buildDashboard(progress, new Date(), modulos), nome: user.nome, conquistas };
+}
+
+// FASE-09 — server action da página /conquistas. Wrapper fino: autentica e delega à camada de
+// I/O (getConquistasDoUsuario), espelhando o padrão de getDashboardData → buildDashboard.
+export async function getConquistas() {
+  const user = await exigirSessao();
+  return getConquistasDoUsuario(user.id);
 }
 
 // Página de perfil (somente leitura): identidade autoritativa (e-mail/papel por PK)
