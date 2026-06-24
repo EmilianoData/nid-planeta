@@ -1,5 +1,6 @@
 import { prisma } from '../src/lib/prisma';
 import { buildSeedPlan } from '../src/lib/universinid/seed-plan';
+import { badgeSlugModulo, badgeSlugCurso } from '../src/lib/universinid/badges';
 
 export async function runSeedContent(): Promise<void> {
   const plan = buildSeedPlan();
@@ -31,4 +32,37 @@ export async function runSeedContent(): Promise<void> {
       },
     });
   }
+
+  await seedBadges(course.id, course.title);
+}
+
+// FASE-09 — catálogo de medalhas: 1 Badge por módulo PUBLICADO + 1 pela trilha (curso).
+// Idempotente por slug (badgeSlug* derivado do id — join-por-valor). Semeado só de conteúdo
+// PUBLISHED: é exatamente o que grantBadges (via getPublishedTree) consegue conceder — evita
+// medalha "eternamente bloqueada" de rascunho no catálogo. Em ambientes onde o PG direto é
+// bloqueado (rede DELP, P1001), aplicar via Neon MCP com o mesmo formato de slug/nome.
+async function seedBadges(courseId: string, courseTitle: string): Promise<void> {
+  const modulos = await prisma.module.findMany({
+    where: { courseId, status: 'PUBLISHED' },
+    select: { id: true, title: true, position: true },
+    orderBy: { position: 'asc' },
+  });
+  for (const m of modulos) {
+    const slug = badgeSlugModulo(m.id);
+    const nome = `Módulo: ${m.title}`;
+    const descricao = `Conclua todas as lições do módulo "${m.title}".`;
+    await prisma.badge.upsert({
+      where: { slug },
+      update: { nome, descricao, escopo: 'MODULE', alvoId: m.id, icone: 'award', position: m.position },
+      create: { slug, nome, descricao, escopo: 'MODULE', alvoId: m.id, icone: 'award', position: m.position },
+    });
+  }
+  const slug = badgeSlugCurso(courseId);
+  const nome = `Trilha completa: ${courseTitle}`;
+  const descricao = 'Conclua todas as lições da trilha.';
+  await prisma.badge.upsert({
+    where: { slug },
+    update: { nome, descricao, escopo: 'COURSE', alvoId: courseId, icone: 'trophy', position: 0 },
+    create: { slug, nome, descricao, escopo: 'COURSE', alvoId: courseId, icone: 'trophy', position: 0 },
+  });
 }
