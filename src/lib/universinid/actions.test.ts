@@ -1,12 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { authMock, lessonFindUnique, aliasFindUnique, progressUpsert, progressUpdateMany, userFindUnique } = vi.hoisted(() => ({
+const { authMock, lessonFindUnique, aliasFindUnique, progressUpsert, progressUpdateMany, userFindUnique, grantBadgesMock } = vi.hoisted(() => ({
   authMock: vi.fn(),
   lessonFindUnique: vi.fn(),
   aliasFindUnique: vi.fn(),
   progressUpsert: vi.fn(),
   progressUpdateMany: vi.fn(),
   userFindUnique: vi.fn(),
+  grantBadgesMock: vi.fn(),
 }));
 
 vi.mock('@/lib/auth', () => ({ auth: authMock }));
@@ -17,6 +18,12 @@ vi.mock('@/lib/prisma', () => ({ prisma: {
   lessonProgress: { upsert: progressUpsert, updateMany: progressUpdateMany },
   user: { findUnique: userFindUnique },
 } }));
+// Isola a concessão (FASE-09): testada à parte em badges-grant.test.ts. Aqui só verificamos o gancho.
+vi.mock('./badges-grant', () => ({
+  grantBadges: grantBadgesMock,
+  contarConquistas: vi.fn().mockResolvedValue(0),
+  getConquistasDoUsuario: vi.fn(),
+}));
 
 import { markLessonProgress } from './actions';
 
@@ -34,6 +41,8 @@ describe('markLessonProgress — guarda no banco (extensão E3)', () => {
     progressUpdateMany.mockResolvedValue({ count: 0 }); // força o caminho de create → mantém as asserções de upsert
     userFindUnique.mockReset();
     userFindUnique.mockResolvedValue({ id: 'u1' }); // padrão: conta existe E está ativa
+    grantBadgesMock.mockReset();
+    grantBadgesMock.mockResolvedValue(undefined);
   });
 
   it('aceita lição que existe no BANCO mesmo fora do catálogo estático', async () => {
@@ -81,5 +90,18 @@ describe('markLessonProgress — guarda no banco (extensão E3)', () => {
       markLessonProgress({ slug: 'llm-o-que-e', status: 'IN_PROGRESS', pct: 10 }),
     ).rejects.toThrow('Conta inativa');
     expect(progressUpsert).not.toHaveBeenCalled();
+  });
+
+  // FASE-09 — gancho de concessão de medalhas (best-effort, após o latch de progresso).
+  it('concluir lição (COMPLETED) dispara grantBadges para o usuário', async () => {
+    lessonFindUnique.mockResolvedValue({ id: 'l1', slug: 'llm-o-que-e' });
+    await markLessonProgress({ slug: 'llm-o-que-e', status: 'COMPLETED', pct: 100 });
+    expect(grantBadgesMock).toHaveBeenCalledWith('u1');
+  });
+
+  it('progresso não-final (IN_PROGRESS) NÃO dispara grantBadges (hot path enxuto)', async () => {
+    lessonFindUnique.mockResolvedValue({ id: 'l1', slug: 'llm-o-que-e' });
+    await markLessonProgress({ slug: 'llm-o-que-e', status: 'IN_PROGRESS', pct: 40 });
+    expect(grantBadgesMock).not.toHaveBeenCalled();
   });
 });

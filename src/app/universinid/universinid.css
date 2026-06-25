@@ -81,12 +81,17 @@
   font-weight:750; font-size:.82rem; padding:9px 18px; border-radius:10px; text-decoration:none;
   display:inline-flex; align-items:center; gap:7px; box-shadow:var(--shadow-cta); }
 .uni-cont .go:focus-visible{ outline:2px solid #fff; outline-offset:var(--focus-offset); }
-.uni-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+/* auto-fit: 4 stats (perfil) OU 5 (dashboard, c/ Conquistas) preenchem a linha sem coluna vazia. */
+.uni-stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin-bottom:24px; }
 .uni-stat{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
 .uni-stat .n{ font-size:1.5rem; font-weight:800; }
 .uni-stat .n small{ font-size:.78rem; color:var(--muted); font-weight:600; }
 .uni-stat.acc .n{ color:var(--navy); }
 .uni-stat .t{ font-size:.72rem; color:var(--muted); margin-top:2px; }
+/* 5º stat "Conquistas" é um link para /conquistas. */
+a.uni-stat{ text-decoration:none; color:inherit; display:block; }
+a.uni-stat:hover{ border-color:var(--navy-2); box-shadow:var(--shadow-hover); }
+a.uni-stat:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
 .uni-sec{ font-size:.82rem; font-weight:750; color:var(--ink); margin:0 0 12px; }
 .uni-sec b{ color:var(--muted); font-weight:600; }
 .uni-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
@@ -230,6 +235,18 @@
 .uni-back{ display:inline-flex; align-items:center; gap:4px; font-size:.85rem; font-weight:600; color:var(--navy); text-decoration:none; }
 .uni-back:hover{ color:var(--navy-2); }
 .uni-back:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); border-radius:6px; }
+
+/* FASE-09 — grade de medalhas (/conquistas). Ganha = tint marinho + data em verde; bloqueada =
+   neutra + hint de desbloqueio. Classe própria (.uni-medal*), NÃO reusa .uni-badge (pílula de status). */
+.uni-medals{ display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:14px; }
+.uni-medal{ display:flex; align-items:center; gap:14px; background:var(--card); border:1px solid var(--line); border-radius:13px; padding:16px; }
+.uni-medal .ic{ width:46px; height:46px; flex-shrink:0; border-radius:12px; display:flex; align-items:center; justify-content:center; background:var(--soft); color:var(--muted); }
+.uni-medal .nm{ font-size:.9rem; font-weight:700; color:var(--muted); }
+.uni-medal .ds{ font-size:.72rem; color:var(--muted); margin-top:3px; }
+.uni-medal .dt{ font-size:.72rem; color:var(--green-text); font-weight:600; margin-top:3px; }
+.uni-medal.on .ic{ background:var(--navy-l); color:var(--navy); }
+.uni-medal.on .nm{ color:var(--ink); }
+
 .uni-lesson-bar .met{ display:flex; gap:8px; }
 .uni-lesson-bar .chip{ background:var(--soft); border:1px solid var(--line); border-radius:20px; padding:3px 10px; font-size:.7rem; color:var(--muted); font-weight:600; white-space:nowrap; }
 

@@ -49,6 +49,9 @@ export function AccountMenu({ nome, isAdmin }: { nome: string; isAdmin: boolean 
           <Link role="menuitem" className="uni-acct-item" href="/universinid/perfil" onClick={() => setOpen(false)}>
             <Icon name="user" size={18} /> Meu perfil
           </Link>
+          <Link role="menuitem" className="uni-acct-item" href="/universinid/conquistas" onClick={() => setOpen(false)}>
+            <Icon name="trophy" size={18} /> Minhas conquistas
+          </Link>
           {isAdmin && (
             <Link role="menuitem" className="uni-acct-item" href="/universinid/admin" onClick={() => setOpen(false)}>
               <Icon name="settings" size={18} /> Admin
