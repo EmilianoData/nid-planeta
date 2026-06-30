@@ -58,7 +58,9 @@ const DialogContent = React.forwardRef<
           'absolute right-4 top-4 rounded-[6px] text-[var(--muted)] text-lg leading-none',
           'hover:text-[var(--ink)] hover:bg-[var(--navy-l)]',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)]',
-          'h-7 w-7 flex items-center justify-center transition-colors'
+          // Alvo de toque 44×44 (WCAG 2.5.5); o × segue centrado pelo flex. Token em
+          // :root → resolve mesmo no conteúdo portalizado (RadixDialog.Portal → body).
+          'min-h-[var(--touch-min)] min-w-[var(--touch-min)] flex items-center justify-center transition-colors'
         )}
       >
         ×
@@ -76,7 +78,9 @@ const DialogTitle = React.forwardRef<
   <RadixDialog.Title
     ref={ref}
     className={cn(
-      'text-[1rem] font-bold text-[var(--ink)] mb-1 pr-8',
+      // pr-16: clearance p/ a área de toque 44×44 do DialogClose (canto sup. dir.) não
+      // sobrepor o título (gate D4). Ajustar se a medição no portal mostrar folga/aperto.
+      'text-[1rem] font-bold text-[var(--ink)] mb-1 pr-16',
       className
     )}
     {...props}

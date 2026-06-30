@@ -25,7 +25,9 @@ export const buttonVariants = cva(
           'border border-[var(--navy)] bg-transparent text-[var(--navy)] hover:bg-[var(--navy-l)]',
       },
       size: {
-        md: 'px-4 py-[9px] text-[.82rem]',
+        // md herda o piso de toque 44px (WCAG 2.5.5); sm fica compacto de propósito
+        // (exceção WCAG 2.5.8 — alvos inline em UI densa de admin/mouse, ex.: ContentTree).
+        md: 'min-h-[var(--touch-min)] px-4 py-[9px] text-[.82rem]',
         sm: 'px-3 py-[6px] text-[.75rem]',
       },
     },
