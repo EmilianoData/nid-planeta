@@ -18,6 +18,8 @@
   --bg:#F4F2EE; --card:#FFFFFF; --line:#E7E2DA; --ink:#1E1E22; --muted:#6E6A66; --soft:#F7F5F1;
   /* Foco visível (WCAG 2.4.11 / 2.4.13) */
   --focus-ring:2px solid #213D75; --focus-offset:2px;
+  /* Alvo de toque mínimo (WCAG 2.5.5 Target Size) — aplicado explicitamente nos primitivos/.uni-* */
+  --touch-min:44px;
   /* Elevação navy-tinted — rgb(33,61,117) = #213D75 ; cta rgb(204,15,16) = #CC0F10 */
   --shadow-hover:0 8px 22px rgba(33,61,117,.10);
   --shadow-hero:0 12px 34px rgba(33,61,117,.20);
@@ -32,9 +34,9 @@
 .uni-shell *{ box-sizing:border-box; }
 .uni-top{ height:56px; background:var(--card); border-bottom:1px solid var(--line);
   display:flex; align-items:center; gap:16px; padding:0 18px; position:sticky; top:0; z-index:20; }
-.uni-wm{ font-weight:800; letter-spacing:.4px; color:var(--ink); font-size:1.05rem; text-decoration:none; }
+.uni-wm{ display:inline-flex; align-items:center; min-height:var(--touch-min); font-weight:800; letter-spacing:.4px; color:var(--ink); font-size:1.05rem; text-decoration:none; }
 .uni-wm b{ color:var(--red); }
-.uni-k{ margin-left:8px; flex:1; max-width:360px; display:flex; align-items:center; gap:8px;
+.uni-k{ margin-left:8px; flex:1; max-width:360px; display:flex; align-items:center; gap:8px; min-height:var(--touch-min);
   background:var(--soft); border:1px solid var(--line); border-radius:10px; padding:8px 12px;
   color:var(--muted); font-size:.85rem; cursor:pointer; }
 .uni-k:hover{ border-color:var(--navy-l); }
@@ -56,7 +58,7 @@
 /* Nível 1 da sidebar (Course) — acima dos módulos (.uni-lbl). */
 .uni-course{ padding:14px 8px 4px; font-size:.72rem; font-weight:800; letter-spacing:.06em;
   text-transform:uppercase; color:var(--navy); }
-.uni-nav{ display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:9px;
+.uni-nav{ display:flex; align-items:center; gap:10px; padding:9px 10px; min-height:var(--touch-min); border-radius:9px;
   margin-bottom:2px; font-size:.85rem; color:var(--ink); text-decoration:none; }
 .uni-nav:hover{ background:var(--soft); }
 .uni-nav.on{ background:var(--navy-l); color:var(--navy); font-weight:650; }
@@ -77,7 +79,7 @@
 .uni-cont .bar{ height:7px; border-radius:4px; background:rgba(255,255,255,.22); overflow:hidden; max-width:62%; margin-bottom:7px; }
 .uni-cont .bar i{ display:block; height:100%; background:#fff; }
 .uni-cont .pct{ font-size:.72rem; opacity:.85; }
-.uni-cont .go{ position:absolute; right:24px; bottom:22px; background:var(--red); color:#fff;
+.uni-cont .go{ position:absolute; right:24px; bottom:22px; min-height:var(--touch-min); background:var(--red); color:#fff;
   font-weight:750; font-size:.82rem; padding:9px 18px; border-radius:10px; text-decoration:none;
   display:inline-flex; align-items:center; gap:7px; box-shadow:var(--shadow-cta); }
 .uni-cont .go:focus-visible{ outline:2px solid #fff; outline-offset:var(--focus-offset); }
@@ -139,7 +141,7 @@ a.uni-stat:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-
 .uni-embed-form button{ min-height:44px; padding:0 16px; border:none; border-radius:8px; background:var(--red); color:#fff; font-weight:700; cursor:pointer; }
 .uni-embed-form button:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
 .uni-embed-err{ flex-basis:100%; color:var(--red); font-size:.85rem; margin:4px 0 0; }
-.uni-btn{ background:var(--navy); color:#fff; border:none; border-radius:10px; padding:9px 16px; font-weight:700; font-size:.82rem; cursor:pointer; }
+.uni-btn{ display:inline-flex; align-items:center; justify-content:center; min-height:var(--touch-min); background:var(--navy); color:#fff; border:none; border-radius:10px; padding:9px 16px; font-weight:700; font-size:.82rem; cursor:pointer; }
 .uni-btn:hover{ background:var(--navy-2); }
 .uni-btn:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); }
 .uni-btn.ok{ background:var(--green); }
@@ -159,7 +161,7 @@ a.uni-stat:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-
 .uni-login .form h1{ font-size:1.5rem; margin:0 0 4px; color:var(--ink); }
 .uni-login .form p{ color:var(--muted); margin:0 0 24px; font-size:.9rem; }
 .uni-login label{ display:block; font-size:.78rem; font-weight:650; margin:0 0 6px; color:var(--ink); }
-.uni-login input{ width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:10px;
+.uni-login input{ width:100%; box-sizing:border-box; min-height:var(--touch-min); padding:11px 13px; border:1.5px solid var(--line); border-radius:10px;
   font-size:.92rem; margin-bottom:16px; }
 .uni-login input:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); border-color:var(--navy); }
 .uni-login .submit{ width:100%; background:var(--red); color:#fff; border:none; border-radius:10px;
@@ -185,7 +187,7 @@ a.uni-stat:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-
 .uni-cmd-input:focus-visible{ outline:var(--focus-ring); outline-offset:-2px; }
 .uni-cmd-list{ max-height:360px; overflow-y:auto; }
 .uni-cmd-empty{ padding:18px; color:var(--muted); }
-.uni-cmd-item{ display:flex; width:100%; text-align:left; gap:10px; padding:12px 18px; border:none;
+.uni-cmd-item{ display:flex; width:100%; text-align:left; gap:10px; padding:12px 18px; min-height:var(--touch-min); border:none;
   background:transparent; cursor:pointer; font-size:.9rem; align-items:center; color:var(--ink); }
 .uni-cmd-item:hover{ background:var(--soft); }
 .uni-cmd-item:focus-visible{ background:var(--soft); outline:var(--focus-ring); outline-offset:-2px; }
@@ -232,7 +234,7 @@ a.uni-stat:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-
 .uni-skel-node{ height:64px; border-radius:13px; margin-bottom:14px; }
 
 /* Barra da lição — link de voltar + chips próprios (antes herdavam de .uni-ls por acaso). */
-.uni-back{ display:inline-flex; align-items:center; gap:4px; font-size:.85rem; font-weight:600; color:var(--navy); text-decoration:none; }
+.uni-back{ display:inline-flex; align-items:center; gap:4px; min-height:var(--touch-min); font-size:.85rem; font-weight:600; color:var(--navy); text-decoration:none; }
 .uni-back:hover{ color:var(--navy-2); }
 .uni-back:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-offset); border-radius:6px; }
 
@@ -276,7 +278,7 @@ a.uni-stat:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-
 
 /* Abas do admin (Usuários/Conteúdo/Quizzes) — foco visível incluído. */
 .uni-tabs{ display:flex; gap:0; border-bottom:1.5px solid var(--line); margin-bottom:22px; }
-.uni-tab{ display:inline-block; padding:8px 18px; font-size:.88rem; font-weight:500; color:var(--muted);
+.uni-tab{ display:inline-flex; align-items:center; min-height:var(--touch-min); padding:8px 18px; font-size:.88rem; font-weight:500; color:var(--muted);
   text-decoration:none; border-bottom:2.5px solid transparent; margin-bottom:-1.5px; transition:color .15s,border-color .15s; }
 .uni-tab:hover{ color:var(--navy); }
 .uni-tab.on{ color:var(--navy); font-weight:700; border-bottom-color:var(--navy); }
@@ -287,7 +289,7 @@ a.uni-stat:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-
 .uni-note.alert{ border-color:var(--red); background:var(--soft); color:var(--red); }
 
 /* Seletor lateral (ex.: alunos em Resultados de quizzes). */
-.uni-pick{ display:block; width:100%; text-align:left; padding:8px 10px; border-radius:8px; border:none;
+.uni-pick{ display:flex; align-items:center; min-height:var(--touch-min); width:100%; text-align:left; padding:8px 10px; border-radius:8px; border:none;
   cursor:pointer; margin-bottom:4px; background:transparent; color:var(--ink); font-weight:500; font-size:.88rem; }
 .uni-pick:hover{ background:var(--soft); }
 .uni-pick.on{ background:var(--navy-l); color:var(--navy); font-weight:700; }
@@ -309,7 +311,7 @@ a.uni-stat:focus-visible{ outline:var(--focus-ring); outline-offset:var(--focus-
   border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow-hover); padding:6px; z-index:60; }
 .uni-acct-head{ padding:8px 10px; border-bottom:1px solid var(--line); margin-bottom:4px; }
 .uni-acct-head .nome{ font-size:.85rem; font-weight:700; color:var(--ink); }
-.uni-acct-item{ display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:9px 10px;
+.uni-acct-item{ display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:9px 10px; min-height:var(--touch-min);
   border:none; background:transparent; border-radius:8px; font-size:.85rem; color:var(--ink); cursor:pointer;
   text-decoration:none; font-family:inherit; }
 .uni-acct-item:hover{ background:var(--soft); }

@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 
 const selectBase = [
   'w-full rounded-[10px] border-[1.5px] border-[var(--line)] bg-[var(--card)]',
-  'px-[12px] py-[10px] text-[.9rem] text-[var(--ink)]',
+  'min-h-[var(--touch-min)] px-[12px] py-[10px] text-[.9rem] text-[var(--ink)]',
   'appearance-none',
   // Chevron sutil via SVG inline no background (cor = --muted #6E6A66, da paleta).
   'bg-no-repeat bg-[right_12px_center]',

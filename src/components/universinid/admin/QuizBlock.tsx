@@ -108,17 +108,17 @@ function QuizBlockEditor({ notaCorteInicial, questoesJson, onChange }: QuizBlock
                   type="button" onClick={() => removeAlternativa(qi, ai)}
                   disabled={q.alternativas.length <= 2}
                   aria-label={`Remover alternativa ${ai + 1}`}
-                  className="rounded-[6px] px-2 py-1 text-[.8rem] text-[var(--red)] disabled:opacity-30"
+                  className="inline-flex items-center justify-center min-h-[var(--touch-min)] min-w-[var(--touch-min)] rounded-[6px] text-[.8rem] text-[var(--red)] disabled:opacity-30"
                 >✕</button>
               </div>
             ))}
           </div>
           <div className="mt-2 flex items-center gap-3">
-            <button type="button" onClick={() => addAlternativa(qi)} className="text-[.8rem] text-[var(--navy)]">+ alternativa</button>
+            <button type="button" onClick={() => addAlternativa(qi)} className="inline-flex items-center min-h-[var(--touch-min)] text-[.8rem] text-[var(--navy)]">+ alternativa</button>
             {questoes.length > 1 && (
               <button
                 type="button" onClick={() => apply(questoes.filter((_, j) => j !== qi), notaCorte)}
-                className="text-[.8rem] text-[var(--red)]"
+                className="inline-flex items-center min-h-[var(--touch-min)] text-[.8rem] text-[var(--red)]"
               >remover questão</button>
             )}
           </div>
@@ -134,7 +134,7 @@ function QuizBlockEditor({ notaCorteInicial, questoesJson, onChange }: QuizBlock
 
       <button
         type="button" onClick={() => apply([...questoes, emptyQuestao()], notaCorte)}
-        className="rounded-[8px] bg-[var(--navy)] px-3 py-1.5 text-[.85rem] font-medium text-white"
+        className="inline-flex items-center min-h-[var(--touch-min)] rounded-[8px] bg-[var(--navy)] px-3 py-1.5 text-[.85rem] font-medium text-white"
       >+ adicionar questão</button>
     </div>
   );
